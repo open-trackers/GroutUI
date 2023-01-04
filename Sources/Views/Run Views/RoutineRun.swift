@@ -176,6 +176,17 @@ public struct RoutineRun: View {
         }
     }
 
+    private func editAction(_ exerciseURI: URL) {
+        logger.debug("\(#function) exerciseURI=\(exerciseURI)")
+        // TODO: is a delay actually needed? Try it without.
+        DispatchQueue.main.asyncAfter(deadline: .now() + editDelaySeconds) {
+            if selectedTab != exerciseURI {
+                selectedTab = exerciseURI
+            }
+            router.path.append(MyRoutes.exerciseDetail(exerciseURI))
+        }
+    }
+
     private func stopAction() {
         logger.debug("\(#function)")
         onStop(routine) // parent view will take down the sheet & save context
@@ -202,19 +213,6 @@ public struct RoutineRun: View {
         ]
         userActivity.isEligibleForPrediction = true
         userActivity.isEligibleForSearch = true
-    }
-
-    // MARK: - Helpers
-
-    private func editAction(_ exerciseURI: URL) {
-        logger.debug("\(#function) exerciseURI=\(exerciseURI)")
-        // TODO: is a delay actually needed? Try it without.
-        DispatchQueue.main.asyncAfter(deadline: .now() + editDelaySeconds) {
-            if selectedTab != exerciseURI {
-                selectedTab = exerciseURI
-            }
-            router.path.append(MyRoutes.exerciseDetail(exerciseURI))
-        }
     }
 }
 
