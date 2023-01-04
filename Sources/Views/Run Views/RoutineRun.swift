@@ -165,11 +165,6 @@ public struct RoutineRun: View {
 
     // MARK: - Actions/Updates
 
-    private func editAction(_ exerciseURI: URL) {
-        logger.debug("\(#function) exerciseURI=\(exerciseURI)")
-        launchEdit(exerciseURI)
-    }
-
     private func addAction() {
         logger.debug("\(#function) maxOrder=\(maxOrder)")
         withAnimation {
@@ -177,7 +172,7 @@ public struct RoutineRun: View {
             routine.addToExercises(nu)
             PersistenceManager.shared.save(forced: true)
             let uriRep = nu.objectID.uriRepresentation()
-            launchEdit(uriRep)
+            editAction(uriRep)
         }
     }
 
@@ -211,13 +206,14 @@ public struct RoutineRun: View {
 
     // MARK: - Helpers
 
-    private func launchEdit(_ uriRep: URL) {
+    private func editAction(_ exerciseURI: URL) {
+        logger.debug("\(#function) exerciseURI=\(exerciseURI)")
         // TODO: is a delay actually needed? Try it without.
         DispatchQueue.main.asyncAfter(deadline: .now() + editDelaySeconds) {
-            if selectedTab != uriRep {
-                selectedTab = uriRep
+            if selectedTab != exerciseURI {
+                selectedTab = exerciseURI
             }
-            router.path.append(MyRoutes.exerciseDetail(uriRep))
+            router.path.append(MyRoutes.exerciseDetail(exerciseURI))
         }
     }
 }
