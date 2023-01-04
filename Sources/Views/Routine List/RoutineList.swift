@@ -186,6 +186,34 @@ public struct RoutineList: View {
     private func stopAction(_ routine: Routine) {
         logger.notice("\(#function): Stop Routine \(routine.wrappedName)")
         if routine.stop(startedAt: startedAt) {
+            
+//            if routine.archiveID == nil {
+//                routine.archiveID = UUID()
+//            }
+//
+//            let aroutine: ARoutine? = {
+//                if let archiveID = routine.archiveID {
+//                    if let aroutine = try? ARoutine.get(viewContext, forArchiveID: archiveID) {
+//                        print(">>>> FOUND EXISTING AROUTINE")
+//                        // found existing routine
+//                        return aroutine
+//                    } else {
+//                        print(">>>> CREATING NEW AROUTINE")
+//                        let aroutine = ARoutine.create(viewContext, name: routine.wrappedName, archiveID: archiveID)
+//                        //viewContext.assign(aroutine, to: archive)
+//                        return aroutine
+//                    }
+//                }
+//                return nil
+//            }()
+//
+//            if let aroutine {
+//                let duration = now.timeIntervalSince(startedAt)  //TODO redundant
+//                _ = ARoutineRun.create(viewContext, aroutine: aroutine, startedAt: startedAt, duration: duration)
+//                //viewContext.assign(aroutine, to: archive)
+//                print(">>>>> Created ARoutineRun")
+//            }
+            
             PersistenceManager.shared.save()
         } else {
             logger.debug("\(#function): not recorded, probably because no exercises completed")
