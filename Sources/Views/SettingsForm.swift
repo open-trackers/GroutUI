@@ -52,7 +52,7 @@ public struct SettingsForm: View {
         }
         .navigationTitle("Settings")
     }
-    
+
     private var displayName: String {
         Bundle.main.displayName ?? "unknown"
     }

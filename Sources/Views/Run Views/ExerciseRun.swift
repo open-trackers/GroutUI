@@ -8,6 +8,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+import CoreData
 import os
 import SwiftUI
 
@@ -32,12 +33,12 @@ public struct ExerciseRun: View {
     @ObservedObject private var exercise: Exercise
     private var onNextIncomplete: (Int16?) -> Void
     private var hasNextIncomplete: () -> Bool
-    private var onEdit: (Exercise) -> Void
+    private var onEdit: (URL) -> Void
 
     public init(exercise: Exercise,
                 onNextIncomplete: @escaping (Int16?) -> Void,
                 hasNextIncomplete: @escaping () -> Bool,
-                onEdit: @escaping (Exercise) -> Void)
+                onEdit: @escaping (URL) -> Void)
     {
         self.exercise = exercise
         self.onNextIncomplete = onNextIncomplete
@@ -140,15 +141,6 @@ public struct ExerciseRun: View {
                 // leave space at bottom for page indicator
                 .padding(.bottom, geo.size.height / 10)
                 .padding(.horizontal)
-                .toolbar {
-                    ToolbarItem {
-                        Button(action: {
-                            onEdit(exercise)
-                        }) {
-                            Text("Edit")
-                        }
-                    }
-                }
             #endif
         }
     }

@@ -8,13 +8,14 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+import CoreData
 import SwiftUI
 
 import GroutLib
 
 struct ExerciseRunVolume: View {
     @ObservedObject var exercise: Exercise
-    var onEdit: (Exercise) -> Void
+    var onEdit: (URL) -> Void
     #if os(watchOS)
         @Binding var middleMode: ExerciseMiddleRowMode
     #endif

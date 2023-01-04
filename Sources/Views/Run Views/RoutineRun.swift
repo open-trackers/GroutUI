@@ -8,6 +8,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+import CoreData
 import os
 import SwiftUI
 
@@ -93,6 +94,16 @@ public struct RoutineRun: View {
             ToolbarItem(placement: .cancellationAction) {
                 toolbarItem
             }
+            #if os(iOS)
+                ToolbarItem {
+                    Button(action: {
+                        editAction(selectedTab)
+                    }) {
+                        Text("Edit")
+                    }
+                    .disabled(selectedTab == controlTab)
+                }
+            #endif
         }
 
         .onAppear {
@@ -154,10 +165,9 @@ public struct RoutineRun: View {
 
     // MARK: - Actions/Updates
 
-    private func editAction(_ exercise: Exercise) {
-        logger.debug("\(#function) exercise=\(exercise.wrappedName)")
-        let uriRep = exercise.objectID.uriRepresentation()
-        launchEdit(uriRep)
+    private func editAction(_ exerciseURI: URL) {
+        logger.debug("\(#function) exerciseURI=\(exerciseURI)")
+        launchEdit(exerciseURI)
     }
 
     private func addAction() {
