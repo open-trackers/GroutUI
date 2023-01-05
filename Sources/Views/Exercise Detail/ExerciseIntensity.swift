@@ -26,7 +26,7 @@ public struct ExerciseIntensity: View {
 
     @State private var units: Int16
 
-    private let intensityRange: ClosedRange<Float> = 0 ... intensityMaxValue
+    private let intensityRange: ClosedRange<Float> = 0 ... Exercise.intensityMaxValue
     private let intensityStepRange: ClosedRange<Float> = 0.1 ... 25
     private let intensityStep: Float = 0.1
 

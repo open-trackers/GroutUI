@@ -42,7 +42,7 @@ struct ExerciseRunIntensity: View {
         #elseif os(iOS)
             GroupBox {
                 GroutStepper(value: $exercise.lastIntensity,
-                             in: 0.0 ... intensityMaxValue,
+                             in: 0.0 ... Exercise.intensityMaxValue,
                              step: exercise.intensityStep) {
                     intensityText
                 }

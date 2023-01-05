@@ -218,18 +218,8 @@ public struct ExerciseRun: View {
         hasNextIncomplete() ? exerciseNextColor : disabledColor
     }
 
-    private var advancedIntensity: Float {
-        if exercise.invertedIntensity {
-            // advance downwards
-            return max(0, exercise.lastIntensity - exercise.intensityStep)
-        } else {
-            // advance upwards
-            return min(intensityMaxValue, exercise.lastIntensity + exercise.intensityStep)
-        }
-    }
-
     private var alertTitle: String {
-        "Advance intensity from \(exercise.formatIntensity(exercise.lastIntensity)) to \(exercise.formatIntensity(advancedIntensity))?"
+        "Advance intensity from \(exercise.formatIntensity(exercise.lastIntensity)) to \(exercise.formatIntensity(exercise.advancedIntensity))?"
     }
 
     // MARK: - Actions
@@ -269,11 +259,16 @@ public struct ExerciseRun: View {
     private func markDone(withAdvance: Bool) {
         logger.debug("\(#function) withAdvance=\(withAdvance)")
 
-        exercise.lastCompletedAt = Date.now
+        exercise.markDone(withAdvance: withAdvance)
 
-        if withAdvance {
-            exercise.lastIntensity = advancedIntensity
-        }
+//        exercise.lastCompletedAt = now
+//
+//        if withAdvance {
+//            exercise.lastIntensity = advancedIntensity
+//        }
+
+        // archive the run for charting
+//        logRun(completedAt: now, intensity: self.intensity, now: now)
 
         nextIncompleteAction()
     }
