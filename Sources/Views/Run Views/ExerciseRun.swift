@@ -259,7 +259,7 @@ public struct ExerciseRun: View {
     private func markDone(withAdvance: Bool) {
         logger.debug("\(#function) withAdvance=\(withAdvance)")
 
-        exercise.markDone(withAdvance: withAdvance)
+        exercise.markDone(viewContext, withAdvance: withAdvance)
 
 //        exercise.lastCompletedAt = now
 //

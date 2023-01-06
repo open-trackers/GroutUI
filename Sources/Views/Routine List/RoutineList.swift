@@ -185,7 +185,7 @@ public struct RoutineList: View {
 
     private func stopAction(_ routine: Routine) {
         logger.notice("\(#function): Stop Routine \(routine.wrappedName)")
-        if routine.stop(startedAt: startedAt) {
+        if routine.stop(viewContext, startedAt: startedAt) {
             PersistenceManager.shared.save()
         } else {
             logger.debug("\(#function): not recorded, probably because no exercises completed")
