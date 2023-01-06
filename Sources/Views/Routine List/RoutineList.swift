@@ -230,7 +230,13 @@ public struct RoutineList: View {
         logger.notice("\(#function)")
 
         if !updatedArchiveIDs {
-            updateArchiveIDs()
+            updateArchiveIDs(routines: routines.map { $0 })
+            do {
+                try PersistenceManager.shared.save()
+            } catch {
+                logger.error("\(#function): \(error.localizedDescription)")
+            }
+            logger.notice("\(#function): updated archive IDs, where necessary")
             updatedArchiveIDs = true
         }
 
@@ -241,6 +247,7 @@ public struct RoutineList: View {
             logger.notice("\(#function): keepSince=\(keepSince)   days=\(days)")
             do {
                 try cleanLogRecords(viewContext, keepSince: keepSince)
+                try PersistenceManager.shared.save()
             } catch {
                 logger.error("\(#function): cleanLogRecords \(error.localizedDescription)")
             }
@@ -248,29 +255,6 @@ public struct RoutineList: View {
             // transfer any log records to archive
             // TODO:
         #endif
-    }
-
-    // MARK: - Helpers
-
-    /// Ensure all the records have archiveIDs
-    private func updateArchiveIDs() {
-        for routine in routines {
-            if let _ = routine.archiveID { continue }
-            routine.archiveID = UUID()
-            logger.notice("\(#function): added archiveID to \(routine.wrappedName)")
-            guard let exercises = routine.exercises?.allObjects as? [Exercise] else { continue }
-            for exercise in exercises {
-                if let _ = exercise.archiveID { continue }
-                exercise.archiveID = UUID()
-                logger.notice("\(#function): added archiveID to \(exercise.wrappedName)")
-            }
-        }
-        do {
-            try PersistenceManager.shared.save()
-        } catch {
-            logger.error("\(#function): \(error.localizedDescription)")
-        }
-        logger.notice("\(#function): updated archive IDs, where necessary")
     }
 }
 
