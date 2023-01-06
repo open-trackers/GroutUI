@@ -257,18 +257,14 @@ public struct ExerciseRun: View {
     // MARK: - Helpers
 
     private func markDone(withAdvance: Bool) {
-        logger.debug("\(#function) withAdvance=\(withAdvance)")
+        logger.debug("\(#function): withAdvance=\(withAdvance)")
 
-        exercise.markDone(viewContext, withAdvance: withAdvance)
-
-//        exercise.lastCompletedAt = now
-//
-//        if withAdvance {
-//            exercise.lastIntensity = advancedIntensity
-//        }
-
-        // archive the run for charting
-//        logRun(completedAt: now, intensity: self.intensity, now: now)
+        do {
+            try exercise.markDone(viewContext, withAdvance: withAdvance)
+            PersistenceManager.shared.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
 
         nextIncompleteAction()
     }

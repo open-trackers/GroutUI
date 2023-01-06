@@ -185,10 +185,14 @@ public struct RoutineList: View {
 
     private func stopAction(_ routine: Routine) {
         logger.notice("\(#function): Stop Routine \(routine.wrappedName)")
-        if routine.stop(viewContext, startedAt: startedAt) {
-            PersistenceManager.shared.save()
-        } else {
-            logger.debug("\(#function): not recorded, probably because no exercises completed")
+        do {
+            if try routine.stop(viewContext, startedAt: startedAt) {
+                PersistenceManager.shared.save()
+            } else {
+                logger.debug("\(#function): not recorded, probably because no exercises completed")
+            }
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
         }
         startedAt = Date.distantFuture
         selectedRoutine = nil // closes sheet
