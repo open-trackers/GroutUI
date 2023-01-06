@@ -24,7 +24,7 @@ struct ExerciseRunSettings: View {
         #if os(watchOS)
             ExerciseRunMiddleRow(imageName: "gearshape.fill",
                                  imageColor: exerciseGearColor,
-                                 onDetail: { onEdit(exercise) },
+                                 onDetail: { onEdit(exercise.uriRepresentation) },
                                  onTap: { middleMode = .volume }) {
                 settingsText
             }

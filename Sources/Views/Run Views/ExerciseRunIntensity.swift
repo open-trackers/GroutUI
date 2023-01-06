@@ -21,7 +21,7 @@ struct ExerciseRunIntensity: View {
     var body: some View {
         #if os(watchOS)
             Stepper(value: $exercise.lastIntensity,
-                    in: 0.0 ... intensityMaxValue,
+                    in: 0.0 ... Exercise.intensityMaxValue,
                     step: exercise.intensityStep) {
                 intensityText
                     .modify {

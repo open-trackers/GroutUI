@@ -24,7 +24,7 @@ struct ExerciseRunVolume: View {
         #if os(watchOS)
             ExerciseRunMiddleRow(imageName: "dumbbell.fill",
                                  imageColor: exerciseSetsColor,
-                                 onDetail: { onEdit(exercise) },
+                                 onDetail: { onEdit(exercise.uriRepresentation) },
                                  onTap: { middleMode = .intensity }) {
                 volumeText
             }

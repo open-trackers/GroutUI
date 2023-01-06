@@ -115,7 +115,13 @@ public struct RoutineList: View {
                 logger.notice(">>>>>>>>>>>>>>>>>>>>>> task")
                 #if os(watchOS)
                     // delete log records older than N days
-                    cleanLogRecords(viewContext)
+                    let keepSince = Date.now.addingTimeInterval(-1 * 60 * 60 * 24 * 30)
+                    logger.notice("task: keepSince = \(keepSince)")
+                    do {
+                        try cleanLogRecords(viewContext, keepSince: keepSince)
+                    } catch let error as NSError {
+                        logger.error("task: cleanLogRecords \(error.localizedDescription)")
+                    }
                 #elseif os(iOS)
 
                 #endif
@@ -196,7 +202,7 @@ public struct RoutineList: View {
             selectedRoutine = routineURI // displays sheet
 
         } catch let error as NSError {
-            logger.error("\(#function): Start failure \(nserror.localizedDescription)")
+            logger.error("\(#function): Start failure \(error.localizedDescription)")
         }
     }
 
