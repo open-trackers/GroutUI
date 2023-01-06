@@ -106,19 +106,19 @@ public struct RoutineList: View {
             .onContinueUserActivity(runRoutineActivityType,
                                     perform: continueUserActivityAction)
             .onAppear {
-                //TODO move to .task?
+                // TODO: move to .task?
                 guard !updatedArchiveIDs else { return }
                 updateArchiveIDs()
                 updatedArchiveIDs = true
             }
             .task {
                 logger.notice(">>>>>>>>>>>>>>>>>>>>>> task")
-#if os(watchOS)
-                // delete log records older than N days
-                cleanLogRecords(viewContext)
-#elseif os(iOS)
-                
-#endif
+                #if os(watchOS)
+                    // delete log records older than N days
+                    cleanLogRecords(viewContext)
+                #elseif os(iOS)
+
+                #endif
             }
     }
 
