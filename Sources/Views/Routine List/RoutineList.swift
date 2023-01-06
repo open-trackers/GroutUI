@@ -105,27 +105,7 @@ public struct RoutineList: View {
             }
             .onContinueUserActivity(runRoutineActivityType,
                                     perform: continueUserActivityAction)
-            .onAppear {
-                // TODO: move to .task?
-                guard !updatedArchiveIDs else { return }
-                updateArchiveIDs()
-                updatedArchiveIDs = true
-            }
-            .task {
-                logger.notice(">>>>>>>>>>>>>>>>>>>>>> task")
-                #if os(watchOS)
-                    // delete log records older than N days
-                    let keepSince = Date.now.addingTimeInterval(-1 * 60 * 60 * 24 * 30)
-                    logger.notice("task: keepSince = \(keepSince)")
-                    do {
-                        try cleanLogRecords(viewContext, keepSince: keepSince)
-                    } catch {
-                        logger.error("task: cleanLogRecords \(error.localizedDescription)")
-                    }
-                #elseif os(iOS)
-
-                #endif
-            }
+            .task(priority: .utility, taskAction)
     }
 
     #if os(watchOS)
@@ -245,6 +225,31 @@ public struct RoutineList: View {
         }
     #endif
 
+    @Sendable
+    private func taskAction() async {
+        logger.notice("\(#function)")
+
+        if !updatedArchiveIDs {
+            updateArchiveIDs()
+            updatedArchiveIDs = true
+        }
+
+        #if os(watchOS)
+            // delete log records older than N days
+            let days: Double = 30
+            let keepSince = Date.now.addingTimeInterval(-1 * 60 * 60 * 24 * days)
+            logger.notice("\(#function): keepSince=\(keepSince)   days=\(days)")
+            do {
+                try cleanLogRecords(viewContext, keepSince: keepSince)
+            } catch {
+                logger.error("\(#function): cleanLogRecords \(error.localizedDescription)")
+            }
+        #elseif os(iOS)
+            // transfer any log records to archive
+            // TODO:
+        #endif
+    }
+
     // MARK: - Helpers
 
     /// Ensure all the records have archiveIDs
@@ -265,7 +270,7 @@ public struct RoutineList: View {
         } catch {
             logger.error("\(#function): \(error.localizedDescription)")
         }
-        logger.notice("updated archive IDs, where necessary")
+        logger.notice("\(#function): updated archive IDs, where necessary")
     }
 }
 
