@@ -119,7 +119,7 @@ public struct RoutineList: View {
                     logger.notice("task: keepSince = \(keepSince)")
                     do {
                         try cleanLogRecords(viewContext, keepSince: keepSince)
-                    } catch let error as NSError {
+                    } catch {
                         logger.error("task: cleanLogRecords \(error.localizedDescription)")
                     }
                 #elseif os(iOS)
@@ -201,7 +201,7 @@ public struct RoutineList: View {
             isNew = true // forces start at first incomplete exercise
             selectedRoutine = routineURI // displays sheet
 
-        } catch let error as NSError {
+        } catch {
             logger.error("\(#function): Start failure \(error.localizedDescription)")
         }
     }
