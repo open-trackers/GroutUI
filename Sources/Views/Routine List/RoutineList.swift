@@ -195,8 +195,7 @@ public struct RoutineList: View {
             isNew = true // forces start at first incomplete exercise
             selectedRoutine = routineURI // displays sheet
 
-        } catch {
-            let nserror = error as NSError
+        } catch let error as NSError {
             logger.error("\(#function): Start failure \(nserror.localizedDescription)")
         }
     }
