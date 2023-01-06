@@ -8,9 +8,15 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+import os
 import SwiftUI
 
 import GroutLib
+
+private let logger = Logger(
+    subsystem: Bundle.main.bundleIdentifier!,
+    category: "ExerciseList"
+)
 
 public struct ExerciseList: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -78,12 +84,20 @@ public struct ExerciseList: View {
 
     private func deleteAction(offsets: IndexSet) {
         offsets.map { exercises[$0] }.forEach(viewContext.delete)
-        PersistenceManager.shared.save()
+        do {
+            try PersistenceManager.shared.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
     }
 
     private func moveAction(from source: IndexSet, to destination: Int) {
         Exercise.move(exercises, from: source, to: destination)
-        PersistenceManager.shared.save()
+        do {
+            try PersistenceManager.shared.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
     }
 }
 

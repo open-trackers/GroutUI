@@ -8,9 +8,15 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+import os
 import SwiftUI
 
 import GroutLib
+
+private let logger = Logger(
+    subsystem: Bundle.main.bundleIdentifier!,
+    category: "AddExerciseButton"
+)
 
 public struct AddExerciseButton<Label>: View
     where Label: View
@@ -59,8 +65,12 @@ public struct AddExerciseButton<Label>: View
             let nu = Exercise.create(viewContext, userOrder: maxOrder + 1)
             nu.name = "New Exercise"
             nu.routine = routine
-            PersistenceManager.shared.save(forced: true)
-            router.path.append(MyRoutes.exerciseDetail(nu.uriRepresentation))
+            do {
+                try PersistenceManager.shared.save(forced: true)
+                router.path.append(MyRoutes.exerciseDetail(nu.uriRepresentation))
+            } catch {
+                logger.error("\(#function): \(error.localizedDescription)")
+            }
         }
     }
 }

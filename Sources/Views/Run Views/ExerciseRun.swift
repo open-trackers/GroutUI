@@ -261,7 +261,7 @@ public struct ExerciseRun: View {
 
         do {
             try exercise.markDone(viewContext, withAdvance: withAdvance)
-            PersistenceManager.shared.save()
+            try PersistenceManager.shared.save()
         } catch {
             logger.error("\(#function): \(error.localizedDescription)")
         }

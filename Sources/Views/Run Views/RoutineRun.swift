@@ -170,7 +170,11 @@ public struct RoutineRun: View {
         withAnimation {
             let nu = Exercise.create(viewContext, userOrder: maxOrder + 1)
             routine.addToExercises(nu)
-            PersistenceManager.shared.save(forced: true)
+            do {
+                try PersistenceManager.shared.save(forced: true)
+            } catch {
+                logger.error("\(#function): \(error.localizedDescription)")
+            }
             let uriRep = nu.objectID.uriRepresentation()
             editAction(uriRep)
         }

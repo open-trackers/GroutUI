@@ -152,12 +152,20 @@ public struct RoutineList: View {
 
     private func deleteAction(offsets: IndexSet) {
         offsets.map { routines[$0] }.forEach(viewContext.delete)
-        PersistenceManager.shared.save()
+        do {
+            try PersistenceManager.shared.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
     }
 
     private func moveAction(from source: IndexSet, to destination: Int) {
         Routine.move(routines, from: source, to: destination)
-        PersistenceManager.shared.save()
+        do {
+            try PersistenceManager.shared.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
     }
 
     private func startAction(_ routineURI: URL, clearData: Bool) {
@@ -172,7 +180,7 @@ public struct RoutineList: View {
             // NOTE: storing startedAt locally (not in routine.lastStartedAt)
             // to ignore mistaken starts.
             startedAt = try routine.start(viewContext, clearData: clearData)
-            PersistenceManager.shared.save()
+            try PersistenceManager.shared.save()
 
             isNew = true // forces start at first incomplete exercise
             selectedRoutine = routineURI // displays sheet
@@ -187,7 +195,7 @@ public struct RoutineList: View {
         logger.notice("\(#function): Stop Routine \(routine.wrappedName)")
         do {
             if try routine.stop(viewContext, startedAt: startedAt) {
-                PersistenceManager.shared.save()
+                try PersistenceManager.shared.save()
             } else {
                 logger.debug("\(#function): not recorded, probably because no exercises completed")
             }
@@ -237,7 +245,11 @@ public struct RoutineList: View {
                 logger.notice("\(#function): added archiveID to \(exercise.wrappedName)")
             }
         }
-        PersistenceManager.shared.save()
+        do {
+            try PersistenceManager.shared.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
         logger.notice("updated archive IDs, where necessary")
     }
 }

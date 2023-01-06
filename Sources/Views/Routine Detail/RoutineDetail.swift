@@ -10,6 +10,11 @@ import SwiftUI
 
 import GroutLib
 
+private let logger = Logger(
+    subsystem: Bundle.main.bundleIdentifier!,
+    category: "RoutineDetail"
+)
+
 public struct RoutineDetail: View {
     @EnvironmentObject private var router: MyRouter
 
@@ -118,7 +123,11 @@ public struct RoutineDetail: View {
     #endif
 
     private func onDisappearAction() {
-        PersistenceManager.shared.save()
+        do {
+            try PersistenceManager.shared.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
     }
 }
 
