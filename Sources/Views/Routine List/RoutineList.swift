@@ -269,7 +269,9 @@ struct RoutineList_Previews: PreviewProvider {
     }
 
     static var previews: some View {
+        // let container = try! PersistenceManager.getTestContainer()
         let ctx = PersistenceManager.preview.container.viewContext
+        // let ctx = container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
         let exercise = Exercise.create(ctx, userOrder: 0)
