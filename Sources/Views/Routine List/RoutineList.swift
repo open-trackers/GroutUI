@@ -19,6 +19,7 @@ private let logger = Logger(
     category: "RoutineList"
 )
 
+/// Common view shared by watchOS and iOS.
 public struct RoutineList: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var router: MyRouter
