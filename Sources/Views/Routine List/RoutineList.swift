@@ -249,11 +249,16 @@ public struct RoutineList: View {
                 try cleanLogRecords(viewContext, keepSince: keepSince)
                 try PersistenceManager.shared.save()
             } catch {
-                logger.error("\(#function): cleanLogRecords \(error.localizedDescription)")
+                logger.error("\(#function): CLEAN \(error.localizedDescription)")
             }
         #elseif os(iOS)
-            // transfer any log records to archive
-            // TODO:
+            // transfer any 'Z' records from the 'Main' store to the 'Archive' store.
+            do {
+                try transferToArchive(viewContext)
+                try PersistenceManager.shared.save()
+            } catch {
+                logger.error("\(#function): TRANSFER \(error.localizedDescription)")
+            }
         #endif
     }
 }
