@@ -264,8 +264,15 @@ public struct ExerciseRun: View {
         logger.debug("\(#function): withAdvance=\(withAdvance)")
 
         do {
-            try exercise.markDone(viewContext, withAdvance: withAdvance)
+            try exercise.markDone(viewContext,
+                                  withAdvance: withAdvance)
             try PersistenceManager.shared.save()
+
+            try viewContext.fetcher(ZExerciseRun.self) {
+                print(">>>>\($0.zExercise?.name ?? "UNKNOWN") \(String(describing: $0.completedAt))")
+                return true
+            }
+
         } catch {
             logger.error("\(#function): \(error.localizedDescription)")
         }
