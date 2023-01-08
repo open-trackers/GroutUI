@@ -71,8 +71,12 @@ public struct ExerciseRun: View {
                    isPresented: $showAdvanceAlert,
                    actions: {
                        VStack {
-                           Button("Yes, advance") { markDone(withAdvance: true) }
-                           Button("No") { markDone(withAdvance: false) }
+                           Button("Yes, advance") {
+                               markDone(withAdvance: true)
+                           }
+                           Button("No") {
+                               markDone(withAdvance: false)
+                           }
                            Button("Always advance") {
                                alwaysAdvanceOnLongPress = true
                                markDone(withAdvance: true)
