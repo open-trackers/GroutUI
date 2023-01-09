@@ -18,12 +18,12 @@ import GroutLib
 public struct SinceText: View {
     // MARK: - Parameters
 
-    private var startedAt: Date
+    private var startedAt: Date?
     private var duration: TimeInterval
     @Binding private var now: Date
     private var compactorStyle: TimeCompactor.Style
 
-    public init(startedAt: Date, duration: TimeInterval, now: Binding<Date>, compactorStyle: TimeCompactor.Style) {
+    public init(startedAt: Date?, duration: TimeInterval, now: Binding<Date>, compactorStyle: TimeCompactor.Style) {
         self.startedAt = startedAt
         self.duration = duration
         _now = now
@@ -61,8 +61,8 @@ public struct SinceText: View {
 
     // time interval since the last workout ended, formatted compactly
     private var sinceStr: String? {
-        guard duration > 0
-        else { return nil }
+        guard let startedAt,
+              duration > 0 else { return nil }
         let since = max(0, now.timeIntervalSince(startedAt) - duration)
         return tcSince.string(from: since as NSNumber)
     }
