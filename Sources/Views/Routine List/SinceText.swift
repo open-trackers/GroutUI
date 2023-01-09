@@ -15,7 +15,7 @@ import Compactor
 
 import GroutLib
 
-struct SinceText: View {
+public struct SinceText: View {
     // MARK: - Parameters
 
     private var startedAt: Date
@@ -40,7 +40,7 @@ struct SinceText: View {
 
     // MARK: - Views
 
-    var body: some View {
+    public var body: some View {
         VStack {
             if let _lastStr = lastStr {
                 Text(_lastStr)
