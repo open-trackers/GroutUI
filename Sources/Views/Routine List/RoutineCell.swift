@@ -111,7 +111,7 @@ public struct RoutineCell: View {
     }
 
     private var routineSinceText: some View {
-        RoutineSinceText(routine: routine, now: $now, compactorStyle: compactorStyle)
+        SinceText(startedAt: routine.lastStartedAt ?? Date(), duration: routine.lastDuration, now: $now, compactorStyle: compactorStyle)
             .font(.body)
             .italic()
             .foregroundColor(lastColor)
