@@ -13,10 +13,8 @@ import SwiftUI
 
 import GroutLib
 
-private let logger = Logger(
-    subsystem: Bundle.main.bundleIdentifier!,
-    category: "NavStack"
-)
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: "NavStack")
 
 public struct NavStack<Content>: View
     where Content: View

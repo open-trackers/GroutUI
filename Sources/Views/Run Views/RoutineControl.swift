@@ -89,7 +89,8 @@ public struct RoutineControl: View {
             ActionButton(action: onStop,
                          imageSystemName: "xmark",
                          buttonText: "Stop",
-                         tint: stopColor, onLongPress: nil)
+                         tint: stopColor,
+                         onLongPress: nil)
             ElapsedView(startedAt: startedAt)
         }
     }
@@ -99,11 +100,13 @@ public struct RoutineControl: View {
             ActionButton(action: onAdd,
                          imageSystemName: "plus", // plus.circle.fill
                          buttonText: "Add",
-                         tint: exerciseColor, onLongPress: nil)
+                         tint: exerciseColor,
+                         onLongPress: nil)
             ActionButton(action: { onNextIncomplete(nil) },
                          imageSystemName: "arrow.forward",
                          buttonText: "Next",
-                         tint: onNextIncompleteColor, onLongPress: nil)
+                         tint: onNextIncompleteColor,
+                         onLongPress: nil)
                 .disabled(!hasRemaining)
         }
     }

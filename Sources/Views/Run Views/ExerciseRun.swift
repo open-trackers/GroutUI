@@ -14,10 +14,8 @@ import SwiftUI
 
 import GroutLib
 
-private let logger = Logger(
-    subsystem: Bundle.main.bundleIdentifier!,
-    category: "ExerciseRun"
-)
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: "ExerciseRun")
 
 public struct ExerciseRun: View {
     #if os(iOS)
@@ -31,16 +29,19 @@ public struct ExerciseRun: View {
     // MARK: - Parameters
 
     @ObservedObject private var exercise: Exercise
+    private let routineStartedAt: Date
     private var onNextIncomplete: (Int16?) -> Void
     private var hasNextIncomplete: () -> Bool
     private var onEdit: (URL) -> Void
 
     public init(exercise: Exercise,
+                routineStartedAt: Date,
                 onNextIncomplete: @escaping (Int16?) -> Void,
                 hasNextIncomplete: @escaping () -> Bool,
                 onEdit: @escaping (URL) -> Void)
     {
         self.exercise = exercise
+        self.routineStartedAt = routineStartedAt
         self.onNextIncomplete = onNextIncomplete
         self.hasNextIncomplete = hasNextIncomplete
         self.onEdit = onEdit
@@ -185,7 +186,8 @@ public struct ExerciseRun: View {
             ActionButton(action: nextIncompleteAction,
                          imageSystemName: "arrow.forward",
                          buttonText: "Next",
-                         tint: nextColor, onLongPress: nil)
+                         tint: nextColor,
+                         onLongPress: nil)
                 .disabled(!hasNext)
         }
     }
@@ -265,7 +267,8 @@ public struct ExerciseRun: View {
 
         do {
             try exercise.markDone(viewContext,
-                                  withAdvance: withAdvance)
+                                  withAdvance: withAdvance,
+                                  routineStartedAt: routineStartedAt)
             try PersistenceManager.shared.save()
 
             try viewContext.fetcher(ZExerciseRun.self) {
@@ -286,6 +289,7 @@ struct ExerciseRun_Previews: PreviewProvider {
         var exercise: Exercise
         var body: some View {
             ExerciseRun(exercise: exercise,
+                        routineStartedAt: Date.now,
                         onNextIncomplete: { _ in },
                         hasNextIncomplete: { true },
                         onEdit: { _ in })

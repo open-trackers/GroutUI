@@ -14,10 +14,8 @@ import SwiftUI
 
 import GroutLib
 
-private let logger = Logger(
-    subsystem: Bundle.main.bundleIdentifier!,
-    category: "RoutineList"
-)
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: "RoutineList")
 
 /// Common view shared by watchOS and iOS.
 public struct RoutineList: View {
@@ -252,14 +250,15 @@ public struct RoutineList: View {
             } catch {
                 logger.error("\(#function): CLEAN \(error.localizedDescription)")
             }
-        #elseif os(iOS)
-            // transfer any 'Z' records from the 'Main' store to the 'Archive' store.
-            do {
-                try transferToArchive(viewContext)
-                try PersistenceManager.shared.save()
-            } catch {
-                logger.error("\(#function): TRANSFER \(error.localizedDescription)")
-            }
+//        #elseif os(iOS)
+//            // transfer any 'Z' records from the 'Main' store to the 'Archive' store.
+//            // NOTE mirrored in HistoryView
+//            do {
+//                try transferToArchive(viewContext)
+//                try PersistenceManager.shared.save()
+//            } catch {
+//                logger.error("\(#function): TRANSFER \(error.localizedDescription)")
+//            }
         #endif
     }
 }

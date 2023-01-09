@@ -13,10 +13,8 @@ import SwiftUI
 
 import GroutLib
 
-private let logger = Logger(
-    subsystem: Bundle.main.bundleIdentifier!,
-    category: "AddRoutineButton"
-)
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: "AddRoutineButton")
 
 public struct AddRoutineButton<Label>: View
     where Label: View

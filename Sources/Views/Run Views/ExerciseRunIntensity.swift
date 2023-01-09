@@ -71,6 +71,7 @@ struct ExerciseRunIntensity_Previews: PreviewProvider {
         var exercise: Exercise
         var body: some View {
             ExerciseRun(exercise: exercise,
+                        routineStartedAt: Date.now,
                         onNextIncomplete: { _ in },
                         hasNextIncomplete: { true },
                         onEdit: { _ in })

@@ -14,10 +14,8 @@ import SwiftUI
 
 import GroutLib
 
-private let logger = Logger(
-    subsystem: Bundle.main.bundleIdentifier!,
-    category: String(describing: RoutineRun.self)
-)
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: String(describing: RoutineRun.self))
 
 public struct RoutineRun: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -79,6 +77,7 @@ public struct RoutineRun: View {
 
             ForEach(exercises, id: \.self) { exercise in
                 ExerciseRun(exercise: exercise,
+                            routineStartedAt: startedAt,
                             onNextIncomplete: nextIncompleteAction,
                             hasNextIncomplete: hasNextIncomplete,
                             onEdit: editAction)

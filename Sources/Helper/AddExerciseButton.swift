@@ -13,10 +13,8 @@ import SwiftUI
 
 import GroutLib
 
-private let logger = Logger(
-    subsystem: Bundle.main.bundleIdentifier!,
-    category: "AddExerciseButton"
-)
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: "AddExerciseButton")
 
 public struct AddExerciseButton<Label>: View
     where Label: View

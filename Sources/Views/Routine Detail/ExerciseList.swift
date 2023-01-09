@@ -13,10 +13,8 @@ import SwiftUI
 
 import GroutLib
 
-private let logger = Logger(
-    subsystem: Bundle.main.bundleIdentifier!,
-    category: "ExerciseList"
-)
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: "ExerciseList")
 
 public struct ExerciseList: View {
     @Environment(\.managedObjectContext) private var viewContext

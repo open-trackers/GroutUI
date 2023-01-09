@@ -10,10 +10,8 @@ import SwiftUI
 
 import GroutLib
 
-private let logger = Logger(
-    subsystem: Bundle.main.bundleIdentifier!,
-    category: "RoutineDetail"
-)
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: "RoutineDetail")
 
 public struct RoutineDetail: View {
     @EnvironmentObject private var router: MyRouter
