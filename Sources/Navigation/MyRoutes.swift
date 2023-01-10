@@ -12,6 +12,7 @@ import Foundation
 
 public typealias MyRouter = Router<MyRoutes>
 
+/// NOTE: routineRunDetail is presently iOS only, requiring injection of view into NavStack.
 public enum MyRoutes: Hashable, Codable, CustomStringConvertible {
     case settings
     case about

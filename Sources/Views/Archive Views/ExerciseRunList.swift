@@ -8,16 +8,16 @@
 //// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 ////
 //
-//import CoreData
-//import os
-//import SwiftUI
+// import CoreData
+// import os
+// import SwiftUI
 //
-//import Compactor
-//import Tabler
+// import Compactor
+// import Tabler
 //
-//import GroutLib
+// import GroutLib
 //
-//#if os(iOS)
+// #if os(iOS)
 //    struct ExerciseRunList: View {
 //        @Environment(\.managedObjectContext) private var viewContext
 //
@@ -155,9 +155,9 @@
 //            return tcDur.string(from: duration as NSNumber) ?? ""
 //        }
 //    }
-//#endif
+// #endif
 //
-//#if os(iOS)
+// #if os(iOS)
 //    struct ExerciseRunList_Previews: PreviewProvider {
 //        static var previews: some View {
 //            let ctx = PersistenceManager.getPreviewContainer().viewContext
@@ -186,4 +186,4 @@
 //            }
 //        }
 //    }
-//#endif
+// #endif

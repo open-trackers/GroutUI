@@ -16,8 +16,9 @@ import GroutLib
 private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                             category: "NavStack")
 
-public struct NavStack<Content>: View
-    where Content: View
+/// NOTE: routineRunDetail is presently iOS only, requiring injection of view into NavStack.
+public struct NavStack<RoutineRunDetail, Content>: View
+    where RoutineRunDetail: View, Content: View
 {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.scenePhase) private var scenePhase
@@ -26,14 +27,17 @@ public struct NavStack<Content>: View
 
     private var name: String
     @Binding private var navData: Data?
+    private var routineRunDetail: (URL) -> RoutineRunDetail
     private var content: () -> Content
 
     public init(name: String,
                 navData: Binding<Data?>,
+                @ViewBuilder routineRunDetail: @escaping (URL) -> RoutineRunDetail = { _ in EmptyView() },
                 @ViewBuilder content: @escaping () -> Content)
     {
         self.name = name
         _navData = navData
+        self.routineRunDetail = routineRunDetail
         self.content = content
     }
 
@@ -82,18 +86,7 @@ public struct NavStack<Content>: View
                             Text("Exercise not available to display detail.")
                         }
                     case let .routineRunDetail(routineRunUri):
-                        Text("Hello")
-//                        #if os(iOS)
-//                            if let zRoutineRun = ZRoutineRun.get(viewContext, forURIRepresentation: routineRunUri),
-//                               let archiveStore = PersistenceManager.getArchiveStore(viewContext)
-//                            {
-//                                ExerciseRunList(zRoutineRun: zRoutineRun, archiveStore: archiveStore)
-//                            } else {
-//                                Text("Routine Run not available to display detail.")
-//                            }
-//                        #else
-//                            Text("Not available on this platform.")
-//                        #endif
+                        routineRunDetail(routineRunUri)
                     }
                 }
                 .onChange(of: scenePhase) {
