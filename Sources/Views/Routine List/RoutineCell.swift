@@ -157,7 +157,7 @@ struct RoutineCell_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.preview.container.viewContext
+        let ctx = PersistenceManager.getPreviewContainer().viewContext
         let r1 = Routine.create(ctx, userOrder: 0)
         r1.name = "Pull" // "Back & Bicep"
         r1.lastDuration = 3545

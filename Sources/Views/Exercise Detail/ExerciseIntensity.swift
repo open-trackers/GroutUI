@@ -100,7 +100,7 @@ public struct ExerciseIntensity: View {
 
 struct ExerciseIntensity_Previews: PreviewProvider {
     static var previews: some View {
-        let ctx = PersistenceManager.preview.container.viewContext
+        let ctx = PersistenceManager.getPreviewContainer().viewContext
         let exercise = Exercise.create(ctx, userOrder: 0)
         exercise.name = "Lat Pulldown"
         exercise.units = Units.kilograms.rawValue
