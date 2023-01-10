@@ -39,6 +39,7 @@ public struct RoutineList: View {
     @SceneStorage("routine-run-nav") private var routineRunNavData: Data?
     @SceneStorage("run-selected-routine") private var selectedRoutine: URL? = nil
     @SceneStorage("run-started-at") private var startedAt: Date = .distantFuture
+    @SceneStorage("run-last-exercise-completed-at") private var lastExerciseCompletedAt: Date = .distantFuture
     @SceneStorage("updated-archive-ids") private var updatedArchiveIDs: Bool = false
 
     // timer used to refresh "2d ago, for 16.5m" on each Routine Cell
@@ -187,15 +188,9 @@ public struct RoutineList: View {
 
     private func stopAction(_ routine: Routine) {
         logger.notice("\(#function): Stop Routine \(routine.wrappedName)")
-        do {
-            if try routine.stop(viewContext, startedAt: startedAt) {
-                try viewContext.save()
-            } else {
-                logger.debug("\(#function): not recorded, probably because no exercises completed")
-            }
-        } catch {
-            logger.error("\(#function): \(error.localizedDescription)")
-        }
+
+        // NOTE: no need to update Routine or ZRoutineRun, as they were both updated in Exercise.logRun.
+
         startedAt = Date.distantFuture
         selectedRoutine = nil // closes sheet
     }
