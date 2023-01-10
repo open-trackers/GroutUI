@@ -271,8 +271,8 @@ public struct ExerciseRun: View {
                                   routineStartedAt: routineStartedAt)
             try PersistenceManager.shared.save()
 
-            try viewContext.fetcher(ZExerciseRun.self) {
-                print(">>>>\($0.zExercise?.name ?? "UNKNOWN") \(String(describing: $0.completedAt))")
+            try viewContext.fetcher { (zExerciseRun: ZExerciseRun) in
+                print(">>>>\(zExerciseRun.zExercise?.name ?? "UNKNOWN") \(String(describing: zExerciseRun.completedAt))")
                 return true
             }
 
