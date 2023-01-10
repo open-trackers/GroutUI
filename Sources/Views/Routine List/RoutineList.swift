@@ -135,12 +135,7 @@ public struct RoutineList: View {
 
     #if os(iOS)
         private var rowBackground: some View {
-            LinearGradient(gradient: .init(colors: [
-                .accentColor.opacity(0.1),
-                .accentColor.opacity(0.2),
-            ]),
-            startPoint: .topLeading,
-            endPoint: .bottom)
+            EntityBackground(.accentColor)
         }
     #endif
 

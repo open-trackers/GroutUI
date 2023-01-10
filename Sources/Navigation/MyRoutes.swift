@@ -15,9 +15,10 @@ public typealias MyRouter = Router<MyRoutes>
 public enum MyRoutes: Hashable, Codable, CustomStringConvertible {
     case settings
     case about
-    case routineDetail(_ routineUriRep: URL)
-    case exerciseDetail(_ exerciseUriRep: URL)
-    case exerciseList(_ routineUriRep: URL)
+    case routineDetail(_ routineUri: URL)
+    case exerciseDetail(_ exerciseUri: URL)
+    case exerciseList(_ routineUri: URL)
+    case routineRunDetail(_ routineRunUri: URL)
 
     public var description: String {
         switch self {
@@ -31,6 +32,8 @@ public enum MyRoutes: Hashable, Codable, CustomStringConvertible {
             return String("Exercise Detail: \(uriSuffix(exerciseUri))")
         case let .exerciseList(routineUri):
             return String("Exercise List for routine=\(uriSuffix(routineUri))")
+        case let .routineRunDetail(routineRunUri):
+            return String("Exercise log for routine=\(uriSuffix(routineRunUri))")
         }
     }
 
