@@ -37,12 +37,12 @@ public struct SettingsForm: View {
             Section {
                 Toggle("Log completions", isOn: $logToHistory)
             } header: {
-                Text("\(Image(systemName: "fossil.shell")) History")
+                Text("\(Image(systemName: "fossil.shell.fill")) History")
             } footer: {
                 #if os(watchOS)
                     Text("Recent history will be stored locally for up to 1 year. Periodically run iOS app for long-term storage and review.")
                 #elseif os(iOS)
-                    Text("History can be reviewed from the home screen.")
+                    Text("History can be reviewed from a tab on the home screen.")
                 #endif
             }
 
