@@ -271,10 +271,10 @@ public struct ExerciseRun: View {
                                   routineStartedAt: routineStartedAt)
             try viewContext.save()
 
-            try viewContext.fetcher { (zExerciseRun: ZExerciseRun) in
-                print(">>>>\(zExerciseRun.zExercise?.name ?? "UNKNOWN") \(String(describing: zExerciseRun.completedAt))")
-                return true
-            }
+//            try viewContext.fetcher { (zExerciseRun: ZExerciseRun) in
+//                print(">>>>\(zExerciseRun.zExercise?.name ?? "UNKNOWN") \(String(describing: zExerciseRun.completedAt))")
+//                return true
+//            }
 
         } catch {
             logger.error("\(#function): \(error.localizedDescription)")
