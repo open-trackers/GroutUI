@@ -258,7 +258,6 @@ public struct RoutineList: View {
     }
 }
 
-// TODO: four copies of each routine showing up; should be one!
 struct RoutineList_Previews: PreviewProvider {
     struct TestHolder: View {
         var body: some View {
