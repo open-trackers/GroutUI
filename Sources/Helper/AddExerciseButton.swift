@@ -64,7 +64,7 @@ public struct AddExerciseButton<Label>: View
             nu.name = "New Exercise"
             nu.routine = routine
             do {
-                try PersistenceManager.shared.save(forced: true)
+                try viewContext.save()
                 router.path.append(MyRoutes.exerciseDetail(nu.uriRepresentation))
             } catch {
                 logger.error("\(#function): \(error.localizedDescription)")

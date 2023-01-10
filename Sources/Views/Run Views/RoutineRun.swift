@@ -170,7 +170,7 @@ public struct RoutineRun: View {
             let nu = Exercise.create(viewContext, userOrder: maxOrder + 1)
             routine.addToExercises(nu)
             do {
-                try PersistenceManager.shared.save(forced: true)
+                try viewContext.save()
             } catch {
                 logger.error("\(#function): \(error.localizedDescription)")
             }

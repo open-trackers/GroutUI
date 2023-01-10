@@ -148,7 +148,7 @@ public struct RoutineList: View {
     private func deleteAction(offsets: IndexSet) {
         offsets.map { routines[$0] }.forEach(viewContext.delete)
         do {
-            try PersistenceManager.shared.save()
+            try viewContext.save()
         } catch {
             logger.error("\(#function): \(error.localizedDescription)")
         }
@@ -157,7 +157,7 @@ public struct RoutineList: View {
     private func moveAction(from source: IndexSet, to destination: Int) {
         Routine.move(routines, from: source, to: destination)
         do {
-            try PersistenceManager.shared.save()
+            try viewContext.save()
         } catch {
             logger.error("\(#function): \(error.localizedDescription)")
         }
@@ -175,7 +175,7 @@ public struct RoutineList: View {
             // NOTE: storing startedAt locally (not in routine.lastStartedAt)
             // to ignore mistaken starts.
             startedAt = try routine.start(viewContext, clearData: clearData)
-            try PersistenceManager.shared.save()
+            try viewContext.save()
 
             isNew = true // forces start at first incomplete exercise
             selectedRoutine = routineURI // displays sheet
@@ -189,7 +189,7 @@ public struct RoutineList: View {
         logger.notice("\(#function): Stop Routine \(routine.wrappedName)")
         do {
             if try routine.stop(viewContext, startedAt: startedAt) {
-                try PersistenceManager.shared.save()
+                try viewContext.save()
             } else {
                 logger.debug("\(#function): not recorded, probably because no exercises completed")
             }
@@ -231,7 +231,7 @@ public struct RoutineList: View {
         if !updatedArchiveIDs {
             updateArchiveIDs(routines: routines.map { $0 })
             do {
-                try PersistenceManager.shared.save()
+                try viewContext.save()
             } catch {
                 logger.error("\(#function): \(error.localizedDescription)")
             }
@@ -246,7 +246,7 @@ public struct RoutineList: View {
             logger.notice("\(#function): keepSince=\(keepSince)   days=\(days)")
             do {
                 try cleanLogRecords(viewContext, keepSince: keepSince)
-                try PersistenceManager.shared.save()
+                try viewContext.save()
             } catch {
                 logger.error("\(#function): CLEAN \(error.localizedDescription)")
             }
@@ -255,7 +255,7 @@ public struct RoutineList: View {
 //            // NOTE mirrored in HistoryView
 //            do {
 //                try transferToArchive(viewContext)
-//                try PersistenceManager.shared.save()
+//                try viewContext.save()
 //            } catch {
 //                logger.error("\(#function): TRANSFER \(error.localizedDescription)")
 //            }

@@ -83,7 +83,7 @@ public struct ExerciseList: View {
     private func deleteAction(offsets: IndexSet) {
         offsets.map { exercises[$0] }.forEach(viewContext.delete)
         do {
-            try PersistenceManager.shared.save()
+            try viewContext.save()
         } catch {
             logger.error("\(#function): \(error.localizedDescription)")
         }
@@ -92,7 +92,7 @@ public struct ExerciseList: View {
     private func moveAction(from source: IndexSet, to destination: Int) {
         Exercise.move(exercises, from: source, to: destination)
         do {
-            try PersistenceManager.shared.save()
+            try viewContext.save()
         } catch {
             logger.error("\(#function): \(error.localizedDescription)")
         }

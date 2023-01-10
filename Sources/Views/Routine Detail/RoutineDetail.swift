@@ -14,6 +14,7 @@ private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                             category: "RoutineDetail")
 
 public struct RoutineDetail: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var router: MyRouter
 
     // MARK: - Parameters
@@ -122,7 +123,7 @@ public struct RoutineDetail: View {
 
     private func onDisappearAction() {
         do {
-            try PersistenceManager.shared.save()
+            try viewContext.save()
         } catch {
             logger.error("\(#function): \(error.localizedDescription)")
         }

@@ -56,7 +56,7 @@ public struct AddRoutineButton<Label>: View
             let nu = Routine.create(viewContext, userOrder: maxOrder + 1)
             nu.name = "New Routine"
             do {
-                try PersistenceManager.shared.save(forced: true)
+                try viewContext.save()
                 router.path.append(MyRoutes.routineDetail(nu.uriRepresentation))
             } catch {
                 logger.error("\(#function): \(error.localizedDescription)")

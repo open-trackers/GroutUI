@@ -269,7 +269,7 @@ public struct ExerciseRun: View {
             try exercise.markDone(viewContext,
                                   withAdvance: withAdvance,
                                   routineStartedAt: routineStartedAt)
-            try PersistenceManager.shared.save()
+            try viewContext.save()
 
             try viewContext.fetcher { (zExerciseRun: ZExerciseRun) in
                 print(">>>>\(zExerciseRun.zExercise?.name ?? "UNKNOWN") \(String(describing: zExerciseRun.completedAt))")
