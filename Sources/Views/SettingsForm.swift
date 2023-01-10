@@ -20,6 +20,7 @@ public struct SettingsForm: View {
     // MARK: - Locals
 
     @AppStorage(alwaysAdvanceOnLongPressKey) var alwaysAdvanceOnLongPress: Bool = false
+    @AppStorage(logToHistoryKey) var logToHistory: Bool = true
 
     #if os(iOS)
         @AppStorage(colorSchemeModeKey) var colorSchemeMode: ColorSchemeMode = .automatic
@@ -31,6 +32,18 @@ public struct SettingsForm: View {
         Form {
             Section("\(Image(systemName: "checkmark")) Done Button") {
                 Toggle("Always advance intensity on long press", isOn: $alwaysAdvanceOnLongPress)
+            }
+
+            Section {
+                Toggle("Log completions", isOn: $logToHistory)
+            } header: {
+                Text("\(Image(systemName: "fossil.shell")) History")
+            } footer: {
+                #if os(watchOS)
+                    Text("Recent history will be stored locally for up to 1 year. Periodically run iOS app for long-term storage and review.")
+                #elseif os(iOS)
+                    Text("History can be reviewed from the home screen.")
+                #endif
             }
 
             #if os(iOS)

@@ -18,6 +18,8 @@ private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                             category: "ExerciseRun")
 
 public struct ExerciseRun: View {
+    @AppStorage(logToHistoryKey) var logToHistory: Bool = true
+
     #if os(iOS)
         @Environment(\.verticalSizeClass) private var verticalSizeClass
         @Environment(\.colorScheme) private var colorScheme
@@ -268,7 +270,8 @@ public struct ExerciseRun: View {
         do {
             try exercise.markDone(viewContext,
                                   withAdvance: withAdvance,
-                                  routineStartedAt: routineStartedAt)
+                                  routineStartedAt: routineStartedAt,
+                                  logToHistory: logToHistory)
             try viewContext.save()
 
 //            try viewContext.fetcher { (zExerciseRun: ZExerciseRun) in

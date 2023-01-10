@@ -65,5 +65,6 @@ public let userActivity_uriRepKey = "uriRep"
 
 // storage keys
 public let alwaysAdvanceOnLongPressKey = "alwaysAdvanceOnLongPress"
+public let logToHistoryKey = "logToHistory"
 
 public let controlTab = URL(string: "uri://control-panel")!
