@@ -82,17 +82,18 @@ public struct NavStack<Content>: View
                             Text("Exercise not available to display detail.")
                         }
                     case let .routineRunDetail(routineRunUri):
-                        #if os(iOS)
-                            if let zRoutineRun = ZRoutineRun.get(viewContext, forURIRepresentation: routineRunUri),
-                               let archiveStore = PersistenceManager.getArchiveStore(viewContext)
-                            {
-                                ExerciseRunList(zRoutineRun: zRoutineRun, archiveStore: archiveStore)
-                            } else {
-                                Text("Routine Run not available to display detail.")
-                            }
-                        #else
-                            Text("Not available on this platform.")
-                        #endif
+                        Text("Hello")
+//                        #if os(iOS)
+//                            if let zRoutineRun = ZRoutineRun.get(viewContext, forURIRepresentation: routineRunUri),
+//                               let archiveStore = PersistenceManager.getArchiveStore(viewContext)
+//                            {
+//                                ExerciseRunList(zRoutineRun: zRoutineRun, archiveStore: archiveStore)
+//                            } else {
+//                                Text("Routine Run not available to display detail.")
+//                            }
+//                        #else
+//                            Text("Not available on this platform.")
+//                        #endif
                     }
                 }
                 .onChange(of: scenePhase) {
