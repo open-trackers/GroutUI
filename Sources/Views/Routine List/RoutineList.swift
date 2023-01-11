@@ -216,40 +216,36 @@ public struct RoutineList: View {
 
     @Sendable
     private func taskAction() async {
-        logger.notice("\(#function)")
+        logger.notice("\(#function) START")
 
-        if !updatedArchiveIDs {
-            updateArchiveIDs(routines: routines.map { $0 })
+        await PersistenceManager.shared.container.performBackgroundTask { backgroundContext in
             do {
-                try viewContext.save()
+                if !updatedArchiveIDs {
+                    updateArchiveIDs(routines: routines.map { $0 })
+                    try backgroundContext.save()
+                    logger.notice("\(#function): updated archive IDs, where necessary")
+                    updatedArchiveIDs = true
+                }
+
+                #if os(watchOS)
+                    // delete log records older than N days
+                    guard let keepSince = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
+                    else { throw DataError.missingData(msg: "Clean: could not resolve date one year in past") }
+                    logger.notice("\(#function): keepSince=\(keepSince)")
+                    try cleanLogRecords(backgroundContext, keepSince: keepSince)
+                    try backgroundContext.save()
+                #endif
+
+                #if os(iOS)
+                    // move log records to archive store
+                    try transferToArchive(backgroundContext)
+                    try backgroundContext.save()
+                #endif
             } catch {
                 logger.error("\(#function): \(error.localizedDescription)")
             }
-            logger.notice("\(#function): updated archive IDs, where necessary")
-            updatedArchiveIDs = true
         }
-
-        #if os(watchOS)
-            // delete log records older than N days
-            let days: Double = 30
-            let keepSince = Date.now.addingTimeInterval(-1 * 60 * 60 * 24 * days)
-            logger.notice("\(#function): keepSince=\(keepSince)   days=\(days)")
-            do {
-                try cleanLogRecords(viewContext, keepSince: keepSince)
-                try viewContext.save()
-            } catch {
-                logger.error("\(#function): CLEAN \(error.localizedDescription)")
-            }
-//        #elseif os(iOS)
-//            // transfer any 'Z' records from the 'Main' store to the 'Archive' store.
-//            // NOTE mirrored in HistoryView
-//            do {
-//                try transferToArchive(viewContext)
-//                try viewContext.save()
-//            } catch {
-//                logger.error("\(#function): TRANSFER \(error.localizedDescription)")
-//            }
-        #endif
+        logger.notice("\(#function) END")
     }
 }
 
