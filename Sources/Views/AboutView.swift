@@ -13,10 +13,6 @@ import SwiftUI
 public struct AboutView<IconImage>: View
     where IconImage: View
 {
-//    private var appName: String
-//    private var displayName: String
-//    private var releaseVersionNumber: String
-//    private var buildNumber: String
     private var websiteURL: URL
     private var privacyURL: URL?
     private var termsURL: URL?
@@ -24,21 +20,13 @@ public struct AboutView<IconImage>: View
     private var copyright: String?
     private var iconImage: () -> IconImage
 
-    public init(//        appName: String,
-//                displayName: String,
-//                releaseVersionNumber: String,
-//                buildNumber: String,
-        websiteURL: URL,
-        privacyURL: URL?,
-        termsURL: URL?,
-        tutorialURL: URL?,
-        copyright: String?,
-        iconImage: @escaping () -> IconImage)
+    public init(websiteURL: URL,
+                privacyURL: URL?,
+                termsURL: URL?,
+                tutorialURL: URL?,
+                copyright: String?,
+                iconImage: @escaping () -> IconImage)
     {
-//        self.appName = appName
-//        self.displayName = displayName
-//        self.releaseVersionNumber = releaseVersionNumber
-//        self.buildNumber = buildNumber
         self.websiteURL = websiteURL
         self.privacyURL = privacyURL
         self.termsURL = termsURL
