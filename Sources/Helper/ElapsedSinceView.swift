@@ -14,7 +14,7 @@ import Compactor
 
 import GroutLib
 
-public struct ElapsedView: View {
+public struct ElapsedSinceView: View {
     // MARK: - Parameters
 
     private var startedAt: Date
@@ -70,15 +70,14 @@ public struct ElapsedView: View {
     // MARK: - Properties
 
     private var remainingStr: String {
+        formatElapsed(timeInterval: elapsedTime, timeElapsedFormat: timeElapsedFormat)
+            ?? tc.string(from: elapsedTime as NSNumber)
+            ?? ""
+    }
+
+    private var timeElapsedFormat: TimeElapsedFormat {
         let secondsPerHour: TimeInterval = 3600
-        let et = elapsedTime
-        if et >= secondsPerHour {
-            return tc.string(from: et as NSNumber) ?? ""
-        }
-        let t = Int(max(0, min(et, TimeInterval(Int.max))))
-        let minutes = t / 60 % 60
-        let seconds = t % 60
-        return String(format: "%02i:%02i", minutes, seconds)
+        return elapsedTime < secondsPerHour ? .mm_ss : .hh_mm_ss
     }
 
     private var elapsedTime: TimeInterval {
@@ -88,7 +87,7 @@ public struct ElapsedView: View {
 
 struct StatusView_Previews: PreviewProvider {
     static var previews: some View {
-        ElapsedView(startedAt: Date.now.addingTimeInterval(-3590))
+        ElapsedSinceView(startedAt: Date.now.addingTimeInterval(-3590))
             .frame(height: 80)
     }
 }

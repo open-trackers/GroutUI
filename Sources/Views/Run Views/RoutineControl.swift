@@ -48,34 +48,25 @@ public struct RoutineControl: View {
     // MARK: - Views
 
     public var body: some View {
-        #if os(watchOS)
-            innerBody
-
-                // NOTE controls running into bottom on my older 45mm S4. This padding places the index just below the buttons.
-                .padding(.bottom)
-        #elseif os(iOS)
-            GeometryReader { geo in
-                innerBody
-                    .frame(height: geo.size.height * factor)
-
+        GeometryReader { geo in
+            #if os(watchOS)
+                innerBody(geo)
+            #elseif os(iOS)
+                innerBody(geo, heightFactor: heightFactor)
                     // NOTE padding needed on iPhone 8, 12, and possibly others (visible in light mode)
                     .padding(.horizontal)
-            }
-        #endif
+            #endif
+        }
     }
 
-    private var innerBody: some View {
-        // rows sized to visually-appealling proportions
-        GeometryReader { geo in
-            VStack(alignment: .center, spacing: 10) {
-                top
-                    .frame(height: geo.size.height * 3 / 11)
-                middle
-                    .frame(height: geo.size.height * 4 / 11)
-                    .padding(.bottom, 3)
-                bottom
-                    .frame(height: geo.size.height * 4 / 11)
-            }
+    private func innerBody(_ geo: GeometryProxy, heightFactor: CGFloat = 1.0) -> some View {
+        VStack(spacing: 9) {
+            top
+                .frame(height: geo.size.height * 3 / 13 * heightFactor)
+            middle
+                .frame(height: geo.size.height * 5 / 13 * heightFactor)
+            bottom
+                .frame(height: geo.size.height * 5 / 13 * heightFactor)
         }
     }
 
@@ -91,7 +82,7 @@ public struct RoutineControl: View {
                          buttonText: "Stop",
                          tint: stopColor,
                          onLongPress: nil)
-            ElapsedView(startedAt: startedAt)
+            ElapsedSinceView(startedAt: startedAt)
         }
     }
 
@@ -114,7 +105,7 @@ public struct RoutineControl: View {
     // MARK: - Properties
 
     #if os(iOS)
-        private var factor: CGFloat {
+        private var heightFactor: CGFloat {
             verticalSizeClass == .regular ? 0.6 : 0.8
         }
     #endif
@@ -146,7 +137,7 @@ struct RoutineControl_Previews: PreviewProvider {
     static var previews: some View {
         let ctx = PersistenceManager.getPreviewContainer().viewContext
         let routine = Routine.create(ctx, userOrder: 0)
-        routine.name = "Back & Bicep"
+        routine.name = "Leg"
         let e1 = Exercise.create(ctx, userOrder: 0)
         e1.name = "Lat Pulldown"
         e1.routine = routine
