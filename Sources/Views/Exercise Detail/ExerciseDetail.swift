@@ -39,7 +39,6 @@ public struct ExerciseDetail: View {
 
     public var body: some View {
         content
-            // .tint(exerciseColor)
             .symbolRenderingMode(.hierarchical)
             .onDisappear(perform: onDisappearAction)
     }
