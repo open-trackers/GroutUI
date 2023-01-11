@@ -116,10 +116,7 @@ public struct NavStack<RoutineRunDetail, Content>: View
     }
 
     private var aboutView: some View {
-        AboutView(displayName: Bundle.main.displayName ?? "unknown",
-                  releaseVersionNumber: Bundle.main.releaseVersionNumber ?? "unknown",
-                  buildNumber: Bundle.main.buildNumber ?? "unknown",
-                  websiteURL: websiteURL,
+        AboutView(websiteURL: websiteURL,
                   privacyURL: websitePrivacyURL,
                   termsURL: websiteTermsURL,
                   tutorialURL: websiteTutorialURL,

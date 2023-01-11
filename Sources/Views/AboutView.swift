@@ -13,9 +13,10 @@ import SwiftUI
 public struct AboutView<IconImage>: View
     where IconImage: View
 {
-    private var displayName: String
-    private var releaseVersionNumber: String
-    private var buildNumber: String
+//    private var appName: String
+//    private var displayName: String
+//    private var releaseVersionNumber: String
+//    private var buildNumber: String
     private var websiteURL: URL
     private var privacyURL: URL?
     private var termsURL: URL?
@@ -23,19 +24,21 @@ public struct AboutView<IconImage>: View
     private var copyright: String?
     private var iconImage: () -> IconImage
 
-    public init(displayName: String,
-                releaseVersionNumber: String,
-                buildNumber: String,
-                websiteURL: URL,
-                privacyURL: URL?,
-                termsURL: URL?,
-                tutorialURL: URL?,
-                copyright: String?,
-                iconImage: @escaping () -> IconImage)
+    public init(//        appName: String,
+//                displayName: String,
+//                releaseVersionNumber: String,
+//                buildNumber: String,
+        websiteURL: URL,
+        privacyURL: URL?,
+        termsURL: URL?,
+        tutorialURL: URL?,
+        copyright: String?,
+        iconImage: @escaping () -> IconImage)
     {
-        self.displayName = displayName
-        self.releaseVersionNumber = releaseVersionNumber
-        self.buildNumber = buildNumber
+//        self.appName = appName
+//        self.displayName = displayName
+//        self.releaseVersionNumber = releaseVersionNumber
+//        self.buildNumber = buildNumber
         self.websiteURL = websiteURL
         self.privacyURL = privacyURL
         self.termsURL = termsURL
@@ -52,7 +55,7 @@ public struct AboutView<IconImage>: View
 
                 VStack(spacing: 5) {
                     Section {
-                        Text(displayName)
+                        Text(appName)
                             .bold()
                         Text("Version: \(releaseVersionNumber) (build \(buildNumber))")
                             .foregroundColor(.secondary)
@@ -85,6 +88,18 @@ public struct AboutView<IconImage>: View
         .navigationTitle("About")
     }
 
+    private var appName: String {
+        Bundle.main.appName ?? ""
+    }
+
+    private var releaseVersionNumber: String {
+        Bundle.main.releaseVersionNumber ?? ""
+    }
+
+    private var buildNumber: String {
+        Bundle.main.buildNumber ?? ""
+    }
+
     private var websiteDomain: String {
         websiteURL.host ?? "unknown"
     }
@@ -95,14 +110,16 @@ struct AboutView_Previews: PreviewProvider {
 
     static var previews: some View {
         NavigationStack {
-            AboutView(displayName: "Gym Routine Tracker",
-                      releaseVersionNumber: "1.0",
-                      buildNumber: "100",
-                      websiteURL: url,
-                      privacyURL: url.appending(path: "privacy"),
-                      termsURL: url.appending(path: "terms"),
-                      tutorialURL: url.appending(path: "tutorial"),
-                      copyright: "Copyright 2022, 2023 OpenAlloc LLC") {
+            AboutView(//                appName: "Gym Routine Tracker Plus",
+//                      displayName: "Gym RT+",
+//                      releaseVersionNumber: "1.0",
+//                      buildNumber: "100",
+                websiteURL: url,
+                privacyURL: url.appending(path: "privacy"),
+                termsURL: url.appending(path: "terms"),
+                tutorialURL: url.appending(path: "tutorial"),
+                copyright: "Copyright 2022, 2023 OpenAlloc LLC")
+            {
                 Image(systemName: "g.circle.fill")
                     .imageScale(.large)
             }

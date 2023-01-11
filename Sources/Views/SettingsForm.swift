@@ -59,15 +59,15 @@ public struct SettingsForm: View {
                 Button(action: {
                     router.path.append(MyRoutes.about)
                 }) {
-                    Text("About \(displayName)")
+                    Text("About \(appName)")
                 }
             #endif
         }
         .navigationTitle("Settings")
     }
 
-    private var displayName: String {
-        Bundle.main.displayName ?? "unknown"
+    private var appName: String {
+        Bundle.main.appName ?? "unknown"
     }
 }
 
