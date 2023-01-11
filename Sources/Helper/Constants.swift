@@ -22,7 +22,8 @@ public let websiteTutorialURL = websiteURL.appending(path: "tutorial")
 public let routineColor: Color = .accentColor
 public let routineListItemTint: Color = .accentColor.opacity(0.2)
 
-public let exerciseColor: Color = .yellow
+public let exerciseColorDarkBg: Color = .yellow
+public let exerciseColorLiteBg: Color = .brown
 public let exerciseListItemTint: Color = .yellow.opacity(0.2)
 
 public let stopColor: Color = .pink
@@ -45,7 +46,6 @@ public let numberWeight: Font.Weight = .light
 public let numberFont: Font = .title2
 
 public let settingRange: ClosedRange<Int16> = 0 ... 50
-public let intensityMaxValue: Float = 500
 
 // How frequently to update time strings in RoutineCell
 public let routineSinceUpdateSeconds: TimeInterval = 60
@@ -66,5 +66,6 @@ public let userActivity_uriRepKey = "uriRep"
 
 // storage keys
 public let alwaysAdvanceOnLongPressKey = "alwaysAdvanceOnLongPress"
+public let logToHistoryKey = "logToHistory"
 
 public let controlTab = URL(string: "uri://control-panel")!

@@ -1,5 +1,5 @@
 //
-//  RoutineSinceText.swift
+//  SinceText.swift
 //
 // Copyright 2022, 2023  OpenAlloc LLC
 //
@@ -15,15 +15,17 @@ import Compactor
 
 import GroutLib
 
-struct RoutineSinceText: View {
+public struct SinceText: View {
     // MARK: - Parameters
 
-    private var routine: Routine
+    private var startedAt: Date?
+    private var duration: TimeInterval
     @Binding private var now: Date
     private var compactorStyle: TimeCompactor.Style
 
-    public init(routine: Routine, now: Binding<Date>, compactorStyle: TimeCompactor.Style) {
-        self.routine = routine
+    public init(startedAt: Date?, duration: TimeInterval, now: Binding<Date>, compactorStyle: TimeCompactor.Style) {
+        self.startedAt = startedAt
+        self.duration = duration
         _now = now
         self.compactorStyle = compactorStyle
 
@@ -38,7 +40,7 @@ struct RoutineSinceText: View {
 
     // MARK: - Views
 
-    var body: some View {
+    public var body: some View {
         VStack {
             if let _lastStr = lastStr {
                 Text(_lastStr)
@@ -59,35 +61,31 @@ struct RoutineSinceText: View {
 
     // time interval since the last workout ended, formatted compactly
     private var sinceStr: String? {
-        guard let lastStartedAt = routine.lastStartedAt,
-              routine.lastDuration > 0
-        else { return nil }
-        let since = max(0, now.timeIntervalSince(lastStartedAt) - routine.lastDuration)
+        guard let startedAt,
+              duration > 0 else { return nil }
+        let since = max(0, now.timeIntervalSince(startedAt) - duration)
         return tcSince.string(from: since as NSNumber)
     }
 
     private var durationStr: String? {
-        tcDur.string(from: routine.lastDuration as NSNumber)
+        tcDur.string(from: duration as NSNumber)
     }
 }
 
-struct RoutineSinceText_Previews: PreviewProvider {
+struct SinceText_Previews: PreviewProvider {
     struct TestHolder: View {
-        var routine: Routine
+        var startedAt = Date.now.addingTimeInterval(-2 * 86400)
+        var duration = 1000.0
         @State var now: Date = .now
         var body: some View {
-            RoutineSinceText(routine: routine, now: $now, compactorStyle: .short)
+            SinceText(startedAt: startedAt, duration: duration, now: $now, compactorStyle: .short)
         }
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.preview.container.viewContext
-        let routine = Routine.create(ctx, userOrder: 0)
-        routine.name = "Back & Bicep"
-        routine.lastDuration = 1000
-        routine.lastStartedAt = Date.now.addingTimeInterval(-2 * 86400)
+        let ctx = PersistenceManager.getPreviewContainer().viewContext
         return NavigationStack {
-            TestHolder(routine: routine)
+            TestHolder()
                 .environment(\.managedObjectContext, ctx)
         }
         .environment(\.managedObjectContext, ctx)

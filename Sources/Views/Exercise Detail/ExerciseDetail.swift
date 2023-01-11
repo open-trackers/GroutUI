@@ -13,7 +13,12 @@ import SwiftUI
 
 import GroutLib
 
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: "ExerciseDetail")
+
 public struct ExerciseDetail: View {
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var router: MyRouter
 
     // MARK: - Parameters
@@ -43,34 +48,40 @@ public struct ExerciseDetail: View {
 
             TabView(selection: $tabSelected) {
                 Form {
-                    ExerciseName(exercise: exercise)
-                    ExerciseSettings(exercise: exercise)
+                    ExerciseName(exercise: exercise, tint: exerciseColor)
+                    ExerciseSettings(exercise: exercise, tint: exerciseColor)
                 }
                 .tag(1)
                 Form {
-                    ExerciseVolume(exercise: exercise)
+                    ExerciseVolume(exercise: exercise, tint: exerciseColor)
                 }
                 .tag(2)
                 Form {
-                    ExerciseIntensity(exercise: exercise)
+                    ExerciseIntensity(exercise: exercise, tint: exerciseColor)
                 }
                 .tag(3)
             }
             .tabViewStyle(.page)
             .navigationTitle {
                 Text(title)
-                    .foregroundColor(exerciseColor)
+                    .foregroundColor(exerciseColorDarkBg)
             }
 
         #elseif os(iOS)
             Form {
-                ExerciseName(exercise: exercise)
-                ExerciseSettings(exercise: exercise)
-                ExerciseVolume(exercise: exercise)
-                ExerciseIntensity(exercise: exercise)
+                ExerciseName(exercise: exercise, tint: exerciseColor)
+                ExerciseSettings(exercise: exercise, tint: exerciseColor)
+                ExerciseVolume(exercise: exercise, tint: exerciseColor)
+                ExerciseIntensity(exercise: exercise, tint: exerciseColor)
             }
             .navigationTitle("Exercise")
         #endif
+    }
+
+    // MARK: - Properties
+
+    private var exerciseColor: Color {
+        colorScheme == .light ? exerciseColorLiteBg : exerciseColorDarkBg
     }
 
     private var title: String {
@@ -80,7 +91,11 @@ public struct ExerciseDetail: View {
     // MARK: - Actions
 
     private func onDisappearAction() {
-        PersistenceManager.shared.save()
+        do {
+            try viewContext.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
     }
 }
 
@@ -95,7 +110,7 @@ struct ExerciseDetail_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.preview.container.viewContext
+        let ctx = PersistenceManager.getPreviewContainer().viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
         let exercise = Exercise.create(ctx, userOrder: 0)

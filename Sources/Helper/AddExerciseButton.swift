@@ -8,9 +8,13 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+import os
 import SwiftUI
 
 import GroutLib
+
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: "AddExerciseButton")
 
 public struct AddExerciseButton<Label>: View
     where Label: View
@@ -59,15 +63,19 @@ public struct AddExerciseButton<Label>: View
             let nu = Exercise.create(viewContext, userOrder: maxOrder + 1)
             nu.name = "New Exercise"
             nu.routine = routine
-            PersistenceManager.shared.save(forced: true)
-            router.path.append(MyRoutes.exerciseDetail(nu.uriRepresentation))
+            do {
+                try viewContext.save()
+                router.path.append(MyRoutes.exerciseDetail(nu.uriRepresentation))
+            } catch {
+                logger.error("\(#function): \(error.localizedDescription)")
+            }
         }
     }
 }
 
 struct AddExerciseButton_Previews: PreviewProvider {
     static var previews: some View {
-        let ctx = PersistenceManager.preview.container.viewContext
+        let ctx = PersistenceManager.getPreviewContainer().viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
         return AddExerciseButton(routine: routine) {

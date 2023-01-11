@@ -16,9 +16,11 @@ public struct ExerciseIntensity: View {
     // MARK: - Parameters
 
     @ObservedObject private var exercise: Exercise
+    private let tint: Color
 
-    public init(exercise: Exercise) {
+    public init(exercise: Exercise, tint: Color) {
         self.exercise = exercise
+        self.tint = tint
         _units = State(initialValue: exercise.units)
     }
 
@@ -26,34 +28,42 @@ public struct ExerciseIntensity: View {
 
     @State private var units: Int16
 
-    private let intensityRange: ClosedRange<Float> = 0 ... intensityMaxValue
+    private let intensityRange: ClosedRange<Float> = 0 ... Exercise.intensityMaxValue
     private let intensityStepRange: ClosedRange<Float> = 0.1 ... 25
     private let intensityStep: Float = 0.1
 
     // MARK: - Views
 
     public var body: some View {
-        Section("Intensity") {
+        Section {
             Stepper(value: $exercise.lastIntensity, in: intensityRange, step: exercise.intensityStep) {
                 intensityText(exercise.lastIntensity)
             }
-            .tint(exerciseColor)
+            .tint(tint)
             Button(action: { exercise.lastIntensity = 0 }) {
                 Text("Set to zero (0)")
+                    .foregroundStyle(tint)
             }
+        } header: {
+            Text("Intensity")
+                .foregroundStyle(tint)
         }
 
-        Section("Intensity Step") {
+        Section {
             Stepper(value: $exercise.intensityStep, in: intensityStepRange, step: intensityStep) {
                 intensityText(exercise.intensityStep)
             }
-            .tint(exerciseColor)
+            .tint(tint)
             Button(action: { exercise.intensityStep = 1 }) {
                 Text("Set to one (1)")
+                    .foregroundStyle(tint)
             }
+        } header: {
+            Text("Intensity Step")
+                .foregroundStyle(tint)
         }
 
-        Section("Intensity Units") {
+        Section {
             Picker(selection: $units) {
                 ForEach(Units.allCases, id: \.self) { unit in
                     Text(unit.formattedDescription)
@@ -69,15 +79,19 @@ public struct ExerciseIntensity: View {
             .onChange(of: units) {
                 exercise.units = $0
             }
+        } header: {
+            Text("Intensity Units")
+                .foregroundStyle(tint)
         }
 
         Section {
             Toggle(isOn: $exercise.invertedIntensity) {
                 Text("Inverted")
             }
-            .tint(exerciseColor)
+            .tint(tint)
         } header: {
             Text("Advance Direction")
+                .foregroundStyle(tint)
         } footer: {
             Text("Example: if inverted with step of 5, advance from 25 to 20")
         }
@@ -100,10 +114,10 @@ public struct ExerciseIntensity: View {
 
 struct ExerciseIntensity_Previews: PreviewProvider {
     static var previews: some View {
-        let ctx = PersistenceManager.preview.container.viewContext
+        let ctx = PersistenceManager.getPreviewContainer().viewContext
         let exercise = Exercise.create(ctx, userOrder: 0)
         exercise.name = "Lat Pulldown"
         exercise.units = Units.kilograms.rawValue
-        return Form { ExerciseIntensity(exercise: exercise) }
+        return Form { ExerciseIntensity(exercise: exercise, tint: .green) }
     }
 }

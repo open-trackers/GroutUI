@@ -14,10 +14,8 @@ import SwiftUI
 
 import GroutLib
 
-private let logger = Logger(
-    subsystem: Bundle.main.bundleIdentifier!,
-    category: String(describing: RoutineRun.self)
-)
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: String(describing: RoutineRun.self))
 
 public struct RoutineRun: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -79,6 +77,7 @@ public struct RoutineRun: View {
 
             ForEach(exercises, id: \.self) { exercise in
                 ExerciseRun(exercise: exercise,
+                            routineStartedAt: startedAt,
                             onNextIncomplete: nextIncompleteAction,
                             hasNextIncomplete: hasNextIncomplete,
                             onEdit: editAction)
@@ -170,7 +169,11 @@ public struct RoutineRun: View {
         withAnimation {
             let nu = Exercise.create(viewContext, userOrder: maxOrder + 1)
             routine.addToExercises(nu)
-            PersistenceManager.shared.save(forced: true)
+            do {
+                try viewContext.save()
+            } catch {
+                logger.error("\(#function): \(error.localizedDescription)")
+            }
             let uriRep = nu.objectID.uriRepresentation()
             editAction(uriRep)
         }
@@ -231,7 +234,7 @@ struct RoutineRun_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.preview.container.viewContext
+        let ctx = PersistenceManager.getPreviewContainer().viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
         let e1 = Exercise.create(ctx, userOrder: 0)

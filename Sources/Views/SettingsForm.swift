@@ -20,6 +20,7 @@ public struct SettingsForm: View {
     // MARK: - Locals
 
     @AppStorage(alwaysAdvanceOnLongPressKey) var alwaysAdvanceOnLongPress: Bool = false
+    @AppStorage(logToHistoryKey) var logToHistory: Bool = true
 
     #if os(iOS)
         @AppStorage(colorSchemeModeKey) var colorSchemeMode: ColorSchemeMode = .automatic
@@ -29,32 +30,54 @@ public struct SettingsForm: View {
 
     public var body: some View {
         Form {
-            Section("\(Image(systemName: "checkmark")) Done Button") {
+            Section {
                 Toggle("Always advance intensity on long press", isOn: $alwaysAdvanceOnLongPress)
+                    .tint(.accentColor)
+
+            } header: {
+                Text("\(Image(systemName: "checkmark")) Done Button")
+                    .foregroundStyle(.tint)
+            }
+
+            Section {
+                Toggle("Log activity", isOn: $logToHistory)
+                    .tint(.accentColor)
+            } header: {
+                Text("\(Image(systemName: "fossil.shell.fill")) History")
+                    .foregroundStyle(.tint)
+            } footer: {
+                #if os(watchOS)
+                    Text("Recent history will be stored locally for up to 1 year. Periodically run iOS app for long-term storage and review.")
+                #elseif os(iOS)
+                    Text("History can be reviewed from a tab on the home screen.")
+                #endif
             }
 
             #if os(iOS)
-                Section("Color Scheme") {
+                Section {
                     Picker("Color", selection: $colorSchemeMode) {
                         ForEach(ColorSchemeMode.allCases, id: \.self) { mode in
                             Text(mode.description).tag(mode)
                         }
                     }
                     .pickerStyle(SegmentedPickerStyle())
+                } header: {
+                    Text("Color Scheme")
+                        .foregroundStyle(.tint)
                 }
 
                 Button(action: {
                     router.path.append(MyRoutes.about)
                 }) {
-                    Text("About \(displayName)")
+                    Text("About \(appName)")
                 }
             #endif
         }
         .navigationTitle("Settings")
     }
 
-    private var displayName: String {
-        Bundle.main.displayName ?? "unknown"
+    private var appName: String {
+        Bundle.main.appName ?? "unknown"
     }
 }
 

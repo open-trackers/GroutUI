@@ -14,12 +14,12 @@ import SwiftUI
 
 import GroutLib
 
-private let logger = Logger(
-    subsystem: Bundle.main.bundleIdentifier!,
-    category: "ExerciseRun"
-)
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: "ExerciseRun")
 
 public struct ExerciseRun: View {
+    @AppStorage(logToHistoryKey) var logToHistory: Bool = true
+
     #if os(iOS)
         @Environment(\.verticalSizeClass) private var verticalSizeClass
         @Environment(\.colorScheme) private var colorScheme
@@ -31,16 +31,19 @@ public struct ExerciseRun: View {
     // MARK: - Parameters
 
     @ObservedObject private var exercise: Exercise
+    private let routineStartedAt: Date
     private var onNextIncomplete: (Int16?) -> Void
     private var hasNextIncomplete: () -> Bool
     private var onEdit: (URL) -> Void
 
     public init(exercise: Exercise,
+                routineStartedAt: Date,
                 onNextIncomplete: @escaping (Int16?) -> Void,
                 hasNextIncomplete: @escaping () -> Bool,
                 onEdit: @escaping (URL) -> Void)
     {
         self.exercise = exercise
+        self.routineStartedAt = routineStartedAt
         self.onNextIncomplete = onNextIncomplete
         self.hasNextIncomplete = hasNextIncomplete
         self.onEdit = onEdit
@@ -71,8 +74,12 @@ public struct ExerciseRun: View {
                    isPresented: $showAdvanceAlert,
                    actions: {
                        VStack {
-                           Button("Yes, advance") { markDone(withAdvance: true) }
-                           Button("No") { markDone(withAdvance: false) }
+                           Button("Yes, advance") {
+                               markDone(withAdvance: true)
+                           }
+                           Button("No") {
+                               markDone(withAdvance: false)
+                           }
                            Button("Always advance") {
                                alwaysAdvanceOnLongPress = true
                                markDone(withAdvance: true)
@@ -181,7 +188,8 @@ public struct ExerciseRun: View {
             ActionButton(action: nextIncompleteAction,
                          imageSystemName: "arrow.forward",
                          buttonText: "Next",
-                         tint: nextColor, onLongPress: nil)
+                         tint: nextColor,
+                         onLongPress: nil)
                 .disabled(!hasNext)
         }
     }
@@ -195,9 +203,9 @@ public struct ExerciseRun: View {
 
     private var titleColor: Color {
         #if os(watchOS)
-            let base = exerciseColor
+            let base = exerciseColorDarkBg
         #elseif os(iOS)
-            let base = colorScheme == .light ? .primary : exerciseColor
+            let base = colorScheme == .light ? .primary : exerciseColorDarkBg
         #endif
         return isDone ? completedColor : base
     }
@@ -218,18 +226,8 @@ public struct ExerciseRun: View {
         hasNextIncomplete() ? exerciseNextColor : disabledColor
     }
 
-    private var advancedIntensity: Float {
-        if exercise.invertedIntensity {
-            // advance downwards
-            return max(0, exercise.lastIntensity - exercise.intensityStep)
-        } else {
-            // advance upwards
-            return min(intensityMaxValue, exercise.lastIntensity + exercise.intensityStep)
-        }
-    }
-
     private var alertTitle: String {
-        "Advance intensity from \(exercise.formatIntensity(exercise.lastIntensity)) to \(exercise.formatIntensity(advancedIntensity))?"
+        "Advance intensity from \(exercise.formatIntensity(exercise.lastIntensity)) to \(exercise.formatIntensity(exercise.advancedIntensity))?"
     }
 
     // MARK: - Actions
@@ -267,12 +265,18 @@ public struct ExerciseRun: View {
     // MARK: - Helpers
 
     private func markDone(withAdvance: Bool) {
-        logger.debug("\(#function) withAdvance=\(withAdvance)")
+        logger.debug("\(#function): withAdvance=\(withAdvance)")
 
-        exercise.lastCompletedAt = Date.now
+        do {
+            try exercise.markDone(viewContext,
+                                  completedAt: Date.now,
+                                  withAdvance: withAdvance,
+                                  routineStartedAt: routineStartedAt,
+                                  logToHistory: logToHistory)
+            try viewContext.save()
 
-        if withAdvance {
-            exercise.lastIntensity = advancedIntensity
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
         }
 
         nextIncompleteAction()
@@ -284,6 +288,7 @@ struct ExerciseRun_Previews: PreviewProvider {
         var exercise: Exercise
         var body: some View {
             ExerciseRun(exercise: exercise,
+                        routineStartedAt: Date.now,
                         onNextIncomplete: { _ in },
                         hasNextIncomplete: { true },
                         onEdit: { _ in })
@@ -291,7 +296,7 @@ struct ExerciseRun_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.preview.container.viewContext
+        let ctx = PersistenceManager.getPreviewContainer().viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
         let e1 = Exercise.create(ctx, userOrder: 0)

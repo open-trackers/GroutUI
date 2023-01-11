@@ -8,9 +8,13 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+import os
 import SwiftUI
 
 import GroutLib
+
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: "AddRoutineButton")
 
 public struct AddRoutineButton<Label>: View
     where Label: View
@@ -51,8 +55,12 @@ public struct AddRoutineButton<Label>: View
         withAnimation {
             let nu = Routine.create(viewContext, userOrder: maxOrder + 1)
             nu.name = "New Routine"
-            PersistenceManager.shared.save(forced: true)
-            router.path.append(MyRoutes.routineDetail(nu.uriRepresentation))
+            do {
+                try viewContext.save()
+                router.path.append(MyRoutes.routineDetail(nu.uriRepresentation))
+            } catch {
+                logger.error("\(#function): \(error.localizedDescription)")
+            }
         }
     }
 }

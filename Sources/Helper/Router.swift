@@ -11,10 +11,8 @@
 import os
 import SwiftUI
 
-private let logger = Logger(
-    subsystem: Bundle.main.bundleIdentifier!,
-    category: "Router"
-)
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: "Router")
 
 @MainActor public final class Router<T>: ObservableObject
     where T: Hashable & CustomStringConvertible

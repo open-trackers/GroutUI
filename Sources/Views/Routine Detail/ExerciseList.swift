@@ -8,11 +8,16 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+import os
 import SwiftUI
 
 import GroutLib
 
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: "ExerciseList")
+
 public struct ExerciseList: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var router: MyRouter
 
@@ -47,6 +52,7 @@ public struct ExerciseList: View {
             .onMove(perform: moveAction)
             .onDelete(perform: deleteAction)
             .listItemTint(exerciseListItemTint)
+            .tint(exerciseColor)
 
             #if os(watchOS)
                 AddExerciseButton(routine: routine) {
@@ -54,7 +60,7 @@ public struct ExerciseList: View {
                         .symbolRenderingMode(.hierarchical)
                 }
                 .font(.title3)
-                .tint(exerciseColor)
+                .tint(exerciseColorDarkBg)
                 .foregroundStyle(.tint)
             #endif
         }
@@ -64,10 +70,17 @@ public struct ExerciseList: View {
             ToolbarItem {
                 AddExerciseButton(routine: routine) {
                     Text("Add")
+                        .tint(exerciseColor)
                 }
             }
         }
         #endif
+    }
+
+    // MARK: - Properties
+
+    private var exerciseColor: Color {
+        colorScheme == .light ? exerciseColorLiteBg : exerciseColorDarkBg
     }
 
     // MARK: - Actions
@@ -78,12 +91,20 @@ public struct ExerciseList: View {
 
     private func deleteAction(offsets: IndexSet) {
         offsets.map { exercises[$0] }.forEach(viewContext.delete)
-        PersistenceManager.shared.save()
+        do {
+            try viewContext.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
     }
 
     private func moveAction(from source: IndexSet, to destination: Int) {
         Exercise.move(exercises, from: source, to: destination)
-        PersistenceManager.shared.save()
+        do {
+            try viewContext.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
     }
 }
 
@@ -98,7 +119,7 @@ struct ExerciseList_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.preview.container.viewContext
+        let ctx = PersistenceManager.getPreviewContainer().viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
         let exercise = Exercise.create(ctx, userOrder: 0)

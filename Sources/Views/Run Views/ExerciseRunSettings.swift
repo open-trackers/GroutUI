@@ -24,7 +24,7 @@ struct ExerciseRunSettings: View {
         #if os(watchOS)
             ExerciseRunMiddleRow(imageName: "gearshape.fill",
                                  imageColor: exerciseGearColor,
-                                 onDetail: { onEdit(exercise) },
+                                 onDetail: { onEdit(exercise.uriRepresentation) },
                                  onTap: { middleMode = .volume }) {
                 settingsText
             }
@@ -69,6 +69,7 @@ struct ExerciseRunSettings_Previews: PreviewProvider {
         var exercise: Exercise
         var body: some View {
             ExerciseRun(exercise: exercise,
+                        routineStartedAt: Date.now,
                         onNextIncomplete: { _ in },
                         hasNextIncomplete: { true },
                         onEdit: { _ in })
@@ -76,7 +77,7 @@ struct ExerciseRunSettings_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.preview.container.viewContext
+        let ctx = PersistenceManager.getPreviewContainer().viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
         let e1 = Exercise.create(ctx, userOrder: 0)

@@ -14,11 +14,10 @@ import SwiftUI
 
 import GroutLib
 
-private let logger = Logger(
-    subsystem: Bundle.main.bundleIdentifier!,
-    category: "RoutineList"
-)
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: "RoutineList")
 
+/// Common view shared by watchOS and iOS.
 public struct RoutineList: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var router: MyRouter
@@ -40,6 +39,7 @@ public struct RoutineList: View {
     @SceneStorage("routine-run-nav") private var routineRunNavData: Data?
     @SceneStorage("run-selected-routine") private var selectedRoutine: URL? = nil
     @SceneStorage("run-started-at") private var startedAt: Date = .distantFuture
+    @SceneStorage("run-last-exercise-completed-at") private var lastExerciseCompletedAt: Date = .distantFuture
     @SceneStorage("updated-archive-ids") private var updatedArchiveIDs: Bool = false
 
     // timer used to refresh "2d ago, for 16.5m" on each Routine Cell
@@ -105,11 +105,7 @@ public struct RoutineList: View {
             }
             .onContinueUserActivity(runRoutineActivityType,
                                     perform: continueUserActivityAction)
-            .onAppear {
-                guard !updatedArchiveIDs else { return }
-                updateArchiveIDs()
-                updatedArchiveIDs = true
-            }
+            .task(priority: .utility, taskAction)
     }
 
     #if os(watchOS)
@@ -139,12 +135,7 @@ public struct RoutineList: View {
 
     #if os(iOS)
         private var rowBackground: some View {
-            LinearGradient(gradient: .init(colors: [
-                .accentColor.opacity(0.1),
-                .accentColor.opacity(0.2),
-            ]),
-            startPoint: .topLeading,
-            endPoint: .bottom)
+            EntityBackground(.accentColor)
         }
     #endif
 
@@ -152,12 +143,20 @@ public struct RoutineList: View {
 
     private func deleteAction(offsets: IndexSet) {
         offsets.map { routines[$0] }.forEach(viewContext.delete)
-        PersistenceManager.shared.save()
+        do {
+            try viewContext.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
     }
 
     private func moveAction(from source: IndexSet, to destination: Int) {
         Routine.move(routines, from: source, to: destination)
-        PersistenceManager.shared.save()
+        do {
+            try viewContext.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
     }
 
     private func startAction(_ routineURI: URL, clearData: Bool) {
@@ -172,24 +171,21 @@ public struct RoutineList: View {
             // NOTE: storing startedAt locally (not in routine.lastStartedAt)
             // to ignore mistaken starts.
             startedAt = try routine.start(viewContext, clearData: clearData)
-            PersistenceManager.shared.save()
+            try viewContext.save()
 
             isNew = true // forces start at first incomplete exercise
             selectedRoutine = routineURI // displays sheet
 
         } catch {
-            let nserror = error as NSError
-            logger.error("\(#function): Start failure \(nserror.localizedDescription)")
+            logger.error("\(#function): Start failure \(error.localizedDescription)")
         }
     }
 
     private func stopAction(_ routine: Routine) {
         logger.notice("\(#function): Stop Routine \(routine.wrappedName)")
-        if routine.stop(startedAt: startedAt) {
-            PersistenceManager.shared.save()
-        } else {
-            logger.debug("\(#function): not recorded, probably because no exercises completed")
-        }
+
+        // NOTE: no need to update Routine or ZRoutineRun, as they were both updated in Exercise.logRun.
+
         startedAt = Date.distantFuture
         selectedRoutine = nil // closes sheet
     }
@@ -218,27 +214,41 @@ public struct RoutineList: View {
         }
     #endif
 
-    // MARK: - Helpers
+    @Sendable
+    private func taskAction() async {
+        logger.notice("\(#function) START")
 
-    /// Ensure all the records have archiveIDs
-    private func updateArchiveIDs() {
-        for routine in routines {
-            if let _ = routine.archiveID { continue }
-            routine.archiveID = UUID()
-            logger.notice("\(#function): added archiveID to \(routine.wrappedName)")
-            guard let exercises = routine.exercises?.allObjects as? [Exercise] else { continue }
-            for exercise in exercises {
-                if let _ = exercise.archiveID { continue }
-                exercise.archiveID = UUID()
-                logger.notice("\(#function): added archiveID to \(exercise.wrappedName)")
+        await PersistenceManager.shared.container.performBackgroundTask { backgroundContext in
+            do {
+                if !updatedArchiveIDs {
+                    updateArchiveIDs(routines: routines.map { $0 })
+                    try backgroundContext.save()
+                    logger.notice("\(#function): updated archive IDs, where necessary")
+                    updatedArchiveIDs = true
+                }
+
+                #if os(watchOS)
+                    // delete log records older than N days
+                    guard let keepSince = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
+                    else { throw DataError.missingData(msg: "Clean: could not resolve date one year in past") }
+                    logger.notice("\(#function): keepSince=\(keepSince)")
+                    try cleanLogRecords(backgroundContext, keepSince: keepSince)
+                    try backgroundContext.save()
+                #endif
+
+                #if os(iOS)
+                    // move log records to archive store
+                    try transferToArchive(backgroundContext)
+                    try backgroundContext.save()
+                #endif
+            } catch {
+                logger.error("\(#function): \(error.localizedDescription)")
             }
         }
-        PersistenceManager.shared.save()
-        logger.notice("updated archive IDs, where necessary")
+        logger.notice("\(#function) END")
     }
 }
 
-// TODO: four copies of each routine showing up; should be one!
 struct RoutineList_Previews: PreviewProvider {
     struct TestHolder: View {
         var body: some View {
@@ -249,7 +259,9 @@ struct RoutineList_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.preview.container.viewContext
+        // let container = try! PersistenceManager.getTestContainer()
+        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        // let ctx = container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
         let exercise = Exercise.create(ctx, userOrder: 0)

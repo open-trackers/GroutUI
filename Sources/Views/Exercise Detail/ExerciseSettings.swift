@@ -16,35 +16,43 @@ public struct ExerciseSettings: View {
     // MARK: - Parameters
 
     @ObservedObject private var exercise: Exercise
+    private let tint: Color
 
-    public init(exercise: Exercise) {
+    public init(exercise: Exercise, tint: Color) {
         self.exercise = exercise
+        self.tint = tint
     }
 
     // MARK: - Views
 
     public var body: some View {
-        Section("Primary Setting") {
+        Section {
             Stepper(value: $exercise.primarySetting, in: settingRange, step: 1) {
                 Text("\(exercise.primarySetting)")
             }
-            .tint(exerciseColor)
+            .tint(tint)
+        } header: {
+            Text("Primary Setting")
+                .foregroundStyle(tint)
         }
 
-        Section("Secondary Setting") {
+        Section {
             Stepper(value: $exercise.secondarySetting, in: settingRange, step: 1) {
                 Text("\(exercise.secondarySetting)")
             }
-            .tint(exerciseColor)
+            .tint(tint)
+        } header: {
+            Text("Secondary Setting")
+                .foregroundStyle(tint)
         }
     }
 }
 
 struct ExerciseSettings_Previews: PreviewProvider {
     static var previews: some View {
-        let ctx = PersistenceManager.preview.container.viewContext
+        let ctx = PersistenceManager.getPreviewContainer().viewContext
         let exercise = Exercise.create(ctx, userOrder: 0)
         exercise.name = "Lat Pulldown"
-        return Form { ExerciseSettings(exercise: exercise) }
+        return Form { ExerciseSettings(exercise: exercise, tint: .blue) }
     }
 }

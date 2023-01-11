@@ -111,7 +111,7 @@ public struct RoutineCell: View {
     }
 
     private var routineSinceText: some View {
-        RoutineSinceText(routine: routine, now: $now, compactorStyle: compactorStyle)
+        SinceText(startedAt: routine.lastStartedAt ?? Date(), duration: routine.lastDuration, now: $now, compactorStyle: compactorStyle)
             .font(.body)
             .italic()
             .foregroundColor(lastColor)
@@ -157,7 +157,7 @@ struct RoutineCell_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.preview.container.viewContext
+        let ctx = PersistenceManager.getPreviewContainer().viewContext
         let r1 = Routine.create(ctx, userOrder: 0)
         r1.name = "Pull" // "Back & Bicep"
         r1.lastDuration = 3545

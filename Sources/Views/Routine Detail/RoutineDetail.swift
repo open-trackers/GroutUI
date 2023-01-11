@@ -10,7 +10,11 @@ import SwiftUI
 
 import GroutLib
 
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                            category: "RoutineDetail")
+
 public struct RoutineDetail: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var router: MyRouter
 
     // MARK: - Parameters
@@ -118,7 +122,11 @@ public struct RoutineDetail: View {
     #endif
 
     private func onDisappearAction() {
-        PersistenceManager.shared.save()
+        do {
+            try viewContext.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
     }
 }
 
@@ -133,7 +141,7 @@ struct RoutineDetail_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.preview.container.viewContext
+        let ctx = PersistenceManager.getPreviewContainer().viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
         let exercise = Exercise.create(ctx, userOrder: 0)
