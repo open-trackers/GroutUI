@@ -91,7 +91,7 @@ public struct RoutineControl: View {
             ActionButton(action: onAdd,
                          imageSystemName: "plus", // plus.circle.fill
                          buttonText: "Add",
-                         tint: exerciseColor,
+                         tint: exerciseColorDarkBg,
                          onLongPress: nil)
             ActionButton(action: { onNextIncomplete(nil) },
                          imageSystemName: "arrow.forward",

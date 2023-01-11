@@ -203,9 +203,9 @@ public struct ExerciseRun: View {
 
     private var titleColor: Color {
         #if os(watchOS)
-            let base = exerciseColor
+            let base = exerciseColorDarkBg
         #elseif os(iOS)
-            let base = colorScheme == .light ? .primary : exerciseColor
+            let base = colorScheme == .light ? .primary : exerciseColorDarkBg
         #endif
         return isDone ? completedColor : base
     }

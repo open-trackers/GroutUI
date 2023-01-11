@@ -16,19 +16,24 @@ public struct ExerciseName: View {
     // MARK: - Parameters
 
     @ObservedObject private var exercise: Exercise
+    private let tint: Color
 
-    public init(exercise: Exercise) {
+    public init(exercise: Exercise, tint: Color) {
         self.exercise = exercise
+        self.tint = tint
     }
 
     // MARK: - Views
 
     public var body: some View {
-        Section("Name") {
+        Section {
             TextFieldWithPresets($exercise.wrappedName,
                                  prompt: "Enter exercise name",
-                                 color: exerciseColor,
+                                 color: tint,
                                  presets: exercisePresets)
+        } header: {
+            Text("Name")
+                .foregroundStyle(tint)
         }
     }
 }
@@ -38,6 +43,6 @@ struct ExerciseName_Previews: PreviewProvider {
         let ctx = PersistenceManager.getPreviewContainer().viewContext
         let exercise = Exercise.create(ctx, userOrder: 0)
         exercise.name = "Lat Pulldown"
-        return Form { ExerciseName(exercise: exercise) }
+        return Form { ExerciseName(exercise: exercise, tint: .orange) }
     }
 }

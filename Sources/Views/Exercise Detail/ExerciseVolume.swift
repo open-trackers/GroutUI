@@ -16,26 +16,34 @@ public struct ExerciseVolume: View {
     // MARK: - Parameters
 
     @ObservedObject private var exercise: Exercise
+    private let tint: Color
 
-    public init(exercise: Exercise) {
+    public init(exercise: Exercise, tint: Color) {
         self.exercise = exercise
+        self.tint = tint
     }
 
     // MARK: - Views
 
     public var body: some View {
-        Section("Set Count") {
+        Section {
             Stepper(value: $exercise.sets, in: 0 ... 10, step: 1) {
                 Text("\(exercise.sets)")
             }
-            .tint(exerciseColor)
+            .tint(tint)
+        } header: {
+            Text("Set Count")
+                .foregroundStyle(tint)
         }
 
-        Section("Repetition Count") {
+        Section {
             Stepper(value: $exercise.repetitions, in: 0 ... 100, step: 1) {
                 Text("\(exercise.repetitions)")
             }
-            .tint(exerciseColor)
+            .tint(tint)
+        } header: {
+            Text("Repetition Count")
+                .foregroundStyle(tint)
         }
     }
 }
@@ -45,6 +53,6 @@ struct ExerciseVolume_Previews: PreviewProvider {
         let ctx = PersistenceManager.getPreviewContainer().viewContext
         let exercise = Exercise.create(ctx, userOrder: 0)
         exercise.name = "Lat Pulldown"
-        return Form { ExerciseVolume(exercise: exercise) }
+        return Form { ExerciseVolume(exercise: exercise, tint: .green) }
     }
 }

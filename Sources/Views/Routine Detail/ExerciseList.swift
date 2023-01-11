@@ -17,6 +17,7 @@ private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                             category: "ExerciseList")
 
 public struct ExerciseList: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var router: MyRouter
 
@@ -51,6 +52,7 @@ public struct ExerciseList: View {
             .onMove(perform: moveAction)
             .onDelete(perform: deleteAction)
             .listItemTint(exerciseListItemTint)
+            .tint(exerciseColor)
 
             #if os(watchOS)
                 AddExerciseButton(routine: routine) {
@@ -58,7 +60,7 @@ public struct ExerciseList: View {
                         .symbolRenderingMode(.hierarchical)
                 }
                 .font(.title3)
-                .tint(exerciseColor)
+                .tint(exerciseColorDarkBg)
                 .foregroundStyle(.tint)
             #endif
         }
@@ -68,10 +70,17 @@ public struct ExerciseList: View {
             ToolbarItem {
                 AddExerciseButton(routine: routine) {
                     Text("Add")
+                        .tint(exerciseColor)
                 }
             }
         }
         #endif
+    }
+
+    // MARK: - Properties
+
+    private var exerciseColor: Color {
+        colorScheme == .light ? exerciseColorLiteBg : exerciseColorDarkBg
     }
 
     // MARK: - Actions

@@ -17,6 +17,7 @@ private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                             category: "ExerciseDetail")
 
 public struct ExerciseDetail: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var router: MyRouter
 
@@ -38,6 +39,7 @@ public struct ExerciseDetail: View {
 
     public var body: some View {
         content
+            // .tint(exerciseColor)
             .symbolRenderingMode(.hierarchical)
             .onDisappear(perform: onDisappearAction)
     }
@@ -47,34 +49,40 @@ public struct ExerciseDetail: View {
 
             TabView(selection: $tabSelected) {
                 Form {
-                    ExerciseName(exercise: exercise)
-                    ExerciseSettings(exercise: exercise)
+                    ExerciseName(exercise: exercise, tint: exerciseColor)
+                    ExerciseSettings(exercise: exercise, tint: exerciseColor)
                 }
                 .tag(1)
                 Form {
-                    ExerciseVolume(exercise: exercise)
+                    ExerciseVolume(exercise: exercise, tint: exerciseColor)
                 }
                 .tag(2)
                 Form {
-                    ExerciseIntensity(exercise: exercise)
+                    ExerciseIntensity(exercise: exercise, tint: exerciseColor)
                 }
                 .tag(3)
             }
             .tabViewStyle(.page)
             .navigationTitle {
                 Text(title)
-                    .foregroundColor(exerciseColor)
+                    .foregroundColor(exerciseColorDarkBg)
             }
 
         #elseif os(iOS)
             Form {
-                ExerciseName(exercise: exercise)
-                ExerciseSettings(exercise: exercise)
-                ExerciseVolume(exercise: exercise)
-                ExerciseIntensity(exercise: exercise)
+                ExerciseName(exercise: exercise, tint: exerciseColor)
+                ExerciseSettings(exercise: exercise, tint: exerciseColor)
+                ExerciseVolume(exercise: exercise, tint: exerciseColor)
+                ExerciseIntensity(exercise: exercise, tint: exerciseColor)
             }
             .navigationTitle("Exercise")
         #endif
+    }
+
+    // MARK: - Properties
+
+    private var exerciseColor: Color {
+        colorScheme == .light ? exerciseColorLiteBg : exerciseColorDarkBg
     }
 
     private var title: String {
