@@ -1,6 +1,6 @@
 # GroutUI
 
-Shared UI layer for Gym Routine Tracker implementations on watchOS, iOS, and possibly other frameworks
+Shared UI layer for Gym Routine Tracker implementations on watchOS, iOS, and possibly other frameworks.
 
 If there is ever a macOS implementation, it should include this package.
 
@@ -8,8 +8,20 @@ All code licensed with Mozilla Public License 2.0.
 
 ## See Also
 
-* [Gym Routine Tracker](https://gym-routine-tracker.github.io/) - WatchOS and iOS implementations of the Gym Routine Tracker
-* [GroutLib](https://github.com/gym-routine-tracker/GroutLib) - Data and Business logic layer (a dependency)
+### App Download Links
+
+* [GRT for Apple Watch](https://apps.apple.com/us/app/gym-routine-tracker/id6444747204) - App Store link for FREE download
+* [GRT+ for iPhone/iPad](https://apps.apple.com/us/app/gym-routine-tracker/id1662243916) - App Store link for FREE download
+
+### Source Code
+
+* [GRT Website](https://gym-routine-tracker.github.io) - Website for GRT
+* [GRT for Apple Watch Source](https://github.com/gym-routine-tracker/Gym-Routine-Tracker-Watch-App) - watchOS implementation
+* [GRT+ for iPhone/iPad Source](https://github.com/gym-routine-tracker/Gym-Routine-Tracker-Plus-App) - iOS implementation
+* [GroutUI](https://github.com/gym-routine-tracker/GroutUI) - shared UI layer for GRT (watchOS and iOS)
+* [GroutLib](https://github.com/gym-routine-tracker/GroutLib) - shared business logic and data layer for GRT
+
+### macOS Apps by the same author
 
 * [FlowAllocator](https://openalloc.github.io/FlowAllocator/index.html) - portfolio rebalancing tool for macOS
 * [FlowWorth](https://openalloc.github.io/FlowWorth/index.html) - portfolio valuation and tracking tool for macOS
