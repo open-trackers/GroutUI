@@ -46,13 +46,12 @@ public struct ExerciseList: View {
             ForEach(exercises, id: \.self) { exercise in
                 Button(action: { detailAction(exercise: exercise) }) {
                     Text("\(exercise.name ?? "unknown")")
+                        .foregroundColor(exerciseColor)
                 }
-                .buttonStyle(.borderless)
             }
             .onMove(perform: moveAction)
             .onDelete(perform: deleteAction)
             .listItemTint(exerciseListItemTint)
-            .tint(exerciseColor)
 
             #if os(watchOS)
                 AddExerciseButton(routine: routine) {
@@ -111,8 +110,9 @@ public struct ExerciseList: View {
 struct ExerciseList_Previews: PreviewProvider {
     struct TestHolder: View {
         var routine: Routine
+        @State var navData: Data?
         var body: some View {
-            NavigationStack {
+            NavStack(name: "foo", navData: $navData) {
                 ExerciseList(routine: routine)
             }
         }
