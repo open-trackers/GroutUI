@@ -15,7 +15,11 @@ public struct SettingsForm: View {
 
     // MARK: - Parameters
 
-    public init() {}
+    private var onExport: () -> Void
+
+    public init(onExport: @escaping () -> Void = {}) {
+        self.onExport = onExport
+    }
 
     // MARK: - Locals
 
@@ -70,6 +74,10 @@ public struct SettingsForm: View {
                     router.path.append(MyRoutes.about)
                 }) {
                     Text("About \(appName)")
+                }
+
+                Button(action: onExport) {
+                    Text("Export Data")
                 }
             #endif
         }
