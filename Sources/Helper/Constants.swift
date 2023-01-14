@@ -60,6 +60,7 @@ public let newFirstIncompleteSeconds: TimeInterval = 0.25
 public let exerciseAnimationDurationSeconds: TimeInterval = 0.25
 
 public let colorSchemeModeKey = "colorScheme"
+public let exportFormatKey = "exportFormat"
 
 public let runRoutineActivityType = "org.openalloc.grout.run-routine"
 public let userActivity_uriRepKey = "uriRep"

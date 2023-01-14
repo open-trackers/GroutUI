@@ -29,6 +29,6 @@ public struct EntityBackground: View {
 
 struct EntityBackground_Previews: PreviewProvider {
     static var previews: some View {
-        EntityBackground(.green)
+        EntityBackground(.blue)
     }
 }

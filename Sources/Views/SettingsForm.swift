@@ -10,21 +10,23 @@
 
 import SwiftUI
 
-public struct SettingsForm: View {
+public struct SettingsForm<Content>: View
+    where Content: View
+{
     @EnvironmentObject private var router: MyRouter
 
     // MARK: - Parameters
 
-    public init() {}
+    private var content: () -> Content
+
+    public init(@ViewBuilder content: @escaping () -> Content = { EmptyView() }) {
+        self.content = content
+    }
 
     // MARK: - Locals
 
     @AppStorage(alwaysAdvanceOnLongPressKey) var alwaysAdvanceOnLongPress: Bool = false
     @AppStorage(logToHistoryKey) var logToHistory: Bool = true
-
-    #if os(iOS)
-        @AppStorage(colorSchemeModeKey) var colorSchemeMode: ColorSchemeMode = .automatic
-    #endif
 
     // MARK: - Views
 
@@ -47,37 +49,16 @@ public struct SettingsForm: View {
                     .foregroundStyle(.tint)
             } footer: {
                 #if os(watchOS)
-                    Text("Recent history will be stored locally for up to 1 year. Periodically run iOS app for long-term storage and review.")
+                    Text("Recent history will be stored locally for up to 1 year. Periodically run iPhone/iPad app for long-term storage and review.")
                 #elseif os(iOS)
-                    Text("History can be reviewed from a tab on the home screen.")
+                    Text("History can be reviewed from the home screen.")
                 #endif
             }
 
-            #if os(iOS)
-                Section {
-                    Picker("Color", selection: $colorSchemeMode) {
-                        ForEach(ColorSchemeMode.allCases, id: \.self) { mode in
-                            Text(mode.description).tag(mode)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                } header: {
-                    Text("Color Scheme")
-                        .foregroundStyle(.tint)
-                }
-
-                Button(action: {
-                    router.path.append(MyRoutes.about)
-                }) {
-                    Text("About \(appName)")
-                }
-            #endif
+            // additional platform-specific settings content, if any
+            content()
         }
         .navigationTitle("Settings")
-    }
-
-    private var appName: String {
-        Bundle.main.appName ?? "unknown"
     }
 }
 

@@ -30,7 +30,7 @@ public struct NavStack<RoutineRunDetail, Content>: View
     private var routineRunDetail: (URL) -> RoutineRunDetail
     private var content: () -> Content
 
-    public init(name: String,
+    public init(name: String = "no-name",
                 navData: Binding<Data?>,
                 @ViewBuilder routineRunDetail: @escaping (URL) -> RoutineRunDetail = { _ in EmptyView() },
                 @ViewBuilder content: @escaping () -> Content)
