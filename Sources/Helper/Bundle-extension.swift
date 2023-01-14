@@ -10,7 +10,7 @@
 
 import SwiftUI
 
-extension Bundle {
+public extension Bundle {
     var appName: String? {
         infoDictionary?["CFBundleName"] as? String
     }

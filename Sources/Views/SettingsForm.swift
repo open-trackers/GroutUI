@@ -10,27 +10,23 @@
 
 import SwiftUI
 
-public struct SettingsForm<Bottom>: View
-    where Bottom: View
+public struct SettingsForm<Content>: View
+    where Content: View
 {
     @EnvironmentObject private var router: MyRouter
 
     // MARK: - Parameters
 
-    private var bottom: () -> Bottom
+    private var content: () -> Content
 
-    public init(bottom: @escaping () -> Bottom = { EmptyView() }) {
-        self.bottom = bottom
+    public init(@ViewBuilder content: @escaping () -> Content = { EmptyView() }) {
+        self.content = content
     }
 
     // MARK: - Locals
 
     @AppStorage(alwaysAdvanceOnLongPressKey) var alwaysAdvanceOnLongPress: Bool = false
     @AppStorage(logToHistoryKey) var logToHistory: Bool = true
-
-    #if os(iOS)
-        @AppStorage(colorSchemeModeKey) var colorSchemeMode: ColorSchemeMode = .automatic
-    #endif
 
     // MARK: - Views
 
@@ -59,36 +55,10 @@ public struct SettingsForm<Bottom>: View
                 #endif
             }
 
-            #if os(watchOS)
-                bottom()
-            #elseif os(iOS)
-                Section {
-                    Picker("Color", selection: $colorSchemeMode) {
-                        ForEach(ColorSchemeMode.allCases, id: \.self) { mode in
-                            Text(mode.description).tag(mode)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                } header: {
-                    Text("Color Scheme")
-                        .foregroundStyle(.tint)
-                }
-
-                bottom()
-
-                Button(action: {
-                    router.path.append(MyRoutes.about)
-                }) {
-                    Text("About \(appName)")
-                }
-
-            #endif
+            // additional platform-specific content
+            content()
         }
         .navigationTitle("Settings")
-    }
-
-    private var appName: String {
-        Bundle.main.appName ?? "unknown"
     }
 }
 
