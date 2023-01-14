@@ -10,15 +10,17 @@
 
 import SwiftUI
 
-public struct SettingsForm: View {
+public struct SettingsForm<Bottom>: View
+    where Bottom: View
+{
     @EnvironmentObject private var router: MyRouter
 
     // MARK: - Parameters
 
-    private var onExport: () -> Void
+    private var bottom: () -> Bottom
 
-    public init(onExport: @escaping () -> Void = {}) {
-        self.onExport = onExport
+    public init(bottom: @escaping () -> Bottom = { EmptyView() }) {
+        self.bottom = bottom
     }
 
     // MARK: - Locals
@@ -57,7 +59,9 @@ public struct SettingsForm: View {
                 #endif
             }
 
-            #if os(iOS)
+            #if os(watchOS)
+                bottom()
+            #elseif os(iOS)
                 Section {
                     Picker("Color", selection: $colorSchemeMode) {
                         ForEach(ColorSchemeMode.allCases, id: \.self) { mode in
@@ -70,15 +74,14 @@ public struct SettingsForm: View {
                         .foregroundStyle(.tint)
                 }
 
+                bottom()
+
                 Button(action: {
                     router.path.append(MyRoutes.about)
                 }) {
                     Text("About \(appName)")
                 }
 
-                Button(action: onExport) {
-                    Text("Export Data")
-                }
             #endif
         }
         .navigationTitle("Settings")
