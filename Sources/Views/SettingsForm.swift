@@ -55,7 +55,7 @@ public struct SettingsForm<Content>: View
                 #endif
             }
 
-            // additional platform-specific content
+            // additional platform-specific settings content
             content()
         }
         .navigationTitle("Settings")
