@@ -125,7 +125,7 @@ public struct RoutineRun: View {
     }
 
     private var toolbarItem: some View {
-        Button(action: { selectedTab = controlTab }) {
+        Button(action: { Haptics.play(); selectedTab = controlTab }) {
             Image(systemName: "control")
                 .foregroundColor(isOnControlPanel ? disabledColor : .primary)
         }
@@ -167,6 +167,7 @@ public struct RoutineRun: View {
     private func addAction() {
         logger.debug("\(#function) maxOrder=\(maxOrder)")
         withAnimation {
+            Haptics.play()
             let nu = Exercise.create(viewContext, userOrder: maxOrder + 1)
             routine.addToExercises(nu)
             do {
@@ -181,6 +182,7 @@ public struct RoutineRun: View {
 
     private func editAction(_ exerciseURI: URL) {
         logger.debug("\(#function) exerciseURI=\(exerciseURI)")
+        Haptics.play()
         // TODO: is a delay actually needed? Try it without.
         DispatchQueue.main.asyncAfter(deadline: .now() + editDelaySeconds) {
             if selectedTab != exerciseURI {
@@ -192,6 +194,7 @@ public struct RoutineRun: View {
 
     private func stopAction() {
         logger.debug("\(#function)")
+        Haptics.play()
         onStop(routine) // parent view will take down the sheet & save context
     }
 
@@ -199,10 +202,12 @@ public struct RoutineRun: View {
     private func nextIncompleteAction(from userOrder: Int16?) {
         logger.debug("\(#function) userOrder=\(userOrder ?? -1000)")
         if let nextIncomplete = try? routine.getNextIncomplete(viewContext, from: userOrder) {
+            // Haptics.play()
             let nextTab = nextIncomplete.uriRepresentation()
             // logger.debug("\(#function) Selecting TAB, from \(selectedTab.suffix ?? "") to \(nextTab.suffix ?? "")")
             selectedTab = nextTab
         } else {
+            Haptics.play(.routineCompleted)
             // logger.debug("\(#function) from \(selectedTab.suffix ?? "") to CONTROL")
             selectedTab = controlTab
         }

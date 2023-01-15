@@ -38,6 +38,7 @@ public struct ImageStepper: View {
         Stepper(value: $index, in: 0 ... imageNames.count - 1) {
             Image(systemName: imageNames[index])
         }.onChange(of: index) { newValue in
+            Haptics.play()
             onSelect(imageNames[newValue])
         }
         .symbolRenderingMode(.hierarchical)

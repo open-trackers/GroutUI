@@ -53,6 +53,7 @@ public struct AddRoutineButton<Label>: View
 
     private func addAction() {
         withAnimation {
+            Haptics.play()
             let nu = Routine.create(viewContext, userOrder: maxOrder + 1)
             nu.name = "New Routine"
             do {

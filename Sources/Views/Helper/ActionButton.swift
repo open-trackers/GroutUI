@@ -13,19 +13,19 @@ import SwiftUI
 public struct ActionButton: View {
     // MARK: - Parameters
 
-    private var action: () -> Void
-    private var imageSystemName: String // "arrow.backward"
-    private var buttonText: String? // "Previous"
-    private var tint: Color
-    private var onLongPress: (() -> Void)?
+    private let onShortPress: () -> Void
+    private let imageSystemName: String // "arrow.backward"
+    private let buttonText: String? // "Previous"
+    private let tint: Color
+    private let onLongPress: (() -> Void)?
 
-    public init(action: @escaping () -> Void,
+    public init(onShortPress: @escaping () -> Void,
                 imageSystemName: String,
                 buttonText: String? = nil,
                 tint: Color,
                 onLongPress: (() -> Void)? = nil)
     {
-        self.action = action
+        self.onShortPress = onShortPress
         self.imageSystemName = imageSystemName
         self.buttonText = buttonText
         self.tint = tint
@@ -92,7 +92,7 @@ public struct ActionButton: View {
     }
 
     private var normalButton: some View {
-        Button(action: action, label: { label })
+        Button(action: onShortPress, label: { label })
     }
 
     private var longPressButton: some View {
@@ -106,7 +106,7 @@ public struct ActionButton: View {
             .highPriorityGesture(
                 TapGesture()
                     .onEnded { _ in
-                        action()
+                        onShortPress()
                     }
             )
     }
@@ -115,11 +115,11 @@ public struct ActionButton: View {
 struct ActionButton_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            ActionButton(action: {}, imageSystemName: "arrow.backward", buttonText: "Previous", tint: .green)
+            ActionButton(onShortPress: {}, imageSystemName: "arrow.backward", buttonText: "Previous", tint: .green)
                 .frame(width: 300, height: 200)
-            ActionButton(action: {}, imageSystemName: "checkmark", buttonText: "Done", tint: .blue)
+            ActionButton(onShortPress: {}, imageSystemName: "checkmark", buttonText: "Done", tint: .blue)
                 .frame(width: 300, height: 200)
-            ActionButton(action: {}, imageSystemName: "xmark", buttonText: "Stop", tint: .red)
+            ActionButton(onShortPress: {}, imageSystemName: "xmark", buttonText: "Stop", tint: .red)
                 .frame(width: 100, height: 66)
         }
     }

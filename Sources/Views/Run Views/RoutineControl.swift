@@ -77,7 +77,7 @@ public struct RoutineControl: View {
 
     private var middle: some View {
         HStack(alignment: .bottom) {
-            ActionButton(action: onStop,
+            ActionButton(onShortPress: onStop,
                          imageSystemName: "xmark",
                          buttonText: "Stop",
                          tint: stopColor,
@@ -88,12 +88,12 @@ public struct RoutineControl: View {
 
     private var bottom: some View {
         HStack(alignment: .bottom) {
-            ActionButton(action: onAdd,
+            ActionButton(onShortPress: onAdd,
                          imageSystemName: "plus", // plus.circle.fill
                          buttonText: "Add",
                          tint: exerciseColorDarkBg,
                          onLongPress: nil)
-            ActionButton(action: { onNextIncomplete(nil) },
+            ActionButton(onShortPress: { onNextIncomplete(nil) },
                          imageSystemName: "arrow.forward",
                          buttonText: "Next",
                          tint: onNextIncompleteColor,

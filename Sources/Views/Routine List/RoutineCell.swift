@@ -131,6 +131,8 @@ public struct RoutineCell: View {
     // MARK: - Actions
 
     private func detailAction() {
+        Haptics.play()
+
         router.path.append(MyRoutes.routineDetail(routine.uriRepresentation))
     }
 
@@ -140,6 +142,8 @@ public struct RoutineCell: View {
     }
 
     private func startAction() {
+        Haptics.play(.startingRoutine)
+
         // NOTE true to clear lastCompleted in each Exercise
         onStart(routine.uriRepresentation, true)
     }

@@ -25,7 +25,7 @@ struct ExerciseRunSettings: View {
             ExerciseRunMiddleRow(imageName: "gearshape.fill",
                                  imageColor: exerciseGearColor,
                                  onDetail: { onEdit(exercise.uriRepresentation) },
-                                 onTap: { middleMode = .volume }) {
+                                 onTap: tapAction) {
                 settingsText
             }
         #elseif os(iOS)
@@ -62,6 +62,16 @@ struct ExerciseRunSettings: View {
             #endif
         }
     }
+
+    // MARK: - Actions
+
+    #if os(watchOS)
+        private func tapAction() {
+            Haptics.play()
+
+            middleMode = .volume
+        }
+    #endif
 }
 
 struct ExerciseRunSettings_Previews: PreviewProvider {

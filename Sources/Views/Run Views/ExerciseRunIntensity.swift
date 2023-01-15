@@ -31,14 +31,14 @@ struct ExerciseRunIntensity: View {
                             $0
                         }
                     }
+            } onEditingChanged: { _ in
+                Haptics.play()
             }
             .symbolRenderingMode(.hierarchical)
             .disabled(exercise.isDone)
             .foregroundColor(textTintColor)
             .contentShape(Rectangle())
-            .onTapGesture {
-                middleMode = .settings
-            }
+            .onTapGesture(perform: tapAction)
         #elseif os(iOS)
             GroupBox {
                 GroutStepper(value: $exercise.lastIntensity,
@@ -64,6 +64,16 @@ struct ExerciseRunIntensity: View {
     private var textTintColor: Color {
         exercise.isDone ? completedColor : .primary
     }
+
+    // MARK: - Actions
+
+    #if os(watchOS)
+        private func tapAction() {
+            Haptics.play()
+
+            middleMode = .settings
+        }
+    #endif
 }
 
 struct ExerciseRunIntensity_Previews: PreviewProvider {

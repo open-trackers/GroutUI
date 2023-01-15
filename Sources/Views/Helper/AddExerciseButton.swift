@@ -60,6 +60,7 @@ public struct AddExerciseButton<Label>: View
 
     private func addAction() {
         withAnimation {
+            Haptics.play()
             let nu = Exercise.create(viewContext, userOrder: maxOrder + 1)
             nu.name = "New Exercise"
             nu.routine = routine

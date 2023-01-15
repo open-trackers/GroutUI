@@ -44,7 +44,7 @@ public struct ExerciseList: View {
     public var body: some View {
         List {
             ForEach(exercises, id: \.self) { exercise in
-                Button(action: { detailAction(exercise: exercise) }) {
+                Button(action: { Haptics.play(); detailAction(exercise: exercise) }) {
                     Text("\(exercise.name ?? "unknown")")
                         .foregroundColor(exerciseColor)
                 }
@@ -89,6 +89,7 @@ public struct ExerciseList: View {
     }
 
     private func deleteAction(offsets: IndexSet) {
+        Haptics.play()
         offsets.map { exercises[$0] }.forEach(viewContext.delete)
         do {
             try viewContext.save()

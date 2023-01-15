@@ -25,7 +25,7 @@ struct ExerciseRunVolume: View {
             ExerciseRunMiddleRow(imageName: "dumbbell.fill",
                                  imageColor: exerciseSetsColor,
                                  onDetail: { onEdit(exercise.uriRepresentation) },
-                                 onTap: { middleMode = .intensity }) {
+                                 onTap: tapAction) {
                 volumeText
             }
         #elseif os(iOS)
@@ -58,6 +58,16 @@ struct ExerciseRunVolume: View {
     private var textTintColor: Color {
         exercise.isDone ? completedColor : .primary
     }
+
+    // MARK: - Actions
+
+    #if os(watchOS)
+        private func tapAction() {
+            Haptics.play()
+
+            middleMode = .intensity
+        }
+    #endif
 }
 
 struct ExerciseRunVolume_Previews: PreviewProvider {

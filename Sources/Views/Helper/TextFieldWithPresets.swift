@@ -35,7 +35,10 @@ public struct TextFieldWithPresets: View {
     public var body: some View {
         HStack {
             TextField(text: $name, prompt: Text(prompt)) { EmptyView() }
-            Button(action: { showPresetNames = true }) {
+            Button(action: {
+                Haptics.play()
+                showPresetNames = true
+            }) {
                 Image(systemName: "line.3.horizontal.decrease")
                     .imageScale(.large)
                     .symbolRenderingMode(.hierarchical)

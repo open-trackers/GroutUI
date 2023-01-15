@@ -178,14 +178,14 @@ public struct ExerciseRun: View {
 
     private var navigationRow: some View {
         HStack {
-            ActionButton(action: isDone ? undoAction : doneAction,
+            ActionButton(onShortPress: isDone ? undoAction : doneAction,
                          imageSystemName: isDone ? "arrow.uturn.backward" : "checkmark",
                          buttonText: isDone ? "Undo" : "Done",
                          tint: shortPressDone ? disabledColor : (isDone ? exerciseUndoColor : exerciseDoneColor),
                          onLongPress: isDone ? nil : doneLongPressAction)
                 .disabled(shortPressDone)
 
-            ActionButton(action: nextIncompleteAction,
+            ActionButton(onShortPress: nextAction,
                          imageSystemName: "arrow.forward",
                          buttonText: "Next",
                          tint: nextColor,
@@ -234,25 +234,41 @@ public struct ExerciseRun: View {
 
     private func nextIncompleteAction() {
         logger.debug("\(#function) \(exercise.wrappedName) userOrder=\(exercise.userOrder) uri=\(exercise.uriRepresentationSuffix ?? "")")
+
+        // NOTE: no haptic should be done here, as it's secondary to other actions
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             onNextIncomplete(exercise.userOrder)
         }
     }
 
+    private func nextAction() {
+        Haptics.play()
+
+        nextIncompleteAction()
+    }
+
+    private func undoAction() {
+        logger.debug("\(#function)")
+
+        Haptics.play()
+
+        exercise.lastCompletedAt = nil
+    }
+
     private func doneAction() {
         shortPressDone = true // to avoid double presses
+
+        Haptics.play()
 
         logger.debug("\(#function)")
         markDone(withAdvance: false)
     }
 
-    private func undoAction() {
-        logger.debug("\(#function)")
-        exercise.lastCompletedAt = nil
-    }
-
     private func doneLongPressAction() {
         shortPressDone = true // to avoid double presses
+
+        Haptics.play(.longPress)
 
         logger.debug("\(#function)")
         if alwaysAdvanceOnLongPress {

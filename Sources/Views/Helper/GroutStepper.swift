@@ -83,10 +83,12 @@ import SwiftUI
         // MARK: - Actions
 
         private func decreaseAction() {
+            Haptics.play()
             value = max(range.lowerBound, value - step)
         }
 
         private func increaseAction() {
+            Haptics.play()
             value = min(value + step, range.upperBound)
         }
     }
