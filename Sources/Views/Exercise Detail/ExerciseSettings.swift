@@ -29,8 +29,6 @@ public struct ExerciseSettings: View {
         Section {
             Stepper(value: $exercise.primarySetting, in: settingRange, step: 1) {
                 Text("\(exercise.primarySetting)")
-            } onEditingChanged: { _ in
-                Haptics.play()
             }
             .tint(tint)
         } header: {
@@ -41,8 +39,6 @@ public struct ExerciseSettings: View {
         Section {
             Stepper(value: $exercise.secondarySetting, in: settingRange, step: 1) {
                 Text("\(exercise.secondarySetting)")
-            } onEditingChanged: { _ in
-                Haptics.play()
             }
             .tint(tint)
         } header: {

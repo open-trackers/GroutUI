@@ -38,7 +38,6 @@ public struct PresetsPicker: View {
                 Section(header: Text(key)) {
                     ForEach(presets[key]!, id: \.self) { name in // .sorted(by: <)
                         Button {
-                            Haptics.play()
                             onSelect(key, name)
                             showPresets = false
                         } label: {

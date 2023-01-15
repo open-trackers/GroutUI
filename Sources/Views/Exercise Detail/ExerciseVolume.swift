@@ -29,8 +29,6 @@ public struct ExerciseVolume: View {
         Section {
             Stepper(value: $exercise.sets, in: 0 ... 10, step: 1) {
                 Text("\(exercise.sets)")
-            } onEditingChanged: { _ in
-                Haptics.play()
             }
             .tint(tint)
         } header: {
@@ -41,8 +39,6 @@ public struct ExerciseVolume: View {
         Section {
             Stepper(value: $exercise.repetitions, in: 0 ... 100, step: 1) {
                 Text("\(exercise.repetitions)")
-            } onEditingChanged: { _ in
-                Haptics.play()
             }
             .tint(tint)
         } header: {

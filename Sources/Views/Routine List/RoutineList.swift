@@ -142,7 +142,6 @@ public struct RoutineList: View {
     // MARK: - Actions
 
     private func deleteAction(offsets: IndexSet) {
-        Haptics.play()
         offsets.map { routines[$0] }.forEach(viewContext.delete)
         do {
             try viewContext.save()
@@ -207,12 +206,10 @@ public struct RoutineList: View {
 
     #if os(watchOS)
         private func settingsAction() {
-            Haptics.play()
             router.path.append(MyRoutes.settings)
         }
 
         private func aboutAction() {
-            Haptics.play()
             router.path.append(MyRoutes.about)
         }
     #endif

@@ -38,11 +38,9 @@ public struct ExerciseIntensity: View {
         Section {
             Stepper(value: $exercise.lastIntensity, in: intensityRange, step: exercise.intensityStep) {
                 intensityText(exercise.lastIntensity)
-            } onEditingChanged: { _ in
-                Haptics.play()
             }
             .tint(tint)
-            Button(action: { Haptics.play(); exercise.lastIntensity = 0 }) {
+            Button(action: { exercise.lastIntensity = 0 }) {
                 Text("Set to zero (0)")
                     .foregroundStyle(tint)
             }
@@ -54,11 +52,9 @@ public struct ExerciseIntensity: View {
         Section {
             Stepper(value: $exercise.intensityStep, in: intensityStepRange, step: intensityStep) {
                 intensityText(exercise.intensityStep)
-            } onEditingChanged: { _ in
-                Haptics.play()
             }
             .tint(tint)
-            Button(action: { Haptics.play(); exercise.intensityStep = 1 }) {
+            Button(action: { exercise.intensityStep = 1 }) {
                 Text("Set to one (1)")
                     .foregroundStyle(tint)
             }
@@ -76,9 +72,6 @@ public struct ExerciseIntensity: View {
                 }
             } label: {
                 EmptyView()
-            }
-            .onChange(of: units) { _ in
-                Haptics.play()
             }
             #if os(watchOS)
             .pickerStyle(.wheel)

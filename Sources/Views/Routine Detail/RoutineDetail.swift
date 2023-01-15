@@ -117,7 +117,6 @@ public struct RoutineDetail: View {
 
     #if os(iOS)
         private func exerciseListAction() {
-            Haptics.play()
             router.path.append(MyRoutes.exerciseList(routine.uriRepresentation))
         }
     #endif
