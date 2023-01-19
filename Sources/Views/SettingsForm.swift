@@ -9,38 +9,36 @@
 //
 
 import SwiftUI
+import GroutLib
 
 public struct SettingsForm<Content>: View
-    where Content: View
+where Content: View
 {
     @EnvironmentObject private var router: MyRouter
-
+    
     // MARK: - Parameters
-
-    private var content: () -> Content
-
-    public init(@ViewBuilder content: @escaping () -> Content = { EmptyView() }) {
-        self.content = content
+    
+    private var defaultSettings: () -> Content
+    public init(@ViewBuilder content: @escaping () -> Content = { DefaultExercise() }) {
+        self.defaultSettings = content
     }
-
+    
     // MARK: - Locals
-
     @AppStorage(alwaysAdvanceOnLongPressKey) var alwaysAdvanceOnLongPress: Bool = false
     @AppStorage(logToHistoryKey) var logToHistory: Bool = true
-
+    
     // MARK: - Views
-
     public var body: some View {
         Form {
             Section {
                 Toggle("Always advance intensity on long press", isOn: $alwaysAdvanceOnLongPress)
                     .tint(.accentColor)
-
+                
             } header: {
                 Text("\(Image(systemName: "checkmark")) Done Button")
                     .foregroundStyle(.tint)
             }
-
+            
             Section {
                 Toggle("Log activity", isOn: $logToHistory)
                     .tint(.accentColor)
@@ -48,15 +46,13 @@ public struct SettingsForm<Content>: View
                 Text("\(Image(systemName: "fossil.shell.fill")) History")
                     .foregroundStyle(.tint)
             } footer: {
-                #if os(watchOS)
-                    Text("Recent history will be stored locally for up to 1 year. Periodically run iPhone/iPad app for long-term storage and review.")
-                #elseif os(iOS)
-                    Text("History can be reviewed from the home screen.")
-                #endif
+#if os(watchOS)
+                Text("Recent history will be stored locally for up to 1 year. Periodically run iPhone/iPad app for long-term storage and review.")
+#elseif os(iOS)
+                Text("History can be reviewed from the home screen.")
+#endif
             }
-
-            // additional platform-specific settings content, if any
-            content()
+            defaultSettings()
         }
         .navigationTitle("Settings")
     }
