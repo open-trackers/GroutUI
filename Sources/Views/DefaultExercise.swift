@@ -16,7 +16,6 @@ struct DefaultExercise: View {
     @AppStorage("defaultIntensity") public var defaultIntensity = 0.1
     @AppStorage("defaultUnitStored") public var defaultUnitStored = "Kg"
     @State var defaultUnit = Units.kilograms
-    @State private var scrollAmount = CGSize.zero
     
     var body: some View {
         VStack {
