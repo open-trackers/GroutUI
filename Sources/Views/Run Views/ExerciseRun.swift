@@ -321,7 +321,7 @@ struct ExerciseRun_Previews: PreviewProvider {
         e1.primarySetting = 4
         e1.intensityStep = 8.2
         e1.units = Units.minutes.rawValue
-        //try? ctx.save()
+        // try? ctx.save()
         return NavigationStack {
             TestHolder(exercise: e1)
         }
