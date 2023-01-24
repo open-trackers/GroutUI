@@ -19,7 +19,7 @@ where Content: View
     // MARK: - Parameters
     
     private var defaultSettings: () -> Content
-    public init(@ViewBuilder content: @escaping () -> Content = { DefaultExercise() }) {
+    public init(@ViewBuilder content: @escaping () -> Content = { DefaultExercise.defaultExercise }) {
         self.defaultSettings = content
     }
     

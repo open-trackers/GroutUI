@@ -42,10 +42,10 @@ public struct ExerciseIntensity: View {
                 Haptics.play()
             }
             .tint(tint)
-            Button(action: { Haptics.play(); exercise.lastIntensity = 0 }) {
-                Text("Set to zero (0)")
-                    .foregroundStyle(tint)
-            }
+//            Button(action: { Haptics.play(); exercise.lastIntensity = 0 }) {
+//                Text("Set to zero (0)")
+//                    .foregroundStyle(tint)
+//            }
         } header: {
             Text("Intensity")
                 .foregroundStyle(tint)
@@ -58,10 +58,10 @@ public struct ExerciseIntensity: View {
                 Haptics.play()
             }
             .tint(tint)
-            Button(action: { Haptics.play(); exercise.intensityStep = 1 }) {
-                Text("Set to one (1)")
-                    .foregroundStyle(tint)
-            }
+//            Button(action: { Haptics.play(); exercise.intensityStep = 1 }) {
+//                Text("Set to one (1)")
+//                    .foregroundStyle(tint)
+//            }
         } header: {
             Text("Intensity Step")
                 .foregroundStyle(tint)

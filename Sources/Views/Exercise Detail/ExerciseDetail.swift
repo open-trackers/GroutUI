@@ -22,11 +22,17 @@ public struct ExerciseDetail: View {
     @EnvironmentObject private var router: MyRouter
 
     // MARK: - Parameters
-
+    private let defaultExercise: Exercise
     private var exercise: Exercise
 
     public init(exercise: Exercise) {
+        exercise.sets = Int16(DefaultExercise.defaultExercise.defaultSet)
+        exercise.repetitions = Int16(DefaultExercise.defaultExercise.defaultRep)
+        exercise.intensityStep = Float(DefaultExercise.defaultExercise.defaultIntensity)
+        exercise.units = Int16(DefaultUnitStored.DefaultUnit.defaultUnitStored)
+        
         self.exercise = exercise
+        self.defaultExercise = exercise
     }
 
     // MARK: - Locals
@@ -68,12 +74,16 @@ public struct ExerciseDetail: View {
             }
 
         #elseif os(iOS)
-            Form {
-                ExerciseName(exercise: exercise, tint: exerciseColor)
-                ExerciseSettings(exercise: exercise, tint: exerciseColor)
-                ExerciseVolume(exercise: exercise, tint: exerciseColor)
-                ExerciseIntensity(exercise: exercise, tint: exerciseColor)
+        Form {
+            ExerciseName(exercise: exercise, tint: exerciseColor)
+            ExerciseSettings(exercise: exercise, tint: exerciseColor)
+            ExerciseVolume(exercise: exercise, tint: exerciseColor)
+            ExerciseIntensity(exercise: exercise, tint: exerciseColor)
+            Button(action: { Haptics.play(); exercise = self.defaultExercise }) {
+                Text("Reset")
+                    .foregroundStyle(tint)
             }
+        }
             .navigationTitle("Exercise")
         #endif
     }
