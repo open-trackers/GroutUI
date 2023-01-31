@@ -98,7 +98,7 @@ public struct ExerciseIntensity: View {
     }
 
     private func intensityText(_ intensityValue: Float) -> some View {
-        Text(exercise.formatIntensity(intensityValue, withUnits: true))
+        Text(exercise.formattedIntensity(intensityValue, withUnits: true))
             // NOTE needed on watchOS to reduce text size
             .minimumScaleFactor(0.1)
             .lineLimit(1)

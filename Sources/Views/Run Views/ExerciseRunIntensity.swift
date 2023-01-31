@@ -57,7 +57,7 @@ struct ExerciseRunIntensity: View {
 
     private var intensityText: some View {
         TitleText(
-            exercise.formatIntensity(exercise.lastIntensity, withUnits: true)
+            exercise.formattedIntensity(exercise.lastIntensity, withUnits: true)
         )
     }
 
@@ -97,6 +97,7 @@ struct ExerciseRunIntensity_Previews: PreviewProvider {
         e1.routine = routine
         e1.primarySetting = 4
         e1.intensityStep = 7.1
+        e1.units = Units.kilograms.rawValue
         return NavigationStack {
             TestHolder(exercise: e1)
         }
