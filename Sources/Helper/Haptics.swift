@@ -20,7 +20,8 @@ import SwiftUI
 
 public struct Haptics {
     public enum Action: Int {
-        case startingRoutine // starting a routine
+        case startingRoutine
+        case stoppingRoutine
         case routineCompleted // when last exercise of a routine has been completed
         case click // most button clicks/presses
         case longPress // long press button
@@ -45,6 +46,8 @@ public struct Haptics {
             switch action {
             case .startingRoutine:
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            case .stoppingRoutine:
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             case .routineCompleted:
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
             case .click:
@@ -59,22 +62,24 @@ public struct Haptics {
             // case notification = 0
             // case directionUp = 1
             // case directionDown = 2
-            // case success = 3
+            // case success = 3 // escalating ding
             // case failure = 4
             // case retry = 5
-            // case start = 6
-            // case stop = 7
+            // case start = 6 // single ding
+            // case stop = 7 // double ding
             // case click = 8
             let device = WKInterfaceDevice.current()
             switch action {
             case .startingRoutine:
                 device.play(.start)
-            case .routineCompleted:
+            case .stoppingRoutine:
                 device.play(.stop)
+            case .routineCompleted:
+                device.play(.success)
             case .click:
                 device.play(.click)
             case .longPress:
-                device.play(.success)
+                device.play(.directionUp)
             case .warning:
                 device.play(.notification)
             }

@@ -268,12 +268,12 @@ public struct ExerciseRun: View {
     private func doneLongPressAction() {
         shortPressDone = true // to avoid double presses
 
-        Haptics.play(.longPress)
-
         logger.debug("\(#function)")
         if alwaysAdvanceOnLongPress {
+            Haptics.play(.longPress)
             markDone(withAdvance: true)
         } else {
+            Haptics.play(.warning)
             showAdvanceAlert = true
         }
     }
