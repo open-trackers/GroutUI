@@ -69,7 +69,7 @@ public struct ExerciseList: View {
             ToolbarItem {
                 AddExerciseButton(routine: routine) {
                     Text("Add")
-                        .tint(exerciseColor)
+                        //.tint(exerciseColor)
                 }
             }
         }

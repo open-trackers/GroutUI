@@ -23,7 +23,7 @@ public let routineColor: Color = .accentColor
 public let routineListItemTint: Color = .accentColor.opacity(0.2)
 
 public let exerciseColorDarkBg: Color = .yellow.opacity(0.8)
-public let exerciseColorLiteBg: Color = .secondary
+public let exerciseColorLiteBg: Color = .primary
 public let exerciseListItemTint: Color = .yellow.opacity(0.2)
 
 public let stopColor: Color = .pink
