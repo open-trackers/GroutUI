@@ -24,7 +24,11 @@ public struct RoutineList: View {
 
     // MARK: - Parameters
 
-    public init() {}
+    private let beforeStart: () -> Void
+
+    public init(beforeStart: @escaping () -> Void = {}) {
+        self.beforeStart = beforeStart
+    }
 
     // MARK: - Locals
 
@@ -167,6 +171,8 @@ public struct RoutineList: View {
 
         logger.notice("\(#function): Start Routine \(routine.wrappedName)")
 
+        beforeStart() // To force to first tab in iOS app, in case started via shortcut
+
         do {
             // NOTE: storing startedAt locally (not in routine.lastStartedAt)
             // to ignore mistaken starts.
@@ -253,7 +259,7 @@ struct RoutineList_Previews: PreviewProvider {
     struct TestHolder: View {
         var body: some View {
             NavigationStack {
-                RoutineList()
+                RoutineList(beforeStart: {})
             }
         }
     }
