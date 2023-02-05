@@ -22,6 +22,7 @@ where Content: View
     public init(@ViewBuilder content: @escaping () -> Content = { DefaultExercise.defaultExercise }) {
         self.defaultSettings = content
     }
+
     
     // MARK: - Locals
     @AppStorage(alwaysAdvanceOnLongPressKey) var alwaysAdvanceOnLongPress: Bool = false
