@@ -60,6 +60,7 @@ public struct RoutineList: View {
                 RoutineCell(routine: routine,
                             now: $now,
                             onStart: startAction)
+                    .deleteDisabled(routine.hasAtLeastOneExercise)
             }
             .onMove(perform: moveAction)
             .onDelete(perform: deleteAction)
