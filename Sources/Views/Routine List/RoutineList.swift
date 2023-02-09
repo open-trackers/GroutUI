@@ -52,6 +52,10 @@ public struct RoutineList: View {
                                       on: .main,
                                       in: .common).autoconnect()
 
+    // support for delete confirmation dialog
+    @State private var toBeDeleted: Routine? = nil
+    @State private var confirmDelete = false
+
     // MARK: - Views
 
     public var body: some View {
@@ -60,10 +64,11 @@ public struct RoutineList: View {
                 RoutineCell(routine: routine,
                             now: $now,
                             onStart: startAction)
-                    .deleteDisabled(routine.hasAtLeastOneExercise)
+                    .swipeActions(edge: .trailing) {
+                        swipeToDelete(routine: routine)
+                    }
             }
             .onMove(perform: moveAction)
-            .onDelete(perform: deleteAction)
             #if os(watchOS)
                 .listItemTint(routineListItemTint)
             #elseif os(iOS)
@@ -105,6 +110,9 @@ public struct RoutineList: View {
                     }
                 }
             }
+            .confirmationDialog("Are you sure?",
+                                isPresented: $confirmDelete,
+                                actions: confirmedDelete)
             .onReceive(timer) { _ in
                 self.now = Date.now
             }
@@ -144,10 +152,35 @@ public struct RoutineList: View {
         }
     #endif
 
+    // swipe button to be shown when user has swiped left
+    private func swipeToDelete(routine: Routine) -> some View {
+        // NOTE that button role is NOT destructive, to prevent item from disappearing before confirmation
+        Button(role: .none) {
+            toBeDeleted = routine
+            confirmDelete = true
+        } label: {
+            Label("Delete", systemImage: "trash")
+        }
+        .tint(.red)
+    }
+
+    // confirmation dialog to be shown after user has swiped to delete
+    private func confirmedDelete() -> some View {
+        withAnimation {
+            Button("Delete ‘\(toBeDeleted?.name ?? "")’ routine?",
+                   role: .destructive) {
+                deleteAction(routine: toBeDeleted)
+                confirmDelete = false
+                toBeDeleted = nil
+            }
+        }
+    }
+
     // MARK: - Actions
 
-    private func deleteAction(offsets: IndexSet) {
-        offsets.map { routines[$0] }.forEach(viewContext.delete)
+    private func deleteAction(routine: Routine?) {
+        guard let routine else { return }
+        viewContext.delete(routine)
         do {
             try viewContext.save()
         } catch {
