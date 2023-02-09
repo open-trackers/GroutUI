@@ -167,7 +167,7 @@ public struct RoutineList: View {
     // confirmation dialog to be shown after user has swiped to delete
     private func confirmedDelete() -> some View {
         withAnimation {
-            Button("Delete ‘\(toBeDeleted?.name ?? "")’ routine?",
+            Button("Delete ‘\(toBeDeleted?.name ?? "")’",
                    role: .destructive) {
                 deleteAction(routine: toBeDeleted)
                 confirmDelete = false
