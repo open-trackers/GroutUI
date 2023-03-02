@@ -13,14 +13,16 @@ import os
 import SwiftUI
 
 import GroutLib
+import TrackerUI
 
 private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                             category: "RoutineList")
 
 /// Common view shared by watchOS and iOS.
 public struct RoutineList: View {
+    @EnvironmentObject private var manager: CoreDataStack
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject private var router: MyRouter
+    @EnvironmentObject private var router: GroutRouter
 
     // MARK: - Parameters
 
@@ -97,7 +99,7 @@ public struct RoutineList: View {
             }
         #endif
             .fullScreenCover(item: $selectedRoutine) { url in
-                NavStack(name: "routineRun", navData: $routineRunNavData) {
+                NavStack(navData: $routineRunNavData) {
                     VStack {
                         if let routine = Routine.get(viewContext, forURIRepresentation: url) {
                             RoutineRun(routine: routine,
@@ -246,11 +248,11 @@ public struct RoutineList: View {
 
     #if os(watchOS)
         private func settingsAction() {
-            router.path.append(MyRoutes.settings)
+            router.path.append(GroutRoute.settings)
         }
 
         private func aboutAction() {
-            router.path.append(MyRoutes.about)
+            router.path.append(GroutRoute.about)
         }
     #endif
 
@@ -258,7 +260,7 @@ public struct RoutineList: View {
     private func taskAction() async {
         logger.notice("\(#function) START")
 
-        await PersistenceManager.shared.container.performBackgroundTask { backgroundContext in
+        await manager.container.performBackgroundTask { backgroundContext in
             do {
                 if !updatedArchiveIDs {
                     updateArchiveIDs(routines: routines.map { $0 })
@@ -277,8 +279,17 @@ public struct RoutineList: View {
                 #endif
 
                 #if os(iOS)
+                    guard let mainStore = manager.getMainStore(backgroundContext),
+                          let archiveStore = manager.getArchiveStore(backgroundContext)
+                    else {
+                        logger.error("\(#function): unable to acquire configuration to transfer log records.")
+                        return
+                    }
+
                     // move log records to archive store
-                    try transferToArchive(backgroundContext)
+                    try transferToArchive(backgroundContext,
+                                          mainStore: mainStore,
+                                          archiveStore: archiveStore)
                     try backgroundContext.save()
                 #endif
             } catch {
@@ -300,7 +311,8 @@ struct RoutineList_Previews: PreviewProvider {
 
     static var previews: some View {
         // let container = try! PersistenceManager.getTestContainer()
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         // let ctx = container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"

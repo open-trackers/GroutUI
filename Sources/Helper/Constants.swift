@@ -10,14 +10,14 @@
 
 import SwiftUI
 
-public let websiteDomain = "gym-routine-tracker.github.io"
-public let websiteTitle = "Gym Routine Tracker"
-public let copyright = "Copyright 2022, 2023 OpenAlloc LLC"
-
-public let websiteURL = URL(string: "https://\(websiteDomain)")!
-public let websitePrivacyURL = websiteURL.appending(path: "privacy")
-public let websiteTermsURL = websiteURL.appending(path: "terms")
-public let websiteTutorialURL = websiteURL.appending(path: "tutorial")
+// public let websiteDomain = "gym-routine-tracker.github.io"
+// public let websiteTitle = "Gym Routine Tracker"
+// public let copyright = "Copyright 2022, 2023 OpenAlloc LLC"
+//
+// public let websiteURL = URL(string: "https://\(websiteDomain)")!
+// public let websitePrivacyURL = websiteURL.appending(path: "privacy")
+// public let websiteTermsURL = websiteURL.appending(path: "terms")
+// public let websiteTutorialURL = websiteURL.appending(path: "tutorial")
 
 public let routineColor: Color = .accentColor
 public let routineListItemTint: Color = .accentColor.opacity(0.2)
@@ -70,3 +70,22 @@ public let alwaysAdvanceOnLongPressKey = "alwaysAdvanceOnLongPress"
 public let logToHistoryKey = "logToHistory"
 
 public let controlTab = URL(string: "uri://control-panel")!
+
+public let websiteDomain = "open-trackers.github.io"
+public let copyright = "Copyright 2022, 2023 OpenAlloc LLC"
+
+public let websiteURL = URL(string: "https://\(websiteDomain)")!
+public let websitePrivacyURL = websiteURL.appending(path: "privacy")
+public let websiteTermsURL = websiteURL.appending(path: "terms")
+
+public let websiteAppURL = websiteURL.appending(path: "grt")
+public let websiteAppTutorialURL = websiteAppURL.appending(path: "tutorial")
+
+public let websitePlea: String =
+    "As an open source project, \(shortAppName) depends on its community of users. Please help by rating and reviewing in the App Store!"
+
+#if os(watchOS)
+    public let shortAppName = "Gym RT"
+#elseif os(iOS)
+    public let shortAppName = "Gym RT+"
+#endif

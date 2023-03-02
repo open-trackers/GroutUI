@@ -12,6 +12,7 @@ import os
 import SwiftUI
 
 import GroutLib
+import TrackerUI
 
 public struct RoutineControl: View {
     #if os(iOS)
@@ -19,7 +20,7 @@ public struct RoutineControl: View {
     #endif
 
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject private var router: MyRouter
+    @EnvironmentObject private var router: GroutRouter
 
     // MARK: - Parameters
 
@@ -135,7 +136,8 @@ struct RoutineControl_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Leg"
         let e1 = Exercise.create(ctx, userOrder: 0)

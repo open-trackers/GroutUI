@@ -13,7 +13,7 @@ import SwiftUI
 public struct SettingsForm<Content>: View
     where Content: View
 {
-    @EnvironmentObject private var router: MyRouter
+    @EnvironmentObject private var router: GroutRouter
 
     // MARK: - Parameters
 

@@ -14,10 +14,11 @@ import SwiftUI
 import Compactor
 
 import GroutLib
+import TrackerUI
 
 public struct RoutineCell: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject private var router: MyRouter
+    @EnvironmentObject private var router: GroutRouter
 
     // MARK: - Parameters
 
@@ -133,7 +134,7 @@ public struct RoutineCell: View {
     private func detailAction() {
         Haptics.play()
 
-        router.path.append(MyRoutes.routineDetail(routine.uriRepresentation))
+        router.path.append(GroutRoute.routineDetail(routine.uriRepresentation))
     }
 
     // refresh immediately on routine completion (timer only updates 'now' on the minute)
@@ -142,7 +143,7 @@ public struct RoutineCell: View {
     }
 
     private func startAction() {
-        Haptics.play(.startingRoutine)
+        Haptics.play(.startingAction)
 
         // NOTE true to clear lastCompleted in each Exercise
         onStart(routine.uriRepresentation, true)
@@ -161,7 +162,8 @@ struct RoutineCell_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let r1 = Routine.create(ctx, userOrder: 0)
         r1.name = "Pull" // "Back & Bicep"
         r1.lastDuration = 3545

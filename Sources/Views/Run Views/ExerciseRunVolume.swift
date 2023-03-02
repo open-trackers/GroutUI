@@ -12,6 +12,7 @@ import CoreData
 import SwiftUI
 
 import GroutLib
+import TrackerUI
 
 struct ExerciseRunVolume: View {
     @ObservedObject var exercise: Exercise
@@ -83,7 +84,8 @@ struct ExerciseRunVolume_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
         let e1 = Exercise.create(ctx, userOrder: 0)

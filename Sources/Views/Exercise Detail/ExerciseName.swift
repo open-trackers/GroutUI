@@ -11,6 +11,7 @@
 import SwiftUI
 
 import GroutLib
+import TrackerUI
 
 public struct ExerciseName: View {
     // MARK: - Parameters
@@ -29,8 +30,12 @@ public struct ExerciseName: View {
         Section {
             TextFieldWithPresets($exercise.wrappedName,
                                  prompt: "Enter exercise name",
-                                 color: tint,
-                                 presets: exercisePresets)
+                                 presets: exercisePresets) { _, _ in
+                // nothing to set other than the name
+            } label: {
+                Text($0)
+                    .foregroundStyle(.tint)
+            }
         } header: {
             Text("Name")
                 .foregroundStyle(tint)
@@ -40,7 +45,8 @@ public struct ExerciseName: View {
 
 struct ExerciseName_Previews: PreviewProvider {
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let exercise = Exercise.create(ctx, userOrder: 0)
         exercise.name = "Lat Pulldown"
         return Form { ExerciseName(exercise: exercise, tint: .orange) }

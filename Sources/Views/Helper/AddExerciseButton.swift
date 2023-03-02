@@ -20,7 +20,7 @@ public struct AddExerciseButton<Label>: View
     where Label: View
 {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject private var router: MyRouter
+    @EnvironmentObject private var router: GroutRouter
 
     // MARK: - Parameters
 
@@ -65,7 +65,7 @@ public struct AddExerciseButton<Label>: View
             nu.routine = routine
             do {
                 try viewContext.save()
-                router.path.append(MyRoutes.exerciseDetail(nu.uriRepresentation))
+                router.path.append(GroutRoute.exerciseDetail(nu.uriRepresentation))
             } catch {
                 logger.error("\(#function): \(error.localizedDescription)")
             }
@@ -75,7 +75,8 @@ public struct AddExerciseButton<Label>: View
 
 struct AddExerciseButton_Previews: PreviewProvider {
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
         return AddExerciseButton(routine: routine) {

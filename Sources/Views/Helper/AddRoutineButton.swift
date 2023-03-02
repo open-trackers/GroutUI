@@ -20,7 +20,7 @@ public struct AddRoutineButton<Label>: View
     where Label: View
 {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject private var router: MyRouter
+    @EnvironmentObject private var router: GroutRouter
 
     // MARK: - Parameters
 
@@ -57,7 +57,7 @@ public struct AddRoutineButton<Label>: View
             nu.name = "New Routine"
             do {
                 try viewContext.save()
-                router.path.append(MyRoutes.routineDetail(nu.uriRepresentation))
+                router.path.append(GroutRoute.routineDetail(nu.uriRepresentation))
             } catch {
                 logger.error("\(#function): \(error.localizedDescription)")
             }

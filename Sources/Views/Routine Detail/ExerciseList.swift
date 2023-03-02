@@ -19,7 +19,7 @@ private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
 public struct ExerciseList: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject private var router: MyRouter
+    @EnvironmentObject private var router: GroutRouter
 
     // MARK: - Parameters
 
@@ -85,7 +85,7 @@ public struct ExerciseList: View {
     // MARK: - Actions
 
     private func detailAction(exercise: Exercise) {
-        router.path.append(MyRoutes.exerciseDetail(exercise.uriRepresentation))
+        router.path.append(GroutRoute.exerciseDetail(exercise.uriRepresentation))
     }
 
     private func deleteAction(offsets: IndexSet) {
@@ -119,7 +119,8 @@ struct ExerciseList_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
         let exercise = Exercise.create(ctx, userOrder: 0)

@@ -13,11 +13,14 @@ import os
 import SwiftUI
 
 import GroutLib
+import TrackerUI
 
 private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                             category: "ExerciseRun")
 
 public struct ExerciseRun: View {
+    @EnvironmentObject private var manager: CoreDataStack
+
     @AppStorage(logToHistoryKey) var logToHistory: Bool = true
 
     #if os(iOS)
@@ -270,7 +273,7 @@ public struct ExerciseRun: View {
 
         logger.debug("\(#function)")
         if alwaysAdvanceOnLongPress {
-            Haptics.play(.longPress)
+            Haptics.play(.immediateAction)
             markDone(withAdvance: true)
         } else {
             Haptics.play(.warning)
@@ -283,8 +286,11 @@ public struct ExerciseRun: View {
     private func markDone(withAdvance: Bool) {
         logger.debug("\(#function): withAdvance=\(withAdvance)")
 
+        guard let mainStore = manager.getMainStore(viewContext) else { return }
+
         do {
             try exercise.markDone(viewContext,
+                                  mainStore: mainStore,
                                   completedAt: Date.now,
                                   withAdvance: withAdvance,
                                   routineStartedAt: routineStartedAt,
@@ -312,7 +318,8 @@ struct ExerciseRun_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
         let e1 = Exercise.create(ctx, userOrder: 0)

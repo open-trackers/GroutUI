@@ -9,13 +9,14 @@ import os
 import SwiftUI
 
 import GroutLib
+import TrackerUI
 
 private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                             category: "RoutineDetail")
 
 public struct RoutineDetail: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject private var router: MyRouter
+    @EnvironmentObject private var router: GroutRouter
 
     // MARK: - Parameters
 
@@ -80,8 +81,12 @@ public struct RoutineDetail: View {
                 Section("Name") {
                     TextFieldWithPresets($routine.wrappedName,
                                          prompt: "Enter routine name",
-                                         color: routineColor,
-                                         presets: routinePresets)
+                                         // color: routineColor,
+                                         presets: routinePresets) { _, _ in
+                        // nothing to do other than set routine name
+                    } label: {
+                        Text($0)
+                    }
                 }
 
                 Section("Image") {
@@ -117,7 +122,7 @@ public struct RoutineDetail: View {
 
     #if os(iOS)
         private func exerciseListAction() {
-            router.path.append(MyRoutes.exerciseList(routine.uriRepresentation))
+            router.path.append(GroutRoute.exerciseList(routine.uriRepresentation))
         }
     #endif
 
@@ -141,7 +146,8 @@ struct RoutineDetail_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
         let exercise = Exercise.create(ctx, userOrder: 0)

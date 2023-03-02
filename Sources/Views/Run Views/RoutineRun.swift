@@ -13,13 +13,15 @@ import os
 import SwiftUI
 
 import GroutLib
+import TrackerLib
+import TrackerUI
 
 private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                             category: String(describing: RoutineRun.self))
 
 public struct RoutineRun: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject private var router: MyRouter
+    @EnvironmentObject private var router: GroutRouter
 
     // MARK: - Parameters
 
@@ -188,13 +190,13 @@ public struct RoutineRun: View {
             if selectedTab != exerciseURI {
                 selectedTab = exerciseURI
             }
-            router.path.append(MyRoutes.exerciseDetail(exerciseURI))
+            router.path.append(GroutRoute.exerciseDetail(exerciseURI))
         }
     }
 
     private func stopAction() {
         logger.debug("\(#function)")
-        Haptics.play(.stoppingRoutine)
+        Haptics.play(.stoppingAction)
         onStop(routine) // parent view will take down the sheet & save context
     }
 
@@ -207,7 +209,7 @@ public struct RoutineRun: View {
             // logger.debug("\(#function) Selecting TAB, from \(selectedTab.suffix ?? "") to \(nextTab.suffix ?? "")")
             selectedTab = nextTab
         } else {
-            Haptics.play(.routineCompleted)
+            Haptics.play(.completedAction)
             // logger.debug("\(#function) from \(selectedTab.suffix ?? "") to CONTROL")
             selectedTab = controlTab
         }
@@ -227,7 +229,7 @@ public struct RoutineRun: View {
 struct RoutineRun_Previews: PreviewProvider {
     struct TestHolder: View {
         var routine: Routine
-        @State var startedAt: Date = Date.now.addingTimeInterval(-1000)
+        @State var startedAt: Date = .now.addingTimeInterval(-1000)
         var body: some View {
             NavigationStack {
                 RoutineRun(routine: routine,
@@ -239,7 +241,8 @@ struct RoutineRun_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
         let e1 = Exercise.create(ctx, userOrder: 0)
