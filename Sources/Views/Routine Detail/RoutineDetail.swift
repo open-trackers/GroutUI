@@ -47,8 +47,12 @@ public struct RoutineDetail: View {
                     Section("Name") {
                         TextFieldWithPresets($routine.wrappedName,
                                              prompt: "Enter routine name",
-                                             color: routineColor,
-                                             presets: routinePresets)
+                                             // color: routineColor,
+                                             presets: routinePresets) { _, _ in
+                            // nothing to set other than the name
+                        } label: {
+                            Text($0)
+                        }
                     }
 
                     Section("Image") {

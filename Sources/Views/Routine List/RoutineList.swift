@@ -13,6 +13,7 @@ import os
 import SwiftUI
 
 import GroutLib
+import TrackerLib
 import TrackerUI
 
 private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
