@@ -270,7 +270,7 @@ public struct RoutineList: View {
                 #if os(watchOS)
                     // delete log records older than N days
                     guard let keepSince = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
-                    else { throw DataError.missingData(msg: "Clean: could not resolve date one year in past") }
+                    else { throw TrackerError.missingData(msg: "Clean: could not resolve date one year in past") }
                     logger.notice("\(#function): keepSince=\(keepSince)")
                     try cleanLogRecords(backgroundContext, keepSince: keepSince)
                     try backgroundContext.save()
