@@ -27,10 +27,10 @@ public struct RoutineList: View {
 
     // MARK: - Parameters
 
-    private let beforeStart: () -> Void
+    private let onShortcut: () -> Void
 
-    public init(beforeStart: @escaping () -> Void = {}) {
-        self.beforeStart = beforeStart
+    public init(onShortcut: @escaping () -> Void = {}) {
+        self.onShortcut = onShortcut
     }
 
     // MARK: - Locals
@@ -208,8 +208,6 @@ public struct RoutineList: View {
 
         logger.notice("\(#function): Start Routine \(routine.wrappedName)")
 
-        beforeStart() // To force to first tab in iOS app, in case started via shortcut
-
         do {
             // NOTE: storing startedAt locally (not in routine.lastStartedAt)
             // to ignore mistaken starts.
@@ -242,6 +240,8 @@ public struct RoutineList: View {
         }
 
         logger.notice("\(#function): continueUserActivityAction on routine=\(routine.wrappedName)")
+
+        onShortcut() // To force to first tab in iOS app, in case started via shortcut
 
         // NOTE: not clearing data, so completed exercises are preserved
         startAction(routineURI, clearData: true)
@@ -305,7 +305,7 @@ struct RoutineList_Previews: PreviewProvider {
     struct TestHolder: View {
         var body: some View {
             NavigationStack {
-                RoutineList(beforeStart: {})
+                RoutineList(onShortcut: {})
             }
         }
     }
