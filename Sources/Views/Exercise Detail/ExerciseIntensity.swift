@@ -116,7 +116,9 @@ struct ExerciseIntensity_Previews: PreviewProvider {
     static var previews: some View {
         let manager = CoreDataStack.getPreviewStack()
         let ctx = manager.container.viewContext
-        let exercise = Exercise.create(ctx, userOrder: 0)
+        let routine = Routine.create(ctx, userOrder: 0)
+        routine.name = "Beverage"
+        let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
         exercise.name = "Lat Pulldown"
         exercise.units = Units.kilograms.rawValue
         return Form { ExerciseIntensity(exercise: exercise, tint: .green) }

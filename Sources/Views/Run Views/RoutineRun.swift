@@ -170,7 +170,7 @@ public struct RoutineRun: View {
         logger.debug("\(#function) maxOrder=\(maxOrder)")
         withAnimation {
             Haptics.play()
-            let nu = Exercise.create(viewContext, userOrder: maxOrder + 1)
+            let nu = Exercise.create(viewContext, routine: routine, userOrder: maxOrder + 1)
             routine.addToExercises(nu)
             do {
                 try viewContext.save()
@@ -245,16 +245,14 @@ struct RoutineRun_Previews: PreviewProvider {
         let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
-        let e1 = Exercise.create(ctx, userOrder: 0)
+        let e1 = Exercise.create(ctx, routine: routine, userOrder: 0)
         e1.name = "Lat Pulldown"
-        e1.routine = routine
         e1.primarySetting = 4
         e1.secondarySetting = 6
         // e1.units = Units.kilograms.rawValue
         e1.intensityStep = 7.1
-        let e2 = Exercise.create(ctx, userOrder: 1)
+        let e2 = Exercise.create(ctx, routine: routine, userOrder: 1)
         e2.name = "Arm Curl"
-        e2.routine = routine
         return
             TestHolder(routine: routine)
                 .environment(\.managedObjectContext, ctx)

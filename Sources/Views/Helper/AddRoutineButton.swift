@@ -12,63 +12,53 @@ import os
 import SwiftUI
 
 import GroutLib
+import TrackerUI
 
-private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                            category: "AddRoutineButton")
-
-public struct AddRoutineButton<Label>: View
-    where Label: View
-{
+public struct AddRoutineButton: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var router: GroutRouter
 
     // MARK: - Parameters
 
-    private var label: () -> Label
-
-    public init(label: @escaping () -> Label) {
-        self.label = label
-    }
+    public init() {}
 
     // MARK: - Locals
-
-    @FetchRequest(entity: Routine.entity(),
-                  sortDescriptors: [NSSortDescriptor(keyPath: \Routine.userOrder, ascending: true)],
-                  animation: .default)
-    private var routines: FetchedResults<Routine>
 
     // MARK: - Views
 
     public var body: some View {
-        Button(action: addAction, label: label)
+        AddElementButton(elementName: "Routine",
+                         onCreate: createAction,
+                         onAfterSave: afterSaveAction)
     }
 
     // MARK: - Properties
 
     private var maxOrder: Int16 {
-        routines.last?.userOrder ?? 0
+        do {
+            return try Routine.maxUserOrder(viewContext) ?? 0
+        } catch {
+            // logger.error("\(#function): \(error.localizedDescription)")
+        }
+        return 0
     }
 
     // MARK: - Actions
 
-    private func addAction() {
-        withAnimation {
-            let nu = Routine.create(viewContext, userOrder: maxOrder + 1)
-            nu.name = "New Routine"
-            do {
-                try viewContext.save()
-                router.path.append(GroutRoute.routineDetail(nu.uriRepresentation))
-            } catch {
-                logger.error("\(#function): \(error.localizedDescription)")
-            }
-        }
+    private func createAction() -> Routine {
+        let nu = Routine.create(viewContext, userOrder: maxOrder)
+        nu.name = "New Routine"
+        nu.userOrder = maxOrder + 1
+        return nu
+    }
+
+    private func afterSaveAction(_ nu: Routine) {
+        router.path.append(GroutRoute.routineDetail(nu.uriRepresentation))
     }
 }
 
-struct AddRoutineButton_Previews: PreviewProvider {
-    static var previews: some View {
-        AddRoutineButton {
-            Text("Add Routine")
-        }
-    }
-}
+// struct AddRoutineButton_Previews: PreviewProvider {
+//    static var previews: some View {
+//        AddRoutineButton()
+//    }
+// }

@@ -14,7 +14,10 @@ import SwiftUI
 import Compactor
 
 import GroutLib
+import TrackerLib
 import TrackerUI
+
+extension Routine: Celled {}
 
 public struct RoutineCell: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -24,94 +27,100 @@ public struct RoutineCell: View {
 
     private var routine: Routine
     @Binding private var now: Date
-    private var onStart: (URL, Bool) -> Void
+    private let onDetail: (URL) -> Void
+    private var onShortPress: (URL, Bool) -> Void
 
     public init(routine: Routine,
                 now: Binding<Date>,
-                onStart: @escaping (URL, Bool) -> Void)
+                onDetail: @escaping (URL) -> Void,
+                onShortPress: @escaping (URL, Bool) -> Void)
     {
         self.routine = routine
         _now = now
-        self.onStart = onStart
+        self.onDetail = onDetail
+        self.onShortPress = onShortPress
     }
-
-    // MARK: - Locals
-
-    private let minHeight = 120.0
 
     // MARK: - Views
 
     public var body: some View {
-        GeometryReader { geo in
-            VStack(alignment: .leading, spacing: 0) {
-                topRow
-                    .frame(height: geo.size.height * 0.4)
-
-                bottomRow
-                    .frame(height: geo.size.height * 0.6)
-            }
-        }
-        .frame(minHeight: minHeight, maxHeight: .infinity)
-        .onAppear(perform: onAppearAction)
+        // NOTE onShortPress true to clear lastCompleted in each Exercise
+        Cell(element: routine,
+             now: $now,
+             defaultImageName: "dumbbell.fill",
+             subtitle: subtitle,
+             onDetail: { onDetail(uri) },
+             onShortPress: { onShortPress(uri, true) })
+//        GeometryReader { geo in
+//            VStack(alignment: .leading, spacing: 0) {
+//                topRow
+//                    .frame(height: geo.size.height * 0.4)
+//
+//                bottomRow
+//                    .frame(height: geo.size.height * 0.6)
+//            }
+//        }
+//        .frame(minHeight: minHeight, maxHeight: .infinity)
+//        .onAppear(perform: onAppearAction)
     }
 
-    private var topRow: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                HStack {
-                    Image(systemName: routine.imageName ?? "dumbbell.fill")
-                    Spacer()
-                }
-            }
-            .padding(.vertical, 12)
-            .contentShape(Rectangle())
-            .onTapGesture(perform: startAction)
-            // .border(.teal)
+//    private var topRow: some View {
+//        HStack {
+//            VStack(alignment: .leading) {
+//                HStack {
+//                    Image(systemName: routine.imageName ?? "dumbbell.fill")
+//                    Spacer()
+//                }
+//            }
+//            .padding(.vertical, 12)
+//            .contentShape(Rectangle())
+//            .onTapGesture(perform: startAction)
+//            // .border(.teal)
+//
+//            Spacer(minLength: 20)
+//
+//            detailButton
+//            // .border(.teal)
+//        }
+//        .foregroundColor(routineColor)
+//        .font(.title2)
+//        .symbolRenderingMode(.hierarchical)
+//    }
+//
+//    private var bottomRow: some View {
+//        HStack {
+//            VStack(alignment: .leading) {
+//                titleText
+//                routineSinceText
+//            }
+//            Spacer()
+//        }
+//        .contentShape(Rectangle())
+//        .onTapGesture(perform: startAction)
+//        // .border(.teal)
+//    }
+//
+//    private var detailButton: some View {
+//        ZStack {
+//            Image(systemName: "ellipsis")
+//                .padding(.leading, 20)
+//                .padding(.vertical, 18)
+//
+//            Button(action: detailAction) {
+//                EmptyView()
+//            }
+//
+//            .frame(width: 0, height: 0)
+//            .foregroundColor(.clear)
+//        }
+//    }
 
-            Spacer(minLength: 20)
+//    private var titleText: some View {
+//        TitleText(routine.name ?? "unknown")
+//            .foregroundColor(titleColor)
+//    }
 
-            detailButton
-            // .border(.teal)
-        }
-        .foregroundColor(routineColor)
-        .font(.title2)
-        .symbolRenderingMode(.hierarchical)
-    }
-
-    private var bottomRow: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                titleText
-                routineSinceText
-            }
-            Spacer()
-        }
-        .contentShape(Rectangle())
-        .onTapGesture(perform: startAction)
-        // .border(.teal)
-    }
-
-    private var detailButton: some View {
-        ZStack {
-            Image(systemName: "ellipsis")
-                .padding(.leading, 20)
-                .padding(.vertical, 18)
-
-            Button(action: detailAction) {
-                EmptyView()
-            }
-
-            .frame(width: 0, height: 0)
-            .foregroundColor(.clear)
-        }
-    }
-
-    private var titleText: some View {
-        TitleText(routine.name ?? "unknown")
-            .foregroundColor(titleColor)
-    }
-
-    private var routineSinceText: some View {
+    private func subtitle() -> some View {
         SinceText(startedAt: routine.lastStartedAt ?? Date(), duration: routine.lastDuration, now: $now, compactorStyle: compactorStyle)
             .font(.body)
             .italic()
@@ -121,6 +130,10 @@ public struct RoutineCell: View {
 
     // MARK: - Properties
 
+    private var uri: URL {
+        routine.uriRepresentation
+    }
+
     private var compactorStyle: TimeCompactor.Style {
         #if os(watchOS)
             .short
@@ -129,25 +142,25 @@ public struct RoutineCell: View {
         #endif
     }
 
-    // MARK: - Actions
-
-    private func detailAction() {
-        Haptics.play()
-
-        router.path.append(GroutRoute.routineDetail(routine.uriRepresentation))
-    }
-
-    // refresh immediately on routine completion (timer only updates 'now' on the minute)
-    private func onAppearAction() {
-        now = Date.now
-    }
-
-    private func startAction() {
-        Haptics.play(.startingAction)
-
-        // NOTE true to clear lastCompleted in each Exercise
-        onStart(routine.uriRepresentation, true)
-    }
+//    // MARK: - Actions
+//
+//    private func detailAction() {
+//        Haptics.play()
+//
+//        router.path.append(GroutRoute.routineDetail(routine.uriRepresentation))
+//    }
+//
+//    // refresh immediately on routine completion (timer only updates 'now' on the minute)
+//    private func onAppearAction() {
+//        now = Date.now
+//    }
+//
+//    private func startAction() {
+//        Haptics.play(.startingAction)
+//
+//        // NOTE true to clear lastCompleted in each Exercise
+//        onShortPress(routine.uriRepresentation, true)
+//    }
 }
 
 struct RoutineCell_Previews: PreviewProvider {
@@ -156,7 +169,7 @@ struct RoutineCell_Previews: PreviewProvider {
         @State var now: Date = .now
         var body: some View {
             List(routines, id: \.self) { routine in
-                RoutineCell(routine: routine, now: $now, onStart: { _, _ in })
+                RoutineCell(routine: routine, now: $now, onDetail: { _ in }, onShortPress: { _, _ in })
             }
         }
     }

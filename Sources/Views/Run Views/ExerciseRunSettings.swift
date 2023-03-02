@@ -92,9 +92,8 @@ struct ExerciseRunSettings_Previews: PreviewProvider {
         let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
-        let e1 = Exercise.create(ctx, userOrder: 0)
+        let e1 = Exercise.create(ctx, routine: routine, userOrder: 0)
         e1.name = "Lat Pulldown"
-        e1.routine = routine
         e1.primarySetting = 4
         e1.intensityStep = 7.1
         return NavigationStack {

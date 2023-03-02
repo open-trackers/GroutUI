@@ -134,7 +134,7 @@ struct RoutineDetail_Previews: PreviewProvider {
         let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
-        let exercise = Exercise.create(ctx, userOrder: 0)
+        let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
         exercise.name = "Lat Pulldown"
         exercise.routine = routine
         return TestHolder(routine: routine)

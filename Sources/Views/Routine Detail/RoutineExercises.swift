@@ -36,7 +36,7 @@ public struct RoutineExercises: View {
                     Spacer()
                     Text(exerciseCount > 0 ? String(format: "%d", exerciseCount) : "none")
                     #if os(watchOS)
-                        .foregroundStyle(foodGroupColorDarkBg)
+                        .foregroundStyle(exerciseColorDarkBg)
                     #endif
                 }
             }
@@ -73,7 +73,7 @@ struct RoutineExercises_Previews: PreviewProvider {
         let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Beverage"
-        let exercise = Exercise.create(ctx, userOrder: 0)
+        let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
         exercise.routine = routine
         exercise.name = "Stout"
         return TestHolder(routine: routine)
