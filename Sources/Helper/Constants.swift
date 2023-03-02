@@ -85,7 +85,7 @@ public let websitePlea: String =
     "As an open source project, \(shortAppName) depends on its community of users. Please help by rating and reviewing in the App Store!"
 
 #if os(watchOS)
-    public let shortAppName = "Gym RT"
+    public let shortAppName = "GRT"
 #elseif os(iOS)
-    public let shortAppName = "Gym RT+"
+    public let shortAppName = "GRT+"
 #endif
