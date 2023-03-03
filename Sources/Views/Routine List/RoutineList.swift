@@ -269,7 +269,7 @@ public struct RoutineList: View {
 
     private func continueUserActivityAction(_ userActivity: NSUserActivity) {
         guard let routineURI = userActivity.userInfo?[userActivity_uriRepKey] as? URL,
-              let routine = NSManagedObject.get(viewContext, forURIRepresentation: routineURI) as? Routine
+              let routine = Routine.get(viewContext, forURIRepresentation: routineURI) as? Routine
         else {
             logger.notice("\(#function): unable to continue User Activity")
             return
