@@ -59,7 +59,8 @@ public struct RoutineList: View {
     @SceneStorage("run-selected-routine") private var selectedRoutine: URL? = nil
     @SceneStorage("run-started-at") private var startedAt: Date = .distantFuture
 //    @SceneStorage("run-last-exercise-completed-at") private var lastExerciseCompletedAt: Date = .distantFuture
-//    @SceneStorage("updated-archive-ids") private var updatedArchiveIDs: Bool = false
+    @SceneStorage("updated-archive-ids") private var updatedArchiveIDs: Bool = false
+    @SceneStorage("updated-created-ats") private var updatedCreatedAts: Bool = false
 //
 //    // timer used to refresh "2d ago, for 16.5m" on each Routine Cell
 //    @State private var now = Date()
@@ -372,12 +373,21 @@ public struct RoutineList: View {
 
         await manager.container.performBackgroundTask { backgroundContext in
             do {
-//                if !updatedArchiveIDs {
-//                    updateArchiveIDs(routines: routines.map { $0 })
-//                    try backgroundContext.save()
-//                    logger.notice("\(#function): updated archive IDs, where necessary")
-//                    updatedArchiveIDs = true
-//                }
+                if !updatedArchiveIDs {
+                    try updateArchiveIDs(backgroundContext)
+                    try backgroundContext.save()
+                    logger.notice("\(#function): updated archive IDs, where necessary")
+                    updatedArchiveIDs = true
+                    try backgroundContext.save()
+                }
+
+                if !updatedCreatedAts {
+                    try updateCreatedAts(backgroundContext)
+                    try backgroundContext.save()
+                    logger.notice("\(#function): updated createdAts, where necessary")
+                    updatedArchiveIDs = true
+                    try backgroundContext.save()
+                }
 
                 #if os(watchOS)
                     // delete log records older than N days

@@ -291,7 +291,7 @@ public struct ExerciseRun: View {
         do {
             try exercise.markDone(viewContext,
                                   mainStore: mainStore,
-                                  completedAt: Date.now,
+                                  // completedAt: Date.now,
                                   withAdvance: withAdvance,
                                   routineStartedAt: routineStartedAt,
                                   logToHistory: logToHistory)
