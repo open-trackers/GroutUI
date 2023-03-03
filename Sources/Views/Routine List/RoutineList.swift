@@ -50,6 +50,7 @@ public struct RoutineList: View {
     // NOTE not stored, to allow resume/restore of started routine
     @State private var isNew = false
 
+    @SceneStorage("routine-run-nav") private var routineRunNavData: Data?
     @SceneStorage("run-selected-routine") private var selectedRoutine: URL? = nil
     @SceneStorage("run-started-at") private var startedAt: Date = .distantFuture
     @SceneStorage("updated-archive-ids") private var updatedArchiveIDs: Bool = false
@@ -84,6 +85,21 @@ public struct RoutineList: View {
                 }
             }
         }
+        .fullScreenCover(item: $selectedRoutine) { url in
+            NavStack(navData: $routineRunNavData) {
+                VStack {
+                    if let routine: Routine = Routine.get(viewContext, forURIRepresentation: url) {
+                        RoutineRun(routine: routine,
+                                   isNew: $isNew,
+                                   startedAt: $startedAt,
+                                   onStop: stopAction)
+                    } else {
+                        Text("Routine not found.")
+                    }
+                }
+            }
+        }
+       
         .onContinueUserActivity(runRoutineActivityType,
                                 perform: continueUserActivityAction)
         .task(priority: .utility, taskAction)
@@ -165,7 +181,7 @@ public struct RoutineList: View {
     }
 
     private func startAction(_ routineURI: URL) {
-        guard let routine = Routine.get(viewContext, forURIRepresentation: routineURI) else {
+        guard let routine: Routine = Routine.get(viewContext, forURIRepresentation: routineURI) else {
             logger.debug("\(#function): couldn't find routine; not starting")
             return
         }
