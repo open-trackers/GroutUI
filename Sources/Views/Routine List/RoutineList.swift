@@ -319,7 +319,7 @@ public struct RoutineList: View {
 //    }
 
     private func startAction(_ routineURI: URL, clearData: Bool) {
-        guard let routine = Routine.get(viewContext, forURIRepresentation: routineURI) else {
+        guard let routine: Routine = Routine.get(viewContext, forURIRepresentation: routineURI) else {
             logger.debug("\(#function): couldn't find routine; not starting")
             return
         }
