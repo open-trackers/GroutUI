@@ -29,7 +29,8 @@ public struct RoutineImage: View {
     public var body: some View {
         Section {
             ImageStepper(initialName: routine.imageName,
-                         imageNames: systemImageNames) {
+                         imageNames: systemImageNames)
+            {
                 routine.imageName = $0
             }
             #if os(watchOS)

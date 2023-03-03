@@ -30,7 +30,8 @@ public struct RoutineName: View {
         Section {
             TextFieldWithPresets($routine.wrappedName,
                                  prompt: "Enter routine name",
-                                 presets: routinePresets) { _, _ in
+                                 presets: routinePresets)
+            { _, _ in
                 // nothing to set other than the name
             } label: {
                 Text($0)

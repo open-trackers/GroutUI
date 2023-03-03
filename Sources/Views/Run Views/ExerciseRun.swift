@@ -30,7 +30,7 @@ public struct ExerciseRun: View {
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                                 category: String(describing: ExerciseRun.self))
-    
+
     // MARK: - Parameters
 
     @ObservedObject private var exercise: Exercise

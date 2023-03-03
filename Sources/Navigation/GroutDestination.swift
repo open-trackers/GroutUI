@@ -79,7 +79,8 @@ public struct GroutDestination: View {
                   termsURL: websiteTermsURL,
                   tutorialURL: websiteAppTutorialURL,
                   copyright: copyright,
-                  plea: websitePlea) {
+                  plea: websitePlea)
+        {
             AppIcon(name: "app_icon")
         }
     }

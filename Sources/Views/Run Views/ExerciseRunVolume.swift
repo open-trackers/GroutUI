@@ -26,7 +26,8 @@ struct ExerciseRunVolume: View {
             ExerciseRunMiddleRow(imageName: "dumbbell.fill",
                                  imageColor: exerciseSetsColor,
                                  onDetail: { onEdit(exercise.uriRepresentation) },
-                                 onTap: tapAction) {
+                                 onTap: tapAction)
+            {
                 volumeText
             }
         #elseif os(iOS)

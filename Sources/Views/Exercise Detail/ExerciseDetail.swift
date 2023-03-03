@@ -30,7 +30,7 @@ public struct ExerciseDetail: View {
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                                 category: String(describing: ExerciseDetail.self))
-    
+
     #if os(watchOS)
         @SceneStorage("exercise-detail-tab") private var tabSelected = 1
     #endif

@@ -30,7 +30,8 @@ public struct ExerciseName: View {
         Section {
             TextFieldWithPresets($exercise.wrappedName,
                                  prompt: "Enter exercise name",
-                                 presets: exercisePresets) { _, _ in
+                                 presets: exercisePresets)
+            { _, _ in
                 // nothing to set other than the name
             } label: {
                 Text($0)

@@ -60,7 +60,8 @@ public struct RoutineList: View {
 
     public var body: some View {
         CellList(cell: routineCell,
-                 addButton: { AddRoutineButton() }) {
+                 addButton: { AddRoutineButton() })
+        {
             #if os(watchOS)
                 watchButtons
             #elseif os(iOS)
@@ -99,7 +100,7 @@ public struct RoutineList: View {
                 }
             }
         }
-       
+
         .onContinueUserActivity(runRoutineActivityType,
                                 perform: continueUserActivityAction)
         .task(priority: .utility, taskAction)

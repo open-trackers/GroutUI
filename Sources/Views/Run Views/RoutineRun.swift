@@ -56,7 +56,7 @@ public struct RoutineRun: View {
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                                 category: String(describing: RoutineRun.self))
-    
+
     @SceneStorage("routine-run-tab") private var selectedTab: URL = controlTab
 
     @FetchRequest private var exercises: FetchedResults<Exercise>

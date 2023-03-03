@@ -23,7 +23,8 @@ struct ExerciseRunIntensity: View {
         #if os(watchOS)
             Stepper(value: $exercise.lastIntensity,
                     in: 0.0 ... Exercise.intensityMaxValue,
-                    step: exercise.intensityStep) {
+                    step: exercise.intensityStep)
+            {
                 intensityText
                     .modify {
                         if #available(iOS 16.1, watchOS 9.1, *) {
@@ -44,7 +45,8 @@ struct ExerciseRunIntensity: View {
             GroupBox {
                 GroutStepper(value: $exercise.lastIntensity,
                              in: 0.0 ... Exercise.intensityMaxValue,
-                             step: exercise.intensityStep) {
+                             step: exercise.intensityStep)
+                {
                     intensityText
                 }
                 .disabled(exercise.isDone)

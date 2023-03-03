@@ -48,7 +48,7 @@ struct GettingStarted: View {
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") {
-                    self.show = false
+                    show = false
                 }
             }
             ToolbarItem(placement: .confirmationAction) {

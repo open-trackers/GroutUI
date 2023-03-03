@@ -26,7 +26,8 @@ struct ExerciseRunSettings: View {
             ExerciseRunMiddleRow(imageName: "gearshape.fill",
                                  imageColor: exerciseGearColor,
                                  onDetail: { onEdit(exercise.uriRepresentation) },
-                                 onTap: tapAction) {
+                                 onTap: tapAction)
+            {
                 settingsText
             }
         #elseif os(iOS)
