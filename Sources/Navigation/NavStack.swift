@@ -14,9 +14,6 @@ import SwiftUI
 import GroutLib
 import TrackerUI
 
-private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                            category: "NavStack")
-
 public struct NavStack<Destination, Content>: View
     where Destination: View, Content: View
 {
@@ -40,6 +37,9 @@ public struct NavStack<Destination, Content>: View
     }
 
     // MARK: - Locals
+
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                                category: String(describing: NavStack<Destination, Content>.self))
 
     @StateObject private var router: GroutRouter = .init()
 

@@ -13,9 +13,6 @@ import SwiftUI
 
 import GroutLib
 
-private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                            category: "ExerciseDetail")
-
 public struct ExerciseDetail: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.managedObjectContext) private var viewContext
@@ -31,6 +28,9 @@ public struct ExerciseDetail: View {
 
     // MARK: - Locals
 
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                                category: String(describing: ExerciseDetail.self))
+    
     #if os(watchOS)
         @SceneStorage("exercise-detail-tab") private var tabSelected = 1
     #endif

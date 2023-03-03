@@ -15,9 +15,6 @@ import SwiftUI
 import GroutLib
 import TrackerUI
 
-private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                            category: "ExerciseRun")
-
 public struct ExerciseRun: View {
     @EnvironmentObject private var manager: CoreDataStack
 
@@ -31,6 +28,9 @@ public struct ExerciseRun: View {
     @Environment(\.managedObjectContext) private var viewContext
     @AppStorage(alwaysAdvanceOnLongPressKey) var alwaysAdvanceOnLongPress: Bool = false
 
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                                category: String(describing: ExerciseRun.self))
+    
     // MARK: - Parameters
 
     @ObservedObject private var exercise: Exercise

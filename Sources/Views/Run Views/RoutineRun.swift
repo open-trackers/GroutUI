@@ -16,9 +16,6 @@ import GroutLib
 import TrackerLib
 import TrackerUI
 
-private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                            category: String(describing: RoutineRun.self))
-
 public struct RoutineRun: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var router: GroutRouter
@@ -57,6 +54,9 @@ public struct RoutineRun: View {
 
     // MARK: - Locals
 
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                                category: String(describing: RoutineRun.self))
+    
     @SceneStorage("routine-run-tab") private var selectedTab: URL = controlTab
 
     @FetchRequest private var exercises: FetchedResults<Exercise>
