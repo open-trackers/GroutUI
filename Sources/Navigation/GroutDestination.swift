@@ -41,7 +41,7 @@ public struct GroutDestination: View {
         case .about:
             aboutView
         case let .routineDetail(routineURI):
-            if let routine = Routine.get(viewContext, forURIRepresentation: routineURI) {
+            if let routine: Routine = Routine.get(viewContext, forURIRepresentation: routineURI) {
                 RoutineDetail(routine: routine)
                     .environmentObject(router)
                     .environment(\.managedObjectContext, viewContext)
@@ -49,7 +49,7 @@ public struct GroutDestination: View {
                 Text("Routine not available to display detail.")
             }
         case let .exerciseList(routineURI):
-            if let routine = Routine.get(viewContext, forURIRepresentation: routineURI) {
+            if let routine: Routine = Routine.get(viewContext, forURIRepresentation: routineURI) {
                 ExerciseList(routine: routine)
                     .environmentObject(router)
                     .environment(\.managedObjectContext, viewContext)
@@ -57,7 +57,7 @@ public struct GroutDestination: View {
                 Text("Routine not available to display exercise list.")
             }
         case let .exerciseDetail(exerciseURI):
-            if let exercise = Exercise.get(viewContext, forURIRepresentation: exerciseURI) {
+            if let exercise: Exercise = Exercise.get(viewContext, forURIRepresentation: exerciseURI) {
                 ExerciseDetail(exercise: exercise)
                     .environmentObject(router)
                     .environment(\.managedObjectContext, viewContext)
