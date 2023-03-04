@@ -45,44 +45,51 @@ public struct RoutineControl: View {
     // MARK: - Locals
 
     #if os(watchOS)
-        let verticalSpacing: CGFloat = 15
-        let minTitleHeight: CGFloat = 25
+        let verticalSpacing: CGFloat = 5 // NOTE 5 may be needed on 40mm watches
+        let minTitleHeight: CGFloat = 20
         let maxButtonHeight: CGFloat = 60
-        let interButtonSpacing: CGFloat = 15
+        let horzButtonSpacing: CGFloat = 15
+        let maxFontSize: CGFloat = 35
     #elseif os(iOS)
         let verticalSpacing: CGFloat = 30
         let minTitleHeight: CGFloat = 60
         let maxButtonHeight: CGFloat = 150
         let interButtonSpacing: CGFloat = 30
+        let maxFontSize: CGFloat = 40
     #endif
 
     // MARK: - Views
 
     public var body: some View {
         VStack(spacing: verticalSpacing) {
-            TitleText(routine.wrappedName)
+            TitleText(routine.wrappedName, maxFontSize: maxFontSize)
                 .foregroundColor(titleColor)
                 .frame(minHeight: minTitleHeight)
             Group {
                 middle
+
                 bottom
+                #if os(watchOS)
+                .padding(.top, 10) // NOTE may be needed on Ultra (TODO try to eliminate this)
+                #endif
             }
             .frame(maxHeight: maxButtonHeight)
             #if os(iOS)
                 Spacer()
             #endif
         }
-        .frame(maxHeight: .infinity)
-//             .border(.red)
+        .frame(maxHeight: .infinity, alignment: .top)
         #if os(iOS)
-// NOTE padding needed on iPhone 8, 12, and possibly others (visible in light mode)
-.padding(.horizontal)
+            // NOTE padding needed on iPhone 8, 12, and possibly others (visible in light mode)
+            .padding(.horizontal)
         #endif
-        // NOTE no .ignoresSafeArea for watch, as there needs to be space for tab indicator
+        #if os(watchOS)
+        .ignoresSafeArea(.all, edges: [.bottom])
+        #endif
     }
 
     private var middle: some View {
-        HStack(alignment: .bottom, spacing: interButtonSpacing) {
+        HStack(alignment: .bottom, spacing: horzButtonSpacing) {
             ActionButton(onShortPress: onStop,
                          imageSystemName: "xmark",
                          buttonText: "Stop",
@@ -93,7 +100,7 @@ public struct RoutineControl: View {
     }
 
     private var bottom: some View {
-        HStack(alignment: .bottom, spacing: interButtonSpacing) {
+        HStack(alignment: .bottom, spacing: horzButtonSpacing) {
             ActionButton(onShortPress: onAdd,
                          imageSystemName: "plus", // plus.circle.fill
                          buttonText: "Add",
