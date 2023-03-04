@@ -48,10 +48,12 @@ public struct RoutineControl: View {
         let verticalSpacing: CGFloat = 15
         let minTitleHeight: CGFloat = 25
         let maxButtonHeight: CGFloat = 60
+        let interButtonSpacing: CGFloat = 15
     #elseif os(iOS)
         let verticalSpacing: CGFloat = 30
         let minTitleHeight: CGFloat = 60
         let maxButtonHeight: CGFloat = 150
+        let interButtonSpacing: CGFloat = 30
     #endif
 
     // MARK: - Views
@@ -80,7 +82,7 @@ public struct RoutineControl: View {
     }
 
     private var middle: some View {
-        HStack(alignment: .bottom) {
+        HStack(alignment: .bottom, spacing: interButtonSpacing) {
             ActionButton(onShortPress: onStop,
                          imageSystemName: "xmark",
                          buttonText: "Stop",
@@ -91,7 +93,7 @@ public struct RoutineControl: View {
     }
 
     private var bottom: some View {
-        HStack(alignment: .bottom) {
+        HStack(alignment: .bottom, spacing: interButtonSpacing) {
             ActionButton(onShortPress: onAdd,
                          imageSystemName: "plus", // plus.circle.fill
                          buttonText: "Add",
