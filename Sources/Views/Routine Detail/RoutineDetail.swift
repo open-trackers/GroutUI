@@ -11,9 +11,6 @@ import SwiftUI
 import GroutLib
 import TrackerUI
 
-private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                            category: "RoutineDetail")
-
 public struct RoutineDetail: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var router: GroutRouter
@@ -55,8 +52,8 @@ public struct RoutineDetail: View {
             TabView(selection: $selectedTab) {
                 Form {
                     RoutineName(routine: routine)
-                    RoutineImage(routine: routine)
                     FormColorPicker(color: $color)
+                    RoutineImage(routine: routine)
                 }
                 .tabItem {
                     Text("Properties")
@@ -87,8 +84,8 @@ public struct RoutineDetail: View {
         private var platformView: some View {
             Form {
                 RoutineName(routine: routine)
-                RoutineImage(routine: routine)
                 FormColorPicker(color: $color)
+                RoutineImage(routine: routine)
                 RoutineExercises(routine: routine)
             }
             .navigationTitle(title)
