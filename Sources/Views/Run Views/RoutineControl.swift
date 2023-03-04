@@ -45,9 +45,11 @@ public struct RoutineControl: View {
     // MARK: - Locals
 
     #if os(watchOS)
+        let verticalSpacing: CGFloat = 15
         let minTitleHeight: CGFloat = 25
         let maxButtonHeight: CGFloat = 60
     #elseif os(iOS)
+        let verticalSpacing: CGFloat = 30
         let minTitleHeight: CGFloat = 60
         let maxButtonHeight: CGFloat = 150
     #endif
@@ -55,27 +57,25 @@ public struct RoutineControl: View {
     // MARK: - Views
 
     public var body: some View {
-        GeometryReader { _ in
-            VStack(spacing: 15) {
-                TitleText(routine.wrappedName)
-                    .foregroundColor(titleColor)
-                    .frame(minHeight: minTitleHeight)
-                Group {
-                    middle
-                    bottom
-                }
-                .frame(maxHeight: maxButtonHeight)
-                #if os(iOS)
-                    Spacer()
-                #endif
+        VStack(spacing: verticalSpacing) {
+            TitleText(routine.wrappedName)
+                .foregroundColor(titleColor)
+                .frame(minHeight: minTitleHeight)
+            Group {
+                middle
+                bottom
             }
-            .frame(maxHeight: .infinity)
-//             .border(.red)
+            .frame(maxHeight: maxButtonHeight)
             #if os(iOS)
-            // NOTE padding needed on iPhone 8, 12, and possibly others (visible in light mode)
-            .padding(.horizontal)
+                Spacer()
             #endif
         }
+        .frame(maxHeight: .infinity)
+//             .border(.red)
+        #if os(iOS)
+// NOTE padding needed on iPhone 8, 12, and possibly others (visible in light mode)
+.padding(.horizontal)
+        #endif
         // NOTE no .ignoresSafeArea for watch, as there needs to be space for tab indicator
     }
 
@@ -139,7 +139,7 @@ struct RoutineControl_Previews: PreviewProvider {
         routine.name = "Chest & Shoulder"
         let e1 = Exercise.create(ctx, routine: routine, userOrder: 0)
         e1.name = "Lat Pulldown"
-        //try? ctx.save()
+        // try? ctx.save()
         return NavigationStack {
             TestHolder(routine: routine)
         }
