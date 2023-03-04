@@ -12,76 +12,73 @@ import SwiftUI
 
 import GroutLib
 import TrackerLib
+import TrackerUI
 
 struct GettingStarted: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     // MARK: - Parameters
 
-    @ObservedObject var appSetting: AppSetting
     @Binding var show: Bool
 
     // MARK: - Locals
-
-    @State private var createStandardCategories = true
 
     private let title = "Getting Started"
 
     // MARK: - Views
 
     var body: some View {
-        Form {
-            Text("TODO")
-//            DailyTargetStepper(targetCalories: $appSetting.targetCalories)
-//
-//            Section {
-//                Toggle(isOn: $createStandardCategories) {
-//                    Text("Create standard categories?")
-//                }
-//            } footer: {
-//                Text("As an alternative, you can create your own.")
-//            }
+        GeometryReader { geo in
+            ScrollView {
+                VStack {
+                    #if os(watchOS)
+                        Text(title)
+                            .font(.title3)
+                            .foregroundColor(.accentColor)
+                    #endif
+                    VStack(alignment: .leading, spacing: 20) {
+                        Group {
+                            Text("Set up your first workout by:")
+
+                            Text("1. Adding a Routine")
+
+                            Text("2. Add one or more Exercises to that Routine")
+
+                            Text("3. Navigate back and tap Routine to start your workout!")
+                        }
+                        .font(.headline)
+
+                        Text("Look for the handy (\(Image(systemName: "line.3.horizontal.decrease"))) button to select a preset to reduce typing!")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding()
+                    Spacer()
+
+                    AppIcon(name: "grt_icon")
+                        .frame(width: geo.size.width / 4, height: geo.size.width / 4)
+                }
+                .onTapGesture {
+                    show = false
+                }
+            }
         }
         #if os(iOS)
         .navigationTitle(title)
         #endif
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
-                    show = false
-                }
-            }
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Done", action: doneAction)
-            }
-        }
-    }
-
-    // MARK: - Properties
-
-    // MARK: - Actions
-
-    private func doneAction() {
-//        if createStandardCategories {
-//            try? MCategory.refreshStandard(viewContext)
+//        .toolbar {
+//            ToolbarItem(placement: .cancellationAction) {
+//                Button("Close", action: { show = false })
+//            }
 //        }
-
-        do {
-            try viewContext.save()
-        } catch {}
-
-        show = false
     }
 }
 
 struct GettingStarted_Previews: PreviewProvider {
     static var previews: some View {
         let manager = CoreDataStack.getPreviewStack()
-        let appSet = AppSetting(context: manager.container.viewContext)
-        // appSet.startOfDayEnum = StartOfDay.defaultValue
-        // appSet.targetCalories = 3000
         return NavigationStack {
-            GettingStarted(appSetting: appSet, show: .constant(true))
+            GettingStarted(show: .constant(true))
                 .accentColor(.blue)
         }
         .environment(\.managedObjectContext, manager.container.viewContext)

@@ -16,8 +16,6 @@ import GroutLib
 import TrackerLib
 import TrackerUI
 
-private let storageKeyRoutineIsNewUser = "routine-is-new-user"
-
 extension Routine: Named {}
 
 /// Common view shared by watchOS and iOS.
@@ -40,15 +38,19 @@ public struct RoutineList: View {
 
     // MARK: - Locals
 
-    @AppStorage(storageKeyRoutineIsNewUser) private var isNewUser: Bool = true
+    private let title = "Routines"
+
+    @AppStorage("routine-is-new-user") private var isNewUser: Bool = true
+
+    // @AppStorage(storageKeyRoutineIsNewUser) private var isNewUser: Bool = true
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                                 category: String(describing: RoutineList.self))
 
-    @State private var showNewUser = false
-
     // NOTE not stored, to allow resume/restore of started routine
     @State private var isNew = false
+
+    @State private var showGettingStarted = false
 
     @SceneStorage("routine-run-nav") private var routineRunNavData: Data?
     @SceneStorage("run-selected-routine") private var selectedRoutine: URL? = nil
@@ -77,13 +79,9 @@ public struct RoutineList: View {
         .navigationTitle(title)
         #endif
         .onAppear(perform: appearAction)
-        .sheet(isPresented: $showNewUser) {
+        .sheet(isPresented: $showGettingStarted) {
             NavigationStack {
-                if let appSetting = try? AppSetting.getOrCreate(viewContext) {
-                    GettingStarted(appSetting: appSetting, show: $showNewUser)
-                } else {
-                    Text("Unable to retrieve settings")
-                }
+                GettingStarted(show: $showGettingStarted)
             }
         }
         .fullScreenCover(item: $selectedRoutine) { url in
@@ -160,17 +158,22 @@ public struct RoutineList: View {
 
     // MARK: - Properties
 
-    private var title: String {
-        "Routines"
+    private var firstRoutine: Routine? {
+        guard let firstRoutine = (try? Routine.getFirst(viewContext))
+        else { return nil }
+        return firstRoutine
     }
 
     // MARK: - Actions
 
     private func appearAction() {
-        // if a new user, prompt for target calories and ask if they'd like to create the standard categories
-        if isNewUser {
+        if !isNewUser {
             isNewUser = false
-            showNewUser = true
+            if firstRoutine == nil {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    showGettingStarted = true
+                }
+            }
         }
     }
 
