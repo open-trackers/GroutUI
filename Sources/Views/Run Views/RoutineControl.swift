@@ -15,10 +15,6 @@ import GroutLib
 import TrackerUI
 
 public struct RoutineControl: View {
-    #if os(iOS)
-        @Environment(\.verticalSizeClass) private var verticalSizeClass
-    #endif
-
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var router: GroutRouter
 
@@ -46,34 +42,41 @@ public struct RoutineControl: View {
         self.startedAt = startedAt
     }
 
+    // MARK: - Locals
+
+    #if os(watchOS)
+        let minTitleHeight: CGFloat = 25
+        let maxButtonHeight: CGFloat = 60
+    #elseif os(iOS)
+        let minTitleHeight: CGFloat = 60
+        let maxButtonHeight: CGFloat = 150
+    #endif
+
     // MARK: - Views
 
     public var body: some View {
-        GeometryReader { geo in
-            #if os(watchOS)
-                innerBody(geo)
-            #elseif os(iOS)
-                innerBody(geo, heightFactor: heightFactor)
-                    // NOTE padding needed on iPhone 8, 12, and possibly others (visible in light mode)
-                    .padding(.horizontal)
+        GeometryReader { _ in
+            VStack(spacing: 15) {
+                TitleText(routine.wrappedName)
+                    .foregroundColor(titleColor)
+                    .frame(minHeight: minTitleHeight)
+                Group {
+                    middle
+                    bottom
+                }
+                .frame(maxHeight: maxButtonHeight)
+                #if os(iOS)
+                    Spacer()
+                #endif
+            }
+            .frame(maxHeight: .infinity)
+//             .border(.red)
+            #if os(iOS)
+            // NOTE padding needed on iPhone 8, 12, and possibly others (visible in light mode)
+            .padding(.horizontal)
             #endif
         }
-    }
-
-    private func innerBody(_ geo: GeometryProxy, heightFactor: CGFloat = 1.0) -> some View {
-        VStack(spacing: 9) {
-            top
-                .frame(height: geo.size.height * 3 / 13 * heightFactor)
-            middle
-                .frame(height: geo.size.height * 5 / 13 * heightFactor)
-            bottom
-                .frame(height: geo.size.height * 5 / 13 * heightFactor)
-        }
-    }
-
-    private var top: some View {
-        TitleText(routine.wrappedName)
-            .foregroundColor(titleColor)
+        // NOTE no .ignoresSafeArea for watch, as there needs to be space for tab indicator
     }
 
     private var middle: some View {
@@ -105,12 +108,6 @@ public struct RoutineControl: View {
 
     // MARK: - Properties
 
-    #if os(iOS)
-        private var heightFactor: CGFloat {
-            verticalSizeClass == .regular ? 0.6 : 0.8
-        }
-    #endif
-
     private var onNextIncompleteColor: Color {
         hasRemaining ? exerciseNextColor : disabledColor
     }
@@ -139,9 +136,10 @@ struct RoutineControl_Previews: PreviewProvider {
         let manager = CoreDataStack.getPreviewStack()
         let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
-        routine.name = "Leg"
+        routine.name = "Chest & Shoulder"
         let e1 = Exercise.create(ctx, routine: routine, userOrder: 0)
         e1.name = "Lat Pulldown"
+        //try? ctx.save()
         return NavigationStack {
             TestHolder(routine: routine)
         }
