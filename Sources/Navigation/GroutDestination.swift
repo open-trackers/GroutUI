@@ -64,8 +64,6 @@ public struct GroutDestination: View {
             } else {
                 Text("Exercise not available to display detail.")
             }
-//        case let .routineRunDetail(routineRunUri):
-//            routineRunDetail(routineRunUri)
         default:
             // routes defined by platform-specific projects should have been handled earlier
             EmptyView()

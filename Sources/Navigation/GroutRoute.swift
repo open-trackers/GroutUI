@@ -14,15 +14,13 @@ import TrackerUI
 
 public typealias GroutRouter = Router<GroutRoute>
 
-/// NOTE: routineRunDetail is presently iOS only, requiring injection of view into NavStack.
 public enum GroutRoute: Hashable, Codable {
     case settings
     case about
     case routineDetail(_ routineUri: URL)
     case exerciseDetail(_ exerciseUri: URL)
     case exerciseList(_ routineUri: URL)
-    case routineRunDetail(_ routineRunUri: URL)
-    case routineRunList(_ routineRunUri: URL)
+    case exerciseRunList(_ routineRunUri: URL)
 
     private func uriSuffix(_ uri: URL) -> String {
         "[\(uri.absoluteString.suffix(12))]"

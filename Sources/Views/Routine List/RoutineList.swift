@@ -166,12 +166,12 @@ public struct RoutineList: View {
     // MARK: - Actions
 
     private func appearAction() {
-        if !isNewUser {
-            isNewUser = false
-            if firstRoutine == nil {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    showGettingStarted = true
-                }
+        guard isNewUser else { return }
+        isNewUser = false
+        logger.debug("\(#function): is new user")
+        if firstRoutine == nil {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                showGettingStarted = true
             }
         }
     }
