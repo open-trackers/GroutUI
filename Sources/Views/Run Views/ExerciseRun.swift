@@ -250,24 +250,17 @@ public struct ExerciseRun: View {
 
     private func nextAction() {
         Haptics.play()
-
         nextIncompleteAction()
     }
 
     private func undoAction() {
         logger.debug("\(#function)")
-
         Haptics.play()
-
         exercise.lastCompletedAt = nil
     }
 
     private func doneAction() {
         shortPressDone = true // to avoid double presses
-
-        Haptics.play()
-
-        logger.debug("\(#function)")
         markDone(withAdvance: false)
     }
 
@@ -276,7 +269,6 @@ public struct ExerciseRun: View {
 
         logger.debug("\(#function)")
         if alwaysAdvanceOnLongPress {
-            Haptics.play(.immediateAction)
             markDone(withAdvance: true)
         } else {
             Haptics.play(.warning)
@@ -289,12 +281,13 @@ public struct ExerciseRun: View {
     private func markDone(withAdvance: Bool) {
         logger.debug("\(#function): withAdvance=\(withAdvance)")
 
+        Haptics.play(withAdvance ? .immediateAction : .click)
+        
         guard let mainStore = manager.getMainStore(viewContext) else { return }
 
         do {
             try exercise.markDone(viewContext,
                                   mainStore: mainStore,
-                                  // completedAt: Date.now,
                                   withAdvance: withAdvance,
                                   routineStartedAt: routineStartedAt,
                                   logToHistory: logToHistory)
