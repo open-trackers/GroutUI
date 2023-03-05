@@ -125,8 +125,8 @@ public struct RoutineList: View {
                 settingsButton
                 aboutButton
             }
+            .listItemTint(Color.accentColor.opacity(0.2))
             .font(.title3)
-            .tint(routineColor)
             .foregroundStyle(.tint)
             .symbolRenderingMode(.hierarchical)
         }
@@ -138,16 +138,16 @@ public struct RoutineList: View {
         private var settingsButton: some View {
             Button(action: settingsAction) {
                 Label("Settings", systemImage: "gear.circle")
-                    .symbolRenderingMode(.hierarchical)
             }
         }
 
         private var aboutButton: some View {
             Button(action: aboutAction) {
-                Label(title: { Text("About") }, icon: {
-                    AppIcon(name: "app_icon")
-                        .frame(width: 24, height: 24)
-                })
+                Label("About \(shortAppName)", systemImage: "info.circle")
+//                Label(title: { Text("About") }, icon: {
+//                    AppIcon(name: "app_icon")
+//                        .frame(width: 24, height: 24)
+//                })
             }
         }
     #endif
@@ -318,8 +318,9 @@ struct RoutineList_Previews: PreviewProvider {
         routine.name = "Back & Bicep"
         let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
         exercise.name = "Lat Pulldown"
-        exercise.routine = routine
         return TestHolder()
             .environment(\.managedObjectContext, ctx)
+            .environmentObject(manager)
+            .accentColor(.orange)
     }
 }
