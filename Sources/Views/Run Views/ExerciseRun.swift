@@ -282,7 +282,7 @@ public struct ExerciseRun: View {
         logger.debug("\(#function): withAdvance=\(withAdvance)")
 
         Haptics.play(withAdvance ? .immediateAction : .click)
-        
+
         guard let mainStore = manager.getMainStore(viewContext) else { return }
 
         do {
