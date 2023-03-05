@@ -73,25 +73,25 @@ public struct ExerciseRun: View {
             .onDisappear {
                 shortPressDone = false // to avoid double presses
             }
-            .alert("Long Press",
-                   isPresented: $showAdvanceAlert,
-                   actions: {
-                       VStack {
-                           Button("Yes, advance") {
-                               markDone(withAdvance: true)
-                           }
-                           Button("No") {
-                               markDone(withAdvance: false)
-                           }
-                           Button("Always advance") {
-                               alwaysAdvanceOnLongPress = true
-                               markDone(withAdvance: true)
-                           }
-                       }
-                   },
-                   message: {
-                       Text(alertTitle)
-                   })
+            .confirmationDialog("Long Press", isPresented: $showAdvanceAlert) {
+                VStack {
+                    Button("Stay at \(exercise.formattedIntensity(exercise.lastIntensity, withUnits: true))") {
+                        markDone(withAdvance: false)
+                    }
+                    Button("Advance to \(exercise.formattedIntensity(exercise.advancedIntensity, withUnits: true))") {
+                        markDone(withAdvance: true)
+                    }
+                    Button("Always advance on long press") {
+                        alwaysAdvanceOnLongPress = true
+                        markDone(withAdvance: true)
+                    }
+                    Button(role: .cancel) {
+                        shortPressDone = false
+                    } label: {
+                        Text("Cancel")
+                    }
+                }
+            }
         }
     }
 
@@ -232,9 +232,9 @@ public struct ExerciseRun: View {
         hasNextIncomplete() ? exerciseNextColor : disabledColor
     }
 
-    private var alertTitle: String {
-        "Advance intensity from \(exercise.formattedIntensity(exercise.lastIntensity)) to \(exercise.formattedIntensity(exercise.advancedIntensity))?"
-    }
+//    private var alertTitle: String {
+//        "Advance intensity from \(exercise.formattedIntensity(exercise.lastIntensity)) to \(exercise.formattedIntensity(exercise.advancedIntensity))?"
+//    }
 
     // MARK: - Actions
 
