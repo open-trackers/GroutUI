@@ -98,7 +98,6 @@ public struct RoutineList: View {
                 }
             }
         }
-
         .onContinueUserActivity(runRoutineActivityType,
                                 perform: continueUserActivityAction)
         .task(priority: .utility, taskAction)
@@ -288,8 +287,12 @@ public struct RoutineList: View {
     // MARK: - User Activity
 
     private func continueUserActivityAction(_ userActivity: NSUserActivity) {
+        logger.notice("\(#function)")
+
         guard let routineURI = userActivity.userInfo?[userActivity_uriRepKey] as? URL,
-              let routine = Routine.get(viewContext, forURIRepresentation: routineURI) as? Routine
+              let routine = Routine.get(viewContext, forURIRepresentation: routineURI) as? Routine,
+              !routine.isDeleted,
+              routine.archiveID != nil
         else {
             logger.notice("\(#function): unable to continue User Activity")
             return
