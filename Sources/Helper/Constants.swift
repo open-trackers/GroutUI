@@ -82,7 +82,7 @@ public let websiteAppURL = websiteURL.appending(path: "grt")
 public let websiteAppTutorialURL = websiteAppURL.appending(path: "tutorial")
 
 public let websitePlea: String =
-    "As an open source project, \(shortAppName) depends on its community of users. Please help by rating and reviewing in the App Store!"
+    "As an open source project, we depend on our community of users. Please rate and review \(shortAppName) in the App Store!"
 
 #if os(watchOS)
     public let shortAppName = "GRT"
