@@ -18,10 +18,6 @@ import TrackerUI
 
 extension Routine: Named {}
 
-public extension Notification.Name {
-    static let startRoutine = Notification.Name("grout-start-routine") // payload of routineURI
-}
-
 /// Common view shared by watchOS and iOS.
 public struct RoutineList: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -102,9 +98,9 @@ public struct RoutineList: View {
         }
         .task(priority: .utility, taskAction)
         .onReceive(startRoutinePublisher) { payload in
-            logger.debug("Notification received for startRoutinePublisher")
-            // refresh, but only for current document
+            logger.debug("onReceive: \(startRoutinePublisher.name.rawValue)")
             guard let routineURI = payload.object as? URL else { return }
+
             // NOTE: not preserving any existing exercise completions; starting anew
             startAction(routineURI)
         }
@@ -190,7 +186,16 @@ public struct RoutineList: View {
         router.path.append(GroutRoute.routineDetail(uri))
     }
 
+    // clear existing running routine, if any
+    private func clearRun() {
+        selectedRoutine = nil
+        startedAt = .distantFuture
+        router.path.removeAll()
+    }
+
     private func startAction(_ routineURI: URL) {
+        clearRun()
+
         guard let routine: Routine = Routine.get(viewContext, forURIRepresentation: routineURI) else {
             logger.debug("\(#function): couldn't find routine; not starting")
             return
@@ -217,8 +222,7 @@ public struct RoutineList: View {
 
         // NOTE: no need to update Routine or ZRoutineRun, as they were both updated in Exercise.logRun.
 
-        startedAt = Date.distantFuture
-        selectedRoutine = nil // closes sheet
+        clearRun()
     }
 
     #if os(watchOS)

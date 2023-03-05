@@ -121,7 +121,7 @@ public struct RoutineRun: View {
         #endif
 
         // advertise running "Start ‘Back & Bicep’ Routine"
-        .userActivity(runRoutineActivityType,
+        .userActivity(startRoutineActivityType,
                       isActive: hasCompletedAtLeastOneExercise,
                       userActivityUpdate)
     }
