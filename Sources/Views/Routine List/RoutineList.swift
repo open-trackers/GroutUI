@@ -63,7 +63,9 @@ public struct RoutineList: View {
                  addButton: { AddRoutineButton() })
         {
             #if os(watchOS)
-                watchButtons
+                AddRoutineButton()
+                settingsButton
+                aboutButton
             #elseif os(iOS)
                 EmptyView()
             #endif
@@ -118,23 +120,6 @@ public struct RoutineList: View {
     }
 
     #if os(watchOS)
-        @ViewBuilder
-        private var watchButtons: some View {
-            Group {
-                addButton
-                settingsButton
-                aboutButton
-            }
-            .listItemTint(Color.accentColor.opacity(0.2))
-            .font(.title3)
-            .foregroundStyle(.tint)
-            .symbolRenderingMode(.hierarchical)
-        }
-
-        private var addButton: some View {
-            AddRoutineButton()
-        }
-
         private var settingsButton: some View {
             Button(action: settingsAction) {
                 Label("Settings", systemImage: "gear.circle")
@@ -144,10 +129,6 @@ public struct RoutineList: View {
         private var aboutButton: some View {
             Button(action: aboutAction) {
                 Label("About \(shortAppName)", systemImage: "info.circle")
-//                Label(title: { Text("About") }, icon: {
-//                    AppIcon(name: "app_icon")
-//                        .frame(width: 24, height: 24)
-//                })
             }
         }
     #endif
