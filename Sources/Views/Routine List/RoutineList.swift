@@ -18,6 +18,10 @@ import TrackerUI
 
 extension Routine: Named {}
 
+public extension Notification.Name {
+    static let startRoutine = Notification.Name("grout-start-routine") // payload of routineURI
+}
+
 /// Common view shared by watchOS and iOS.
 public struct RoutineList: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -30,13 +34,11 @@ public struct RoutineList: View {
 
     // MARK: - Parameters
 
-    private let onShortcut: () -> Void
-
-    public init(onShortcut: @escaping () -> Void = {}) {
-        self.onShortcut = onShortcut
-    }
+    public init() {}
 
     // MARK: - Locals
+
+    private let startRoutinePublisher = NotificationCenter.default.publisher(for: .startRoutine)
 
     private let title = "Routines"
 
@@ -98,9 +100,14 @@ public struct RoutineList: View {
                 }
             }
         }
-        .onContinueUserActivity(runRoutineActivityType,
-                                perform: continueUserActivityAction)
         .task(priority: .utility, taskAction)
+        .onReceive(startRoutinePublisher) { payload in
+            logger.debug("Notification received for startRoutinePublisher")
+            // refresh, but only for current document
+            guard let routineURI = payload.object as? URL else { return }
+            // NOTE: not preserving any existing exercise completions; starting anew
+            startAction(routineURI)
+        }
     }
 
     private func routineCell(routine: Routine, now: Binding<Date>) -> some View {
@@ -283,35 +290,13 @@ public struct RoutineList: View {
         }
         logger.notice("\(#function) END")
     }
-
-    // MARK: - User Activity
-
-    private func continueUserActivityAction(_ userActivity: NSUserActivity) {
-        logger.notice("\(#function)")
-
-        guard let routineURI = userActivity.userInfo?[userActivity_uriRepKey] as? URL,
-              let routine = Routine.get(viewContext, forURIRepresentation: routineURI) as? Routine,
-              !routine.isDeleted,
-              routine.archiveID != nil
-        else {
-            logger.notice("\(#function): unable to continue User Activity")
-            return
-        }
-
-        logger.notice("\(#function): continueUserActivityAction on routine=\(routine.wrappedName)")
-
-        onShortcut() // To force to first tab in iOS app, in case started via shortcut
-
-        // NOTE: not preserving any existing exercise completions; starting anew
-        startAction(routineURI)
-    }
 }
 
 struct RoutineList_Previews: PreviewProvider {
     struct TestHolder: View {
         var body: some View {
             NavigationStack {
-                RoutineList(onShortcut: {})
+                RoutineList()
             }
         }
     }
