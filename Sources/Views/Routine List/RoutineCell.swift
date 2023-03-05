@@ -55,10 +55,6 @@ public struct RoutineCell: View {
 
     private func subtitle() -> some View {
         SinceText(startedAt: routine.lastStartedAt ?? Date(), duration: routine.lastDuration, now: $now, compactorStyle: compactorStyle)
-            .font(.body)
-            .italic()
-            .foregroundColor(lastColor)
-            .lineLimit(1)
     }
 
     // MARK: - Properties
