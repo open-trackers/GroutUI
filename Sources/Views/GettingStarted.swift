@@ -55,7 +55,7 @@ struct GettingStarted: View {
                     .padding()
                     Spacer()
 
-                    AppIcon(name: "grt_icon")
+                    AppIcon(name: "app_icon")
                         .frame(width: geo.size.width / 4, height: geo.size.width / 4)
                 }
                 .onTapGesture {

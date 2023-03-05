@@ -142,7 +142,7 @@ public struct RoutineList: View {
         private var aboutButton: some View {
             Button(action: aboutAction) {
                 Label(title: { Text("About") }, icon: {
-                    AppIcon(name: "grt_icon")
+                    AppIcon(name: "app_icon")
                         .frame(width: 24, height: 24)
                 })
             }

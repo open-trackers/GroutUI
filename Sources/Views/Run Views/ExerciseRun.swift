@@ -75,7 +75,7 @@ public struct ExerciseRun: View {
             }
             .confirmationDialog("Long Press", isPresented: $showAdvanceAlert) {
                 VStack {
-                    Button("Stay at \(exercise.formattedIntensity(exercise.lastIntensity, withUnits: true))") {
+                    Button("Remain at \(exercise.formattedIntensity(exercise.lastIntensity, withUnits: true))") {
                         markDone(withAdvance: false)
                     }
                     Button("Advance to \(exercise.formattedIntensity(exercise.advancedIntensity, withUnits: true))") {
