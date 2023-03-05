@@ -203,6 +203,8 @@ public struct RoutineList: View {
 
         logger.notice("\(#function): Start Routine \(routine.wrappedName)")
 
+        Haptics.play(.startingAction)
+
         do {
             // NOTE: storing startedAt locally (not in routine.lastStartedAt)
             // to ignore mistaken starts.
@@ -219,6 +221,8 @@ public struct RoutineList: View {
 
     private func stopAction(_ routine: Routine) {
         logger.notice("\(#function): Stop Routine \(routine.wrappedName)")
+
+        Haptics.play(.stoppingAction)
 
         // NOTE: no need to update Routine or ZRoutineRun, as they were both updated in Exercise.logRun.
 

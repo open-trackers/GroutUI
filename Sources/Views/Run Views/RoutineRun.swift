@@ -196,7 +196,7 @@ public struct RoutineRun: View {
 
     private func stopAction() {
         logger.debug("\(#function)")
-        Haptics.play(.stoppingAction)
+        // Haptics.play(.stoppingAction)
         onStop(routine) // parent view will take down the sheet & save context
     }
 
