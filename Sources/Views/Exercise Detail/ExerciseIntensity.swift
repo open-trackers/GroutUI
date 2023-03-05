@@ -12,35 +12,46 @@ import SwiftUI
 
 import GroutLib
 
-public struct ExerciseIntensity: View {
+public struct ExerciseIntensity<Content: View>: View {
     // MARK: - Parameters
 
-    @ObservedObject private var exercise: Exercise
+    @Binding private var intensity: Float
+    @Binding private var intensityStep: Float
+    @Binding private var units: Int16
     private let tint: Color
+    private let isDefault: Bool
+    private let content: () -> Content
 
-    public init(exercise: Exercise, tint: Color) {
-        self.exercise = exercise
+    public init(intensity: Binding<Float>,
+                intensityStep: Binding<Float>,
+                units: Binding<Int16>,
+                tint: Color,
+                isDefault: Bool = false,
+                content: @escaping () -> Content = { EmptyView() })
+    {
+        _intensity = intensity
+        _intensityStep = intensityStep
+        _units = units
         self.tint = tint
-        _units = State(initialValue: exercise.units)
+        self.isDefault = isDefault
+        self.content = content
     }
 
     // MARK: - Locals
 
-    @State private var units: Int16
-
     private let intensityRange: ClosedRange<Float> = 0 ... Exercise.intensityMaxValue
     private let intensityStepRange: ClosedRange<Float> = 0.1 ... 25
-    private let intensityStep: Float = 0.1
+    // private let intensityStep: Float = 0.1
 
     // MARK: - Views
 
     public var body: some View {
         Section {
-            Stepper(value: $exercise.lastIntensity, in: intensityRange, step: exercise.intensityStep) {
-                intensityText(exercise.lastIntensity)
+            Stepper(value: $intensity, in: intensityRange, step: intensityStep) {
+                intensityText(intensity)
             }
             .tint(tint)
-            Button(action: { exercise.lastIntensity = 0 }) {
+            Button(action: { intensity = 0 }) {
                 Text("Set to zero (0)")
                     .foregroundStyle(tint)
             }
@@ -50,11 +61,11 @@ public struct ExerciseIntensity: View {
         }
 
         Section {
-            Stepper(value: $exercise.intensityStep, in: intensityStepRange, step: intensityStep) {
-                intensityText(exercise.intensityStep)
+            Stepper(value: $intensityStep, in: intensityStepRange, step: 0.1) {
+                intensityText(intensityStep)
             }
             .tint(tint)
-            Button(action: { exercise.intensityStep = 1 }) {
+            Button(action: { intensityStep = 1 }) {
                 Text("Set to one (1)")
                     .foregroundStyle(tint)
             }
@@ -77,28 +88,28 @@ public struct ExerciseIntensity: View {
             .pickerStyle(.wheel)
             #endif
             .onChange(of: units) {
-                exercise.units = $0
+                units = $0
             }
         } header: {
             Text("Intensity Units")
                 .foregroundStyle(tint)
         }
 
-        Section {
-            Toggle(isOn: $exercise.invertedIntensity) {
-                Text("Inverted")
-            }
-            .tint(tint)
-        } header: {
-            Text("Advance Direction")
-                .foregroundStyle(tint)
-        } footer: {
-            Text("Example: if inverted with step of 5, advance from 25 to 20")
-        }
+//        Section {
+//            Toggle(isOn: $exercise.invertedIntensity) {
+//                Text("Inverted")
+//            }
+//            .tint(tint)
+//        } header: {
+//            Text("Advance Direction")
+//                .foregroundStyle(tint)
+//        } footer: {
+//            Text("Example: if inverted with step of 5, advance from 25 to 20")
+//        }
     }
 
     private func intensityText(_ intensityValue: Float) -> some View {
-        Text(exercise.formattedIntensity(intensityValue, withUnits: true))
+        Text(formattedIntensity(intensityValue))
             // NOTE needed on watchOS to reduce text size
             .minimumScaleFactor(0.1)
             .lineLimit(1)
@@ -110,17 +121,20 @@ public struct ExerciseIntensity: View {
             }
         #endif
     }
-}
 
-struct ExerciseIntensity_Previews: PreviewProvider {
-    static var previews: some View {
-        let manager = CoreDataStack.getPreviewStack()
-        let ctx = manager.container.viewContext
-        let routine = Routine.create(ctx, userOrder: 0)
-        routine.name = "Beverage"
-        let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
-        exercise.name = "Lat Pulldown"
-        exercise.units = Units.kilograms.rawValue
-        return Form { ExerciseIntensity(exercise: exercise, tint: .green) }
+    private func formattedIntensity(_ intensity: Float) -> String {
+        if let _units = Units(rawValue: units) {
+            return formatIntensity(intensity, units: _units, withUnits: true, isFractional: true)
+        } else {
+            return formatIntensity(intensity, units: .none, withUnits: false, isFractional: true)
+        }
     }
 }
+
+// struct ExerciseIntensity_Previews: PreviewProvider {
+//    static var previews: some View {
+//        Form {
+//            ExerciseIntensity(exercise: exercise, tint: .green)
+//        }
+//    }
+// }

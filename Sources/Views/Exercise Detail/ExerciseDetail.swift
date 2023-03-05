@@ -20,7 +20,7 @@ public struct ExerciseDetail: View {
 
     // MARK: - Parameters
 
-    private var exercise: Exercise
+    @ObservedObject private var exercise: Exercise
 
     public init(exercise: Exercise) {
         self.exercise = exercise
@@ -32,32 +32,33 @@ public struct ExerciseDetail: View {
                                 category: String(describing: ExerciseDetail.self))
 
     #if os(watchOS)
-        @SceneStorage("exercise-detail-tab") private var tabSelected = 1
+        @SceneStorage("exercise-detail-tab") private var selectedTab = 1
     #endif
 
     // MARK: - Views
 
     public var body: some View {
-        content
+        platformView
             .symbolRenderingMode(.hierarchical)
             .onDisappear(perform: onDisappearAction)
     }
 
-    private var content: some View {
-        #if os(watchOS)
-
-            TabView(selection: $tabSelected) {
+    #if os(watchOS)
+        private var platformView: some View {
+            TabView(selection: $selectedTab) {
                 Form {
                     ExerciseName(exercise: exercise, tint: exerciseColor)
                     ExerciseSettings(exercise: exercise, tint: exerciseColor)
                 }
                 .tag(1)
                 Form {
-                    ExerciseVolume(exercise: exercise, tint: exerciseColor)
+                    ExerciseVolume(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
                 }
                 .tag(2)
                 Form {
-                    ExerciseIntensity(exercise: exercise, tint: exerciseColor)
+                    ExerciseIntensity(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor) {
+                        inverted
+                    }
                 }
                 .tag(3)
             }
@@ -65,17 +66,41 @@ public struct ExerciseDetail: View {
             .navigationTitle {
                 Text(title)
                     .foregroundColor(exerciseColorDarkBg)
+                    .onTapGesture {
+                        withAnimation {
+                            selectedTab = 1
+                        }
+                    }
             }
+        }
+    #endif
 
-        #elseif os(iOS)
+    #if os(iOS)
+        private var platformView: some View {
             Form {
                 ExerciseName(exercise: exercise, tint: exerciseColor)
                 ExerciseSettings(exercise: exercise, tint: exerciseColor)
-                ExerciseVolume(exercise: exercise, tint: exerciseColor)
-                ExerciseIntensity(exercise: exercise, tint: exerciseColor)
+                ExerciseVolume(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
+                ExerciseIntensity(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor) {
+                    inverted
+                }
             }
             .navigationTitle("Exercise")
-        #endif
+        }
+    #endif
+
+    private var inverted: some View {
+        Section {
+            Toggle(isOn: $exercise.invertedIntensity) {
+                Text("Inverted")
+            }
+            .tint(exerciseColor)
+        } header: {
+            Text("Advance Direction")
+                .foregroundStyle(exerciseColor)
+        } footer: {
+            Text("Example: if inverted with step of 5, advance from 25 to 20")
+        }
     }
 
     // MARK: - Properties

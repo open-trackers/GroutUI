@@ -51,10 +51,15 @@ public struct AddExerciseButton: View {
     // MARK: - Actions
 
     private func createAction() -> Exercise {
-        Exercise.create(viewContext,
-                        routine: routine,
-                        userOrder: maxOrder + 1,
-                        name: "New Exercise")
+        let nu = Exercise.create(viewContext,
+                                 routine: routine,
+                                 userOrder: maxOrder + 1)
+        do {
+            try nu.updateFromAppSettings(viewContext)
+        } catch {
+            // logger.error("\(#function): \(error.localizedDescription)")
+        }
+        return nu
     }
 
     private func afterSaveAction(_ nu: Exercise) {

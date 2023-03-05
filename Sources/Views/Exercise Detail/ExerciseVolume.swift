@@ -15,20 +15,29 @@ import GroutLib
 public struct ExerciseVolume: View {
     // MARK: - Parameters
 
-    @ObservedObject private var exercise: Exercise
+    @Binding private var sets: Int16
+    @Binding private var repetitions: Int16
     private let tint: Color
+    private let isDefault: Bool
 
-    public init(exercise: Exercise, tint: Color) {
-        self.exercise = exercise
+    public init(sets: Binding<Int16>,
+                repetitions: Binding<Int16>,
+                tint: Color,
+                isDefault: Bool = false)
+    {
+        // self.exercise = exercise
+        _sets = sets
+        _repetitions = repetitions
         self.tint = tint
+        self.isDefault = isDefault
     }
 
     // MARK: - Views
 
     public var body: some View {
         Section {
-            Stepper(value: $exercise.sets, in: 0 ... 10, step: 1) {
-                Text("\(exercise.sets)")
+            Stepper(value: $sets, in: 0 ... 10, step: 1) {
+                Text("\(sets)")
             }
             .tint(tint)
         } header: {
@@ -37,8 +46,8 @@ public struct ExerciseVolume: View {
         }
 
         Section {
-            Stepper(value: $exercise.repetitions, in: 0 ... 100, step: 1) {
-                Text("\(exercise.repetitions)")
+            Stepper(value: $repetitions, in: 0 ... 100, step: 1) {
+                Text("\(repetitions)")
             }
             .tint(tint)
         } header: {
@@ -50,12 +59,10 @@ public struct ExerciseVolume: View {
 
 struct ExerciseVolume_Previews: PreviewProvider {
     static var previews: some View {
-        let manager = CoreDataStack.getPreviewStack()
-        let ctx = manager.container.viewContext
-        let routine = Routine.create(ctx, userOrder: 0)
-        routine.name = "Beverage"
-        let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
-        exercise.name = "Lat Pulldown"
-        return Form { ExerciseVolume(exercise: exercise, tint: .green) }
+        Form {
+            ExerciseVolume(sets: .constant(10),
+                           repetitions: .constant(13),
+                           tint: .green)
+        }
     }
 }

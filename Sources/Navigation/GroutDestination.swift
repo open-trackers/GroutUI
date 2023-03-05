@@ -40,6 +40,12 @@ public struct GroutDestination: View {
             }
         case .about:
             aboutView
+        case .exerciseDefaults:
+            if let appSetting = try? AppSetting.getOrCreate(viewContext) {
+                ExerciseDefaults(appSetting: appSetting)
+            } else {
+                Text("Exercise default settings not available.")
+            }
         case let .routineDetail(routineURI):
             if let routine: Routine = Routine.get(viewContext, forURIRepresentation: routineURI) {
                 RoutineDetail(routine: routine)

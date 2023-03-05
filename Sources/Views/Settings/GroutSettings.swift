@@ -20,6 +20,7 @@ import GroutLib
 public struct GroutSettings<Content>: View
     where Content: View
 {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var manager: CoreDataStack
     @EnvironmentObject private var router: GroutRouter
@@ -74,23 +75,43 @@ public struct GroutSettings<Content>: View
                 #endif
             }
 
+            Section {
+                Button(action: exerciseDefaultsAction) {
+                    Text("Exercise Defaults")
+                        .foregroundColor(exerciseColor)
+                }
+            } footer: {
+                Text("Used to initialize the exercises you create.")
+            }
+
             // additional platform-specific settings content, if any
             content()
         }
         // .navigationTitle("Settings")
     }
 
+    private var exerciseColor: Color {
+        colorScheme == .light ? exerciseColorLiteBg : exerciseColorDarkBg
+    }
+
+    private func exerciseDefaultsAction() {
+        router.path.append(GroutRoute.exerciseDefaults)
+    }
+
     private func resetToDefaultsAction() {
         alwaysAdvanceOnLongPress = false
         logToHistory = true
 
-//        do {
-//            appSetting.startOfDayEnum = StartOfDay.defaultValue
-//            appSetting.targetCalories = defaultTargetCalories
-//            try viewContext.save()
-//        } catch {
-//            logger.error("\(#function): \(error.localizedDescription)")
-//        }
+        do {
+            appSetting.defExUnits = Exercise.defaultUnits
+            appSetting.defExReps = Exercise.defaultReps
+            appSetting.defExIntensity = Exercise.defaultIntensity
+            appSetting.defExIntensityStep = Exercise.defaultIntensityStep
+            appSetting.defExSets = Exercise.defaultSets
+            try viewContext.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
 
         onRestoreToDefaults() // continue up the chain
     }
@@ -105,6 +126,7 @@ struct GroutSettings_Previews: PreviewProvider {
                                                onRestoreToDefaults: {}) { EmptyView() }
                 .environment(\.managedObjectContext, manager.container.viewContext)
                 .environmentObject(manager)
+                .accentColor(.orange)
         }
     }
 }
