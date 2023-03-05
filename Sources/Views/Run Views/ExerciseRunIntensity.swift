@@ -19,6 +19,13 @@ struct ExerciseRunIntensity: View {
         @Binding var middleMode: ExerciseMiddleRowMode
     #endif
 
+    #if os(watchOS)
+        private let maxFontSize: CGFloat = 60
+    #elseif os(iOS)
+        private let maxHeight: CGFloat = 180
+        private let maxFontSize: CGFloat = 80
+    #endif
+
     var body: some View {
         #if os(watchOS)
             Stepper(value: $exercise.lastIntensity,
@@ -49,19 +56,20 @@ struct ExerciseRunIntensity: View {
                 {
                     intensityText
                 }
+
                 .disabled(exercise.isDone)
                 .foregroundColor(textTintColor)
             } label: {
                 Text("Intensity")
                     .foregroundStyle(.tint)
             }
+            .frame(maxHeight: maxHeight)
         #endif
     }
 
     private var intensityText: some View {
-        TitleText(
-            exercise.formattedIntensity(exercise.lastIntensity, withUnits: true)
-        )
+        TitleText(exercise.formattedIntensity(exercise.lastIntensity, withUnits: true),
+                  maxFontSize: maxFontSize)
     }
 
     private var textTintColor: Color {
@@ -73,8 +81,7 @@ struct ExerciseRunIntensity: View {
     #if os(watchOS)
         private func tapAction() {
             Haptics.play()
-
-            middleMode = .settings
+            middleMode = middleMode.next
         }
     #endif
 }
@@ -82,12 +89,15 @@ struct ExerciseRunIntensity: View {
 struct ExerciseRunIntensity_Previews: PreviewProvider {
     struct TestHolder: View {
         var exercise: Exercise
+        #if os(watchOS)
+            @State var middleMode: ExerciseMiddleRowMode = .intensity
+        #endif
         var body: some View {
-            ExerciseRun(exercise: exercise,
-                        routineStartedAt: Date.now,
-                        onNextIncomplete: { _ in },
-                        hasNextIncomplete: { true },
-                        onEdit: { _ in })
+            #if os(watchOS)
+                ExerciseRunIntensity(exercise: exercise, middleMode: $middleMode)
+            #elseif os(iOS)
+                ExerciseRunIntensity(exercise: exercise)
+            #endif
         }
     }
 
@@ -98,9 +108,9 @@ struct ExerciseRunIntensity_Previews: PreviewProvider {
         routine.name = "Back & Bicep"
         let e1 = Exercise.create(ctx, routine: routine, userOrder: 0)
         e1.name = "Lat Pulldown"
-        e1.primarySetting = 4
-        e1.intensityStep = 7.1
-        e1.units = Units.kilograms.rawValue
+        e1.lastIntensity = 10.0
+        e1.intensityStep = 7.0
+        // e1.units = Units.kilograms.rawValue
         return NavigationStack {
             TestHolder(exercise: e1)
         }

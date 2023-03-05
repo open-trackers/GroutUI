@@ -70,8 +70,7 @@ struct ExerciseRunSettings: View {
     #if os(watchOS)
         private func tapAction() {
             Haptics.play()
-
-            middleMode = .volume
+            middleMode = middleMode.next
         }
     #endif
 }
