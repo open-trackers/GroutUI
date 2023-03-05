@@ -156,27 +156,30 @@ public struct ExerciseRun: View {
     }
 
     private var settings: some View {
-        #if os(watchOS)
-            ExerciseRunSettings(exercise: exercise, onEdit: onEdit, middleMode: $middleMode)
-        #elseif os(iOS)
-            ExerciseRunSettings(exercise: exercise, onEdit: onEdit)
-        #endif
+        ExerciseRunSettings(exercise: exercise, onEdit: onEdit) {
+            #if os(watchOS)
+                Haptics.play()
+                middleMode = middleMode.next
+            #endif
+        }
     }
 
     private var volume: some View {
-        #if os(watchOS)
-            ExerciseRunVolume(exercise: exercise, onEdit: onEdit, middleMode: $middleMode)
-        #elseif os(iOS)
-            ExerciseRunVolume(exercise: exercise, onEdit: onEdit)
-        #endif
+        ExerciseRunVolume(exercise: exercise, onEdit: onEdit) {
+            #if os(watchOS)
+                Haptics.play()
+                middleMode = middleMode.next
+            #endif
+        }
     }
 
     private var intensity: some View {
-        #if os(watchOS)
-            ExerciseRunIntensity(exercise: exercise, middleMode: $middleMode)
-        #elseif os(iOS)
-            ExerciseRunIntensity(exercise: exercise)
-        #endif
+        ExerciseRunIntensity(exercise: exercise) {
+            #if os(watchOS)
+                Haptics.play()
+                middleMode = middleMode.next
+            #endif
+        }
     }
 
     private var navigationRow: some View {

@@ -17,16 +17,14 @@ import TrackerUI
 struct ExerciseRunVolume: View {
     @ObservedObject var exercise: Exercise
     var onEdit: (URL) -> Void
-    #if os(watchOS)
-        @Binding var middleMode: ExerciseMiddleRowMode
-    #endif
+    var onTap: () -> Void
 
     var body: some View {
         #if os(watchOS)
             ExerciseRunMiddleRow(imageName: "dumbbell.fill",
                                  imageColor: exerciseSetsColor,
                                  onDetail: { onEdit(exercise.uriRepresentation) },
-                                 onTap: tapAction)
+                                 onTap: onTap)
             {
                 volumeText
             }
@@ -60,15 +58,6 @@ struct ExerciseRunVolume: View {
     private var textTintColor: Color {
         exercise.isDone ? completedColor : .primary
     }
-
-    // MARK: - Actions
-
-    #if os(watchOS)
-        private func tapAction() {
-            Haptics.play()
-            middleMode = middleMode.next
-        }
-    #endif
 }
 
 struct ExerciseRunVolume_Previews: PreviewProvider {

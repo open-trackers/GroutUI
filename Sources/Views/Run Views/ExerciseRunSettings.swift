@@ -17,16 +17,14 @@ import TrackerUI
 struct ExerciseRunSettings: View {
     @ObservedObject var exercise: Exercise
     var onEdit: (URL) -> Void
-    #if os(watchOS)
-        @Binding var middleMode: ExerciseMiddleRowMode
-    #endif
+    var onTap: () -> Void
 
     var body: some View {
         #if os(watchOS)
             ExerciseRunMiddleRow(imageName: "gearshape.fill",
                                  imageColor: exerciseGearColor,
                                  onDetail: { onEdit(exercise.uriRepresentation) },
-                                 onTap: tapAction)
+                                 onTap: onTap)
             {
                 settingsText
             }
@@ -64,15 +62,6 @@ struct ExerciseRunSettings: View {
             #endif
         }
     }
-
-    // MARK: - Actions
-
-    #if os(watchOS)
-        private func tapAction() {
-            Haptics.play()
-            middleMode = middleMode.next
-        }
-    #endif
 }
 
 struct ExerciseRunSettings_Previews: PreviewProvider {

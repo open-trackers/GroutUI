@@ -15,9 +15,7 @@ import TrackerUI
 
 struct ExerciseRunIntensity: View {
     @ObservedObject var exercise: Exercise
-    #if os(watchOS)
-        @Binding var middleMode: ExerciseMiddleRowMode
-    #endif
+    var onTap: () -> Void
 
     #if os(watchOS)
         private let maxFontSize: CGFloat = 60
@@ -47,7 +45,7 @@ struct ExerciseRunIntensity: View {
             .disabled(exercise.isDone)
             .foregroundColor(textTintColor)
             .contentShape(Rectangle())
-            .onTapGesture(perform: tapAction)
+            .onTapGesture(perform: onTap)
         #elseif os(iOS)
             GroupBox {
                 GroutStepper(value: $exercise.lastIntensity,
@@ -75,15 +73,6 @@ struct ExerciseRunIntensity: View {
     private var textTintColor: Color {
         exercise.isDone ? completedColor : .primary
     }
-
-    // MARK: - Actions
-
-    #if os(watchOS)
-        private func tapAction() {
-            Haptics.play()
-            middleMode = middleMode.next
-        }
-    #endif
 }
 
 struct ExerciseRunIntensity_Previews: PreviewProvider {
@@ -93,11 +82,7 @@ struct ExerciseRunIntensity_Previews: PreviewProvider {
             @State var middleMode: ExerciseMiddleRowMode = .intensity
         #endif
         var body: some View {
-            #if os(watchOS)
-                ExerciseRunIntensity(exercise: exercise, middleMode: $middleMode)
-            #elseif os(iOS)
-                ExerciseRunIntensity(exercise: exercise)
-            #endif
+            ExerciseRunIntensity(exercise: exercise) {}
         }
     }
 
