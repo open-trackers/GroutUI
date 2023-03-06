@@ -9,13 +9,11 @@ import os
 import SwiftUI
 
 import GroutLib
-
-private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                            category: "RoutineDetail")
+import TrackerUI
 
 public struct RoutineDetail: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject private var router: MyRouter
+    @EnvironmentObject private var router: GroutRouter
 
     // MARK: - Parameters
 
@@ -23,9 +21,19 @@ public struct RoutineDetail: View {
 
     public init(routine: Routine) {
         self.routine = routine
+
+        _color = State(initialValue: routine.getColor() ?? .clear)
     }
 
     // MARK: - Locals
+
+    // Using .clear as a local non-optional proxy for nil, because picker won't
+    // work with optional.
+    // When saved, the color .clear assigned is nil.
+    @State private var color: Color
+
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                                category: String(describing: RoutineDetail.self))
 
     #if os(watchOS)
         @SceneStorage("routine-detail-tab") private var selectedTab: Int = 0
@@ -34,28 +42,18 @@ public struct RoutineDetail: View {
     // MARK: - Views
 
     public var body: some View {
-        content
+        platformView
             .symbolRenderingMode(.hierarchical)
             .onDisappear(perform: onDisappearAction)
     }
 
-    private var content: some View {
-        #if os(watchOS)
+    #if os(watchOS)
+        private var platformView: some View {
             TabView(selection: $selectedTab) {
                 Form {
-                    Section("Name") {
-                        TextFieldWithPresets($routine.wrappedName,
-                                             prompt: "Enter routine name",
-                                             color: routineColor,
-                                             presets: routinePresets)
-                    }
-
-                    Section("Image") {
-                        ImageStepper(initialName: routine.imageName, imageNames: systemImageNames) {
-                            routine.imageName = $0
-                        }
-                        .imageScale(.small)
-                    }
+                    RoutineName(routine: routine)
+                    FormColorPicker(color: $color)
+                    RoutineImage(routine: routine)
                 }
                 .tabItem {
                     Text("Properties")
@@ -72,40 +70,33 @@ public struct RoutineDetail: View {
             }
             .tabViewStyle(.page)
             .navigationTitle {
-                Text("Routine")
-                    .foregroundColor(routineColor)
+                NavTitle(title, color: routineColor)
+                    .onTapGesture {
+                        withAnimation {
+                            selectedTab = 0
+                        }
+                    }
             }
-        #elseif os(iOS)
+        }
+    #endif
+
+    #if os(iOS)
+        private var platformView: some View {
             Form {
-                Section("Name") {
-                    TextFieldWithPresets($routine.wrappedName,
-                                         prompt: "Enter routine name",
-                                         color: routineColor,
-                                         presets: routinePresets)
-                }
-
-                Section("Image") {
-                    ImageStepper(initialName: routine.imageName,
-                                 imageNames: systemImageNames) {
-                        routine.imageName = $0
-                    }
-                    .imageScale(.large)
-                }
-
-                Button(action: exerciseListAction) {
-                    HStack {
-                        Text("Exercises")
-                        Spacer()
-                        Text(exerciseCount > 0 ? String(format: "%d", exerciseCount) : "none")
-                    }
-                }
+                RoutineName(routine: routine)
+                FormColorPicker(color: $color)
+                RoutineImage(routine: routine)
+                RoutineExercises(routine: routine)
             }
-            .navigationTitle("Routine")
-            .onDisappear(perform: onDisappearAction)
-        #endif
-    }
+            .navigationTitle(title)
+        }
+    #endif
 
     // MARK: - Properties
+
+    private var title: String {
+        "Routine"
+    }
 
     #if os(iOS)
         private var exerciseCount: Int {
@@ -115,14 +106,9 @@ public struct RoutineDetail: View {
 
     // MARK: - Actions
 
-    #if os(iOS)
-        private func exerciseListAction() {
-            router.path.append(MyRoutes.exerciseList(routine.uriRepresentation))
-        }
-    #endif
-
     private func onDisappearAction() {
         do {
+            routine.setColor(color != .clear ? color : nil)
             try viewContext.save()
         } catch {
             logger.error("\(#function): \(error.localizedDescription)")
@@ -141,10 +127,11 @@ struct RoutineDetail_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
-        let exercise = Exercise.create(ctx, userOrder: 0)
+        let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
         exercise.name = "Lat Pulldown"
         exercise.routine = routine
         return TestHolder(routine: routine)

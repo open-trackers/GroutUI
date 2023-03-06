@@ -1,5 +1,5 @@
 //
-//  ExerciseName.swift
+//  RoutineName.swift
 //
 // Copyright 2022, 2023  OpenAlloc LLC
 //
@@ -13,24 +13,24 @@ import SwiftUI
 import GroutLib
 import TrackerUI
 
-public struct ExerciseName: View {
+public struct RoutineName: View {
     // MARK: - Parameters
 
-    @ObservedObject private var exercise: Exercise
-    private let tint: Color
+    @ObservedObject private var routine: Routine
 
-    public init(exercise: Exercise, tint: Color) {
-        self.exercise = exercise
-        self.tint = tint
+    public init(routine: Routine) {
+        self.routine = routine
     }
+
+    // MARK: - Locals
 
     // MARK: - Views
 
     public var body: some View {
         Section {
-            TextFieldWithPresets($exercise.wrappedName,
-                                 prompt: "Enter exercise name",
-                                 presets: exercisePresets)
+            TextFieldWithPresets($routine.wrappedName,
+                                 prompt: "Enter routine name",
+                                 presets: routinePresets)
             { _, _ in
                 // nothing to set other than the name
             } label: {
@@ -39,19 +39,30 @@ public struct ExerciseName: View {
             }
         } header: {
             Text("Name")
-                .foregroundStyle(tint)
         }
     }
+
+    // MARK: - Properties
 }
 
-struct ExerciseName_Previews: PreviewProvider {
+struct RoutineName_Previews: PreviewProvider {
+    struct TestHolder: View {
+        var routine: Routine
+        var body: some View {
+            Form {
+                RoutineName(routine: routine)
+            }
+        }
+    }
+
     static var previews: some View {
         let manager = CoreDataStack.getPreviewStack()
         let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Beverage"
-        let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
-        exercise.name = "Lat Pulldown"
-        return Form { ExerciseName(exercise: exercise, tint: .orange) }
+        return TestHolder(routine: routine)
+            .environment(\.managedObjectContext, ctx)
+            .environmentObject(manager)
+            .accentColor(.orange)
     }
 }

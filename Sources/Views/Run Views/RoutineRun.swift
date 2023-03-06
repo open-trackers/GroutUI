@@ -13,13 +13,12 @@ import os
 import SwiftUI
 
 import GroutLib
-
-private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                            category: String(describing: RoutineRun.self))
+import TrackerLib
+import TrackerUI
 
 public struct RoutineRun: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject private var router: MyRouter
+    @EnvironmentObject private var router: GroutRouter
 
     // MARK: - Parameters
 
@@ -54,6 +53,9 @@ public struct RoutineRun: View {
     }
 
     // MARK: - Locals
+
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                                category: String(describing: RoutineRun.self))
 
     @SceneStorage("routine-run-tab") private var selectedTab: URL = controlTab
 
@@ -119,7 +121,7 @@ public struct RoutineRun: View {
         #endif
 
         // advertise running "Start ‘Back & Bicep’ Routine"
-        .userActivity(runRoutineActivityType,
+        .userActivity(startRoutineActivityType,
                       isActive: hasCompletedAtLeastOneExercise,
                       userActivityUpdate)
     }
@@ -168,9 +170,9 @@ public struct RoutineRun: View {
         logger.debug("\(#function) maxOrder=\(maxOrder)")
         withAnimation {
             Haptics.play()
-            let nu = Exercise.create(viewContext, userOrder: maxOrder + 1)
-            routine.addToExercises(nu)
+            let nu = Exercise.create(viewContext, routine: routine, userOrder: maxOrder + 1)
             do {
+                try nu.updateFromAppSettings(viewContext)
                 try viewContext.save()
             } catch {
                 logger.error("\(#function): \(error.localizedDescription)")
@@ -188,13 +190,13 @@ public struct RoutineRun: View {
             if selectedTab != exerciseURI {
                 selectedTab = exerciseURI
             }
-            router.path.append(MyRoutes.exerciseDetail(exerciseURI))
+            router.path.append(GroutRoute.exerciseDetail(exerciseURI))
         }
     }
 
     private func stopAction() {
         logger.debug("\(#function)")
-        Haptics.play(.stoppingRoutine)
+        // Haptics.play(.stoppingAction)
         onStop(routine) // parent view will take down the sheet & save context
     }
 
@@ -207,7 +209,7 @@ public struct RoutineRun: View {
             // logger.debug("\(#function) Selecting TAB, from \(selectedTab.suffix ?? "") to \(nextTab.suffix ?? "")")
             selectedTab = nextTab
         } else {
-            Haptics.play(.routineCompleted)
+            Haptics.play(.completedAction)
             // logger.debug("\(#function) from \(selectedTab.suffix ?? "") to CONTROL")
             selectedTab = controlTab
         }
@@ -227,7 +229,7 @@ public struct RoutineRun: View {
 struct RoutineRun_Previews: PreviewProvider {
     struct TestHolder: View {
         var routine: Routine
-        @State var startedAt: Date = Date.now.addingTimeInterval(-1000)
+        @State var startedAt: Date = .now.addingTimeInterval(-1000)
         var body: some View {
             NavigationStack {
                 RoutineRun(routine: routine,
@@ -239,19 +241,18 @@ struct RoutineRun_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
-        let e1 = Exercise.create(ctx, userOrder: 0)
+        let e1 = Exercise.create(ctx, routine: routine, userOrder: 0)
         e1.name = "Lat Pulldown"
-        e1.routine = routine
         e1.primarySetting = 4
         e1.secondarySetting = 6
         // e1.units = Units.kilograms.rawValue
         e1.intensityStep = 7.1
-        let e2 = Exercise.create(ctx, userOrder: 1)
+        let e2 = Exercise.create(ctx, routine: routine, userOrder: 1)
         e2.name = "Arm Curl"
-        e2.routine = routine
         return
             TestHolder(routine: routine)
                 .environment(\.managedObjectContext, ctx)

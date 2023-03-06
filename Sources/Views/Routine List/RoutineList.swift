@@ -13,135 +13,122 @@ import os
 import SwiftUI
 
 import GroutLib
+import TrackerLib
+import TrackerUI
 
-private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                            category: "RoutineList")
+extension Routine: Named {}
 
 /// Common view shared by watchOS and iOS.
 public struct RoutineList: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject private var router: MyRouter
+    @EnvironmentObject private var manager: CoreDataStack
+    @EnvironmentObject private var router: GroutRouter
+
+    #if os(iOS)
+        @Environment(\.verticalSizeClass) private var verticalSizeClass
+    #endif
 
     // MARK: - Parameters
 
-    private let beforeStart: () -> Void
-
-    public init(beforeStart: @escaping () -> Void = {}) {
-        self.beforeStart = beforeStart
-    }
+    public init() {}
 
     // MARK: - Locals
 
-    @FetchRequest(entity: Routine.entity(),
-                  sortDescriptors: [NSSortDescriptor(keyPath: \Routine.userOrder, ascending: true)],
-                  animation: .default)
-    private var routines: FetchedResults<Routine>
+    private let startRoutinePublisher = NotificationCenter.default.publisher(for: .startRoutine)
+
+    private let title = "Routines"
+
+    @AppStorage("routine-is-new-user") private var isNewUser: Bool = true
+
+    // @AppStorage(storageKeyRoutineIsNewUser) private var isNewUser: Bool = true
+
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                                category: String(describing: RoutineList.self))
 
     // NOTE not stored, to allow resume/restore of started routine
     @State private var isNew = false
 
+    @State private var showGettingStarted = false
+
     @SceneStorage("routine-run-nav") private var routineRunNavData: Data?
     @SceneStorage("run-selected-routine") private var selectedRoutine: URL? = nil
     @SceneStorage("run-started-at") private var startedAt: Date = .distantFuture
-    @SceneStorage("run-last-exercise-completed-at") private var lastExerciseCompletedAt: Date = .distantFuture
     @SceneStorage("updated-archive-ids") private var updatedArchiveIDs: Bool = false
-
-    // timer used to refresh "2d ago, for 16.5m" on each Routine Cell
-    @State private var now = Date()
-    private let timer = Timer.publish(every: routineSinceUpdateSeconds,
-                                      on: .main,
-                                      in: .common).autoconnect()
-
-    // support for delete confirmation dialog
-    @State private var toBeDeleted: Routine? = nil
-    @State private var confirmDelete = false
+    @SceneStorage("updated-created-ats") private var updatedCreatedAts: Bool = false
 
     // MARK: - Views
 
     public var body: some View {
-        List {
-            ForEach(routines, id: \.self) { routine in
-                RoutineCell(routine: routine,
-                            now: $now,
-                            onStart: startAction)
-                    .swipeActions(edge: .trailing) {
-                        swipeToDelete(routine: routine)
-                    }
-            }
-            .onMove(perform: moveAction)
+        CellList(cell: routineCell,
+                 addButton: { AddRoutineButton() })
+        {
             #if os(watchOS)
-                .listItemTint(routineListItemTint)
+                AddRoutineButton()
+                settingsButton
+                aboutButton
             #elseif os(iOS)
-                .listRowBackground(rowBackground)
-            #endif
-
-            #if os(watchOS)
-                Group {
-                    addButton
-                    settingsButton
-                    aboutButton
-                }
-                .font(.title3)
-                .tint(routineColor)
-                .foregroundStyle(.tint)
+                EmptyView()
             #endif
         }
-        .navigationTitle("Routines")
-        #if os(iOS)
-            .toolbar {
-                ToolbarItem {
-                    AddRoutineButton {
-                        Text("Add")
-                    }
-                }
-            }
+        #if os(watchOS)
+        // .navigationBarTitleDisplayMode(.large)
+        .navigationTitle {
+            NavTitle(title)
+        }
+        #elseif os(iOS)
+        .navigationTitle(title)
         #endif
-            .fullScreenCover(item: $selectedRoutine) { url in
-                NavStack(name: "routineRun", navData: $routineRunNavData) {
-                    VStack {
-                        if let routine = Routine.get(viewContext, forURIRepresentation: url) {
-                            RoutineRun(routine: routine,
-                                       isNew: $isNew,
-                                       startedAt: $startedAt,
-                                       onStop: stopAction)
-                        } else {
-                            Text("Routine not found.")
-                        }
+        .onAppear(perform: appearAction)
+        .sheet(isPresented: $showGettingStarted) {
+            NavigationStack {
+                GettingStarted(show: $showGettingStarted)
+            }
+        }
+        .fullScreenCover(item: $selectedRoutine) { url in
+            NavStack(navData: $routineRunNavData) {
+                VStack {
+                    if let routine: Routine = Routine.get(viewContext, forURIRepresentation: url) {
+                        RoutineRun(routine: routine,
+                                   isNew: $isNew,
+                                   startedAt: $startedAt,
+                                   onStop: stopAction)
+                    } else {
+                        Text("Routine not found.")
                     }
                 }
             }
-            .confirmationDialog("Are you sure?",
-                                isPresented: $confirmDelete,
-                                actions: confirmedDelete)
-            .onReceive(timer) { _ in
-                self.now = Date.now
-            }
-            .onContinueUserActivity(runRoutineActivityType,
-                                    perform: continueUserActivityAction)
-            .task(priority: .utility, taskAction)
+        }
+        .task(priority: .utility, taskAction)
+        .onReceive(startRoutinePublisher) { payload in
+            logger.debug("onReceive: \(startRoutinePublisher.name.rawValue)")
+            guard let routineURI = payload.object as? URL else { return }
+
+            // NOTE: not preserving any existing exercise completions; starting anew
+            startAction(routineURI)
+        }
+    }
+
+    private func routineCell(routine: Routine, now: Binding<Date>) -> some View {
+        RoutineCell(routine: routine,
+                    now: now,
+                    onDetail: {
+                        detailAction($0)
+                    },
+                    onShortPress: {
+                        startAction($0)
+                    })
     }
 
     #if os(watchOS)
-        private var addButton: some View {
-            AddRoutineButton {
-                Label("Add Routine", systemImage: "plus.circle.fill")
-                    .symbolRenderingMode(.hierarchical)
-            }
-        }
-
         private var settingsButton: some View {
             Button(action: settingsAction) {
                 Label("Settings", systemImage: "gear.circle")
-                    .symbolRenderingMode(.hierarchical)
             }
         }
 
         private var aboutButton: some View {
             Button(action: aboutAction) {
-                Label(title: { Text("About") }, icon: {
-                    AppIcon(name: "grt_icon")
-                        .frame(width: 24, height: 24)
-                })
+                Label("About \(shortAppName)", systemImage: "info.circle")
             }
         }
     #endif
@@ -152,65 +139,57 @@ public struct RoutineList: View {
         }
     #endif
 
-    // swipe button to be shown when user has swiped left
-    private func swipeToDelete(routine: Routine) -> some View {
-        // NOTE that button role is NOT destructive, to prevent item from disappearing before confirmation
-        Button(role: .none) {
-            toBeDeleted = routine
-            confirmDelete = true
-        } label: {
-            Label("Delete", systemImage: "trash")
-        }
-        .tint(.red)
-    }
+    // MARK: - Properties
 
-    // confirmation dialog to be shown after user has swiped to delete
-    private func confirmedDelete() -> some View {
-        withAnimation {
-            Button("Delete ‘\(toBeDeleted?.name ?? "")’",
-                   role: .destructive) {
-                deleteAction(routine: toBeDeleted)
-                confirmDelete = false
-                toBeDeleted = nil
-            }
-        }
+    private var firstRoutine: Routine? {
+        guard let firstRoutine = (try? Routine.getFirst(viewContext))
+        else { return nil }
+        return firstRoutine
     }
 
     // MARK: - Actions
 
-    private func deleteAction(routine: Routine?) {
-        guard let routine else { return }
-        viewContext.delete(routine)
-        do {
-            try viewContext.save()
-        } catch {
-            logger.error("\(#function): \(error.localizedDescription)")
+    private func appearAction() {
+        guard isNewUser else { return }
+        isNewUser = false
+        logger.debug("\(#function): is new user")
+        if firstRoutine == nil {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                showGettingStarted = true
+            }
         }
     }
 
-    private func moveAction(from source: IndexSet, to destination: Int) {
-        Routine.move(routines, from: source, to: destination)
-        do {
-            try viewContext.save()
-        } catch {
-            logger.error("\(#function): \(error.localizedDescription)")
-        }
+    private func detailAction(_ uri: URL) {
+        logger.notice("\(#function)")
+        Haptics.play()
+
+        router.path.append(GroutRoute.routineDetail(uri))
     }
 
-    private func startAction(_ routineURI: URL, clearData: Bool) {
-        guard let routine = Routine.get(viewContext, forURIRepresentation: routineURI) else {
+    // clear existing running routine, if any
+    private func clearRun() {
+        selectedRoutine = nil
+        startedAt = .distantFuture
+        router.path.removeAll()
+    }
+
+    private func startAction(_ routineURI: URL) {
+        clearRun()
+
+        guard let routine: Routine = Routine.get(viewContext, forURIRepresentation: routineURI) else {
             logger.debug("\(#function): couldn't find routine; not starting")
             return
         }
 
         logger.notice("\(#function): Start Routine \(routine.wrappedName)")
 
-        beforeStart() // To force to first tab in iOS app, in case started via shortcut
+        Haptics.play(.startingAction)
 
         do {
             // NOTE: storing startedAt locally (not in routine.lastStartedAt)
             // to ignore mistaken starts.
-            startedAt = try routine.start(viewContext, clearData: clearData)
+            startedAt = try routine.start(viewContext)
             try viewContext.save()
 
             isNew = true // forces start at first incomplete exercise
@@ -224,61 +203,74 @@ public struct RoutineList: View {
     private func stopAction(_ routine: Routine) {
         logger.notice("\(#function): Stop Routine \(routine.wrappedName)")
 
+        Haptics.play(.stoppingAction)
+
         // NOTE: no need to update Routine or ZRoutineRun, as they were both updated in Exercise.logRun.
 
-        startedAt = Date.distantFuture
-        selectedRoutine = nil // closes sheet
-    }
-
-    private func continueUserActivityAction(_ userActivity: NSUserActivity) {
-        guard let routineURI = userActivity.userInfo?[userActivity_uriRepKey] as? URL,
-              let routine = NSManagedObject.get(viewContext, forURIRepresentation: routineURI) as? Routine
-        else {
-            logger.notice("\(#function): unable to continue User Activity")
-            return
-        }
-
-        logger.notice("\(#function): continueUserActivityAction on routine=\(routine.wrappedName)")
-
-        // NOTE: not clearing data, so completed exercises are preserved
-        startAction(routineURI, clearData: true)
+        clearRun()
     }
 
     #if os(watchOS)
         private func settingsAction() {
-            router.path.append(MyRoutes.settings)
+            logger.notice("\(#function)")
+            Haptics.play()
+
+            router.path.append(GroutRoute.settings)
         }
 
         private func aboutAction() {
-            router.path.append(MyRoutes.about)
+            logger.notice("\(#function)")
+            Haptics.play()
+
+            router.path.append(GroutRoute.about)
         }
     #endif
+
+    // MARK: - Background Task
 
     @Sendable
     private func taskAction() async {
         logger.notice("\(#function) START")
 
-        await PersistenceManager.shared.container.performBackgroundTask { backgroundContext in
+        await manager.container.performBackgroundTask { backgroundContext in
             do {
                 if !updatedArchiveIDs {
-                    updateArchiveIDs(routines: routines.map { $0 })
+                    try updateArchiveIDs(backgroundContext)
                     try backgroundContext.save()
                     logger.notice("\(#function): updated archive IDs, where necessary")
                     updatedArchiveIDs = true
+                    try backgroundContext.save()
+                }
+
+                if !updatedCreatedAts {
+                    try updateCreatedAts(backgroundContext)
+                    try backgroundContext.save()
+                    logger.notice("\(#function): updated createdAts, where necessary")
+                    updatedArchiveIDs = true
+                    try backgroundContext.save()
                 }
 
                 #if os(watchOS)
                     // delete log records older than N days
                     guard let keepSince = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
-                    else { throw DataError.missingData(msg: "Clean: could not resolve date one year in past") }
+                    else { throw TrackerError.missingData(msg: "Clean: could not resolve date one year in past") }
                     logger.notice("\(#function): keepSince=\(keepSince)")
                     try cleanLogRecords(backgroundContext, keepSince: keepSince)
                     try backgroundContext.save()
                 #endif
 
                 #if os(iOS)
+                    guard let mainStore = manager.getMainStore(backgroundContext),
+                          let archiveStore = manager.getArchiveStore(backgroundContext)
+                    else {
+                        logger.error("\(#function): unable to acquire configuration to transfer log records.")
+                        return
+                    }
+
                     // move log records to archive store
-                    try transferToArchive(backgroundContext)
+                    try transferToArchive(backgroundContext,
+                                          mainStore: mainStore,
+                                          archiveStore: archiveStore)
                     try backgroundContext.save()
                 #endif
             } catch {
@@ -293,21 +285,23 @@ struct RoutineList_Previews: PreviewProvider {
     struct TestHolder: View {
         var body: some View {
             NavigationStack {
-                RoutineList(beforeStart: {})
+                RoutineList()
             }
         }
     }
 
     static var previews: some View {
         // let container = try! PersistenceManager.getTestContainer()
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         // let ctx = container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
-        let exercise = Exercise.create(ctx, userOrder: 0)
+        let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
         exercise.name = "Lat Pulldown"
-        exercise.routine = routine
         return TestHolder()
             .environment(\.managedObjectContext, ctx)
+            .environmentObject(manager)
+            .accentColor(.orange)
     }
 }

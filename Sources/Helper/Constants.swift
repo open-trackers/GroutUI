@@ -10,15 +10,6 @@
 
 import SwiftUI
 
-public let websiteDomain = "gym-routine-tracker.github.io"
-public let websiteTitle = "Gym Routine Tracker"
-public let copyright = "Copyright 2022, 2023 OpenAlloc LLC"
-
-public let websiteURL = URL(string: "https://\(websiteDomain)")!
-public let websitePrivacyURL = websiteURL.appending(path: "privacy")
-public let websiteTermsURL = websiteURL.appending(path: "terms")
-public let websiteTutorialURL = websiteURL.appending(path: "tutorial")
-
 public let routineColor: Color = .accentColor
 public let routineListItemTint: Color = .accentColor.opacity(0.2)
 
@@ -59,10 +50,10 @@ public let newFirstIncompleteSeconds: TimeInterval = 0.25
 // How long for tab animation to next exercise
 public let exerciseAnimationDurationSeconds: TimeInterval = 0.25
 
-public let colorSchemeModeKey = "colorScheme"
+// public let colorSchemeModeKey = "colorScheme"
 public let exportFormatKey = "exportFormat"
 
-public let runRoutineActivityType = "org.openalloc.grout.run-routine"
+public let startRoutineActivityType = "org.openalloc.grout.run-routine"
 public let userActivity_uriRepKey = "uriRep"
 
 // storage keys
@@ -70,3 +61,22 @@ public let alwaysAdvanceOnLongPressKey = "alwaysAdvanceOnLongPress"
 public let logToHistoryKey = "logToHistory"
 
 public let controlTab = URL(string: "uri://control-panel")!
+
+public let websiteDomain = "open-trackers.github.io"
+public let copyright = "Copyright 2022, 2023 OpenAlloc LLC"
+
+public let websiteURL = URL(string: "https://\(websiteDomain)")!
+public let websitePrivacyURL = websiteURL.appending(path: "privacy")
+public let websiteTermsURL = websiteURL.appending(path: "terms")
+
+public let websiteAppURL = websiteURL.appending(path: "grt")
+public let websiteAppTutorialURL = websiteAppURL.appending(path: "tutorial")
+
+public let websitePlea: String =
+    "As an open source project, we depend on our community of users. Please rate and review \(shortAppName) in the App Store!"
+
+#if os(watchOS)
+    public let shortAppName = "GRT"
+#elseif os(iOS)
+    public let shortAppName = "GRT+"
+#endif

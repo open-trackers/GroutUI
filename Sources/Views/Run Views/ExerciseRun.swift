@@ -13,11 +13,11 @@ import os
 import SwiftUI
 
 import GroutLib
-
-private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                            category: "ExerciseRun")
+import TrackerUI
 
 public struct ExerciseRun: View {
+    @EnvironmentObject private var manager: CoreDataStack
+
     @AppStorage(logToHistoryKey) var logToHistory: Bool = true
 
     #if os(iOS)
@@ -27,6 +27,9 @@ public struct ExerciseRun: View {
 
     @Environment(\.managedObjectContext) private var viewContext
     @AppStorage(alwaysAdvanceOnLongPressKey) var alwaysAdvanceOnLongPress: Bool = false
+
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                                category: String(describing: ExerciseRun.self))
 
     // MARK: - Parameters
 
@@ -70,25 +73,25 @@ public struct ExerciseRun: View {
             .onDisappear {
                 shortPressDone = false // to avoid double presses
             }
-            .alert("Long Press",
-                   isPresented: $showAdvanceAlert,
-                   actions: {
-                       VStack {
-                           Button("Yes, advance") {
-                               markDone(withAdvance: true)
-                           }
-                           Button("No") {
-                               markDone(withAdvance: false)
-                           }
-                           Button("Always advance") {
-                               alwaysAdvanceOnLongPress = true
-                               markDone(withAdvance: true)
-                           }
-                       }
-                   },
-                   message: {
-                       Text(alertTitle)
-                   })
+            .confirmationDialog("Long Press", isPresented: $showAdvanceAlert) {
+                VStack {
+                    Button("Remain at \(exercise.formattedIntensity(exercise.lastIntensity, withUnits: true))") {
+                        markDone(withAdvance: false)
+                    }
+                    Button("Advance to \(exercise.formattedIntensity(exercise.advancedIntensity, withUnits: true))") {
+                        markDone(withAdvance: true)
+                    }
+                    Button("Always advance on long press") {
+                        alwaysAdvanceOnLongPress = true
+                        markDone(withAdvance: true)
+                    }
+                    Button(role: .cancel) {
+                        shortPressDone = false
+                    } label: {
+                        Text("Cancel")
+                    }
+                }
+            }
         }
     }
 
@@ -153,27 +156,30 @@ public struct ExerciseRun: View {
     }
 
     private var settings: some View {
-        #if os(watchOS)
-            ExerciseRunSettings(exercise: exercise, onEdit: onEdit, middleMode: $middleMode)
-        #elseif os(iOS)
-            ExerciseRunSettings(exercise: exercise, onEdit: onEdit)
-        #endif
+        ExerciseRunSettings(exercise: exercise, onEdit: onEdit) {
+            #if os(watchOS)
+                Haptics.play()
+                middleMode = middleMode.next
+            #endif
+        }
     }
 
     private var volume: some View {
-        #if os(watchOS)
-            ExerciseRunVolume(exercise: exercise, onEdit: onEdit, middleMode: $middleMode)
-        #elseif os(iOS)
-            ExerciseRunVolume(exercise: exercise, onEdit: onEdit)
-        #endif
+        ExerciseRunVolume(exercise: exercise, onEdit: onEdit) {
+            #if os(watchOS)
+                Haptics.play()
+                middleMode = middleMode.next
+            #endif
+        }
     }
 
     private var intensity: some View {
-        #if os(watchOS)
-            ExerciseRunIntensity(exercise: exercise, middleMode: $middleMode)
-        #elseif os(iOS)
-            ExerciseRunIntensity(exercise: exercise)
-        #endif
+        ExerciseRunIntensity(exercise: exercise) {
+            #if os(watchOS)
+                Haptics.play()
+                middleMode = middleMode.next
+            #endif
+        }
     }
 
     private var navigationRow: some View {
@@ -226,9 +232,9 @@ public struct ExerciseRun: View {
         hasNextIncomplete() ? exerciseNextColor : disabledColor
     }
 
-    private var alertTitle: String {
-        "Advance intensity from \(exercise.formattedIntensity(exercise.lastIntensity)) to \(exercise.formattedIntensity(exercise.advancedIntensity))?"
-    }
+//    private var alertTitle: String {
+//        "Advance intensity from \(exercise.formattedIntensity(exercise.lastIntensity)) to \(exercise.formattedIntensity(exercise.advancedIntensity))?"
+//    }
 
     // MARK: - Actions
 
@@ -244,24 +250,17 @@ public struct ExerciseRun: View {
 
     private func nextAction() {
         Haptics.play()
-
         nextIncompleteAction()
     }
 
     private func undoAction() {
         logger.debug("\(#function)")
-
         Haptics.play()
-
         exercise.lastCompletedAt = nil
     }
 
     private func doneAction() {
         shortPressDone = true // to avoid double presses
-
-        Haptics.play()
-
-        logger.debug("\(#function)")
         markDone(withAdvance: false)
     }
 
@@ -270,7 +269,6 @@ public struct ExerciseRun: View {
 
         logger.debug("\(#function)")
         if alwaysAdvanceOnLongPress {
-            Haptics.play(.longPress)
             markDone(withAdvance: true)
         } else {
             Haptics.play(.warning)
@@ -283,9 +281,13 @@ public struct ExerciseRun: View {
     private func markDone(withAdvance: Bool) {
         logger.debug("\(#function): withAdvance=\(withAdvance)")
 
+        Haptics.play(withAdvance ? .immediateAction : .click)
+
+        guard let mainStore = manager.getMainStore(viewContext) else { return }
+
         do {
             try exercise.markDone(viewContext,
-                                  completedAt: Date.now,
+                                  mainStore: mainStore,
                                   withAdvance: withAdvance,
                                   routineStartedAt: routineStartedAt,
                                   logToHistory: logToHistory)
@@ -312,12 +314,12 @@ struct ExerciseRun_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
-        let e1 = Exercise.create(ctx, userOrder: 0)
+        let e1 = Exercise.create(ctx, routine: routine, userOrder: 0)
         e1.name = "Lat Pulldown"
-        e1.routine = routine
         e1.primarySetting = 4
         e1.intensityStep = 8.2
         e1.units = Units.minutes.rawValue

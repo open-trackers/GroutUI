@@ -50,8 +50,11 @@ public struct ExerciseSettings: View {
 
 struct ExerciseSettings_Previews: PreviewProvider {
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
-        let exercise = Exercise.create(ctx, userOrder: 0)
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
+        let routine = Routine.create(ctx, userOrder: 0)
+        routine.name = "Beverage"
+        let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
         exercise.name = "Lat Pulldown"
         return Form { ExerciseSettings(exercise: exercise, tint: .blue) }
     }

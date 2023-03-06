@@ -11,18 +11,25 @@
 import SwiftUI
 
 import GroutLib
+import TrackerUI
 
 struct ExerciseRunIntensity: View {
     @ObservedObject var exercise: Exercise
+    var onTap: () -> Void
+
     #if os(watchOS)
-        @Binding var middleMode: ExerciseMiddleRowMode
+        private let maxFontSize: CGFloat = 60
+    #elseif os(iOS)
+        private let maxHeight: CGFloat = 180
+        private let maxFontSize: CGFloat = 80
     #endif
 
     var body: some View {
         #if os(watchOS)
             Stepper(value: $exercise.lastIntensity,
                     in: 0.0 ... Exercise.intensityMaxValue,
-                    step: exercise.intensityStep) {
+                    step: exercise.intensityStep)
+            {
                 intensityText
                     .modify {
                         if #available(iOS 16.1, watchOS 9.1, *) {
@@ -38,66 +45,57 @@ struct ExerciseRunIntensity: View {
             .disabled(exercise.isDone)
             .foregroundColor(textTintColor)
             .contentShape(Rectangle())
-            .onTapGesture(perform: tapAction)
+            .onTapGesture(perform: onTap)
         #elseif os(iOS)
             GroupBox {
                 GroutStepper(value: $exercise.lastIntensity,
                              in: 0.0 ... Exercise.intensityMaxValue,
-                             step: exercise.intensityStep) {
+                             step: exercise.intensityStep)
+                {
                     intensityText
                 }
+
                 .disabled(exercise.isDone)
                 .foregroundColor(textTintColor)
             } label: {
                 Text("Intensity")
                     .foregroundStyle(.tint)
             }
+            .frame(maxHeight: maxHeight)
         #endif
     }
 
     private var intensityText: some View {
-        TitleText(
-            exercise.formattedIntensity(exercise.lastIntensity, withUnits: true)
-        )
+        TitleText(exercise.formattedIntensity(exercise.lastIntensity, withUnits: true),
+                  maxFontSize: maxFontSize)
     }
 
     private var textTintColor: Color {
         exercise.isDone ? completedColor : .primary
     }
-
-    // MARK: - Actions
-
-    #if os(watchOS)
-        private func tapAction() {
-            Haptics.play()
-
-            middleMode = .settings
-        }
-    #endif
 }
 
 struct ExerciseRunIntensity_Previews: PreviewProvider {
     struct TestHolder: View {
         var exercise: Exercise
+        #if os(watchOS)
+            @State var middleMode: ExerciseMiddleRowMode = .intensity
+        #endif
         var body: some View {
-            ExerciseRun(exercise: exercise,
-                        routineStartedAt: Date.now,
-                        onNextIncomplete: { _ in },
-                        hasNextIncomplete: { true },
-                        onEdit: { _ in })
+            ExerciseRunIntensity(exercise: exercise) {}
         }
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
-        let e1 = Exercise.create(ctx, userOrder: 0)
+        let e1 = Exercise.create(ctx, routine: routine, userOrder: 0)
         e1.name = "Lat Pulldown"
-        e1.routine = routine
-        e1.primarySetting = 4
-        e1.intensityStep = 7.1
-        e1.units = Units.kilograms.rawValue
+        e1.lastIntensity = 10.0
+        e1.intensityStep = 7.0
+        // e1.units = Units.kilograms.rawValue
         return NavigationStack {
             TestHolder(exercise: e1)
         }

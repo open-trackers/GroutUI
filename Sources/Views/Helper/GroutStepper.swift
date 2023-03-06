@@ -10,9 +10,11 @@
 
 import SwiftUI
 
+import TrackerUI
+
 #if os(iOS)
     public struct GroutStepper<T, Label>: View
-        where T: BinaryFloatingPoint & _FormatSpecifiable & Strideable, Label: View
+        where T: Numeric & _FormatSpecifiable & Strideable, Label: View
     {
         // MARK: - Parameters
 
@@ -42,22 +44,20 @@ import SwiftUI
             HStack(alignment: .center) {
                 GeometryReader { geo in
                     let maxHeight = geo.size.height * heightFactor
-                    ZStack {
-                        HStack(alignment: .center) {
-                            button("minus.circle.fill",
-                                   maxHeight: maxHeight,
-                                   action: decreaseAction)
+                    HStack(alignment: .center) {
+                        button("minus.circle.fill",
+                               maxHeight: maxHeight,
+                               action: decreaseAction)
 
-                            Spacer()
+                        Spacer()
 
-                            content()
+                        content()
 
-                            Spacer()
+                        Spacer()
 
-                            button("plus.circle.fill",
-                                   maxHeight: maxHeight,
-                                   action: increaseAction)
-                        }
+                        button("plus.circle.fill",
+                               maxHeight: maxHeight,
+                               action: increaseAction)
                     }
                     .frame(width: geo.size.width,
                            height: geo.size.height,
@@ -66,6 +66,7 @@ import SwiftUI
             }
         }
 
+        // NOTE using onTapGesture rather than action to allow use in Form.
         private func button(_ systemName: String,
                             maxHeight: CGFloat,
                             action: @escaping () -> Void) -> some View
@@ -109,7 +110,9 @@ import SwiftUI
         }
 
         static var previews: some View {
-            TestHolder()
+            Form {
+                TestHolder()
+            }
         }
     }
 #endif

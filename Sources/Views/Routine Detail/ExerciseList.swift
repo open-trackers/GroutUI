@@ -12,14 +12,12 @@ import os
 import SwiftUI
 
 import GroutLib
-
-private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
-                            category: "ExerciseList")
+import TrackerUI
 
 public struct ExerciseList: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject private var router: MyRouter
+    @EnvironmentObject private var router: GroutRouter
 
     // MARK: - Parameters
 
@@ -29,13 +27,16 @@ public struct ExerciseList: View {
         self.routine = routine
 
         let sort = [NSSortDescriptor(keyPath: \Exercise.userOrder, ascending: true)]
-        let pred = NSPredicate(format: "routine = %@", routine)
+        let pred = NSPredicate(format: "routine == %@", routine)
         _exercises = FetchRequest<Exercise>(entity: Exercise.entity(),
                                             sortDescriptors: sort,
                                             predicate: pred)
     }
 
     // MARK: - Locals
+
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                                category: String(describing: ExerciseList.self))
 
     @FetchRequest private var exercises: FetchedResults<Exercise>
 
@@ -54,23 +55,17 @@ public struct ExerciseList: View {
             .listItemTint(exerciseListItemTint)
 
             #if os(watchOS)
-                AddExerciseButton(routine: routine) {
-                    Label("Add Exercise", systemImage: "plus.circle.fill")
-                        .symbolRenderingMode(.hierarchical)
-                }
-                .font(.title3)
-                .tint(exerciseColorDarkBg)
-                .foregroundStyle(.tint)
+                AddExerciseButton(routine: routine)
+                    .font(.title3)
+                    .tint(exerciseColorDarkBg)
+                    .foregroundStyle(.tint)
             #endif
         }
         #if os(iOS)
         .navigationTitle("Exercises")
         .toolbar {
             ToolbarItem {
-                AddExerciseButton(routine: routine) {
-                    Text("Add")
-                    // .tint(exerciseColor)
-                }
+                AddExerciseButton(routine: routine)
             }
         }
         #endif
@@ -85,10 +80,14 @@ public struct ExerciseList: View {
     // MARK: - Actions
 
     private func detailAction(exercise: Exercise) {
-        router.path.append(MyRoutes.exerciseDetail(exercise.uriRepresentation))
+        logger.notice("\(#function)")
+        Haptics.play()
+
+        router.path.append(GroutRoute.exerciseDetail(exercise.uriRepresentation))
     }
 
     private func deleteAction(offsets: IndexSet) {
+        logger.notice("\(#function)")
         offsets.map { exercises[$0] }.forEach(viewContext.delete)
         do {
             try viewContext.save()
@@ -98,6 +97,7 @@ public struct ExerciseList: View {
     }
 
     private func moveAction(from source: IndexSet, to destination: Int) {
+        logger.notice("\(#function)")
         Exercise.move(exercises, from: source, to: destination)
         do {
             try viewContext.save()
@@ -119,10 +119,11 @@ struct ExerciseList_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
-        let exercise = Exercise.create(ctx, userOrder: 0)
+        let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
         exercise.name = "Lat Pulldown"
         exercise.routine = routine
         return TestHolder(routine: routine)

@@ -16,6 +16,17 @@ import SwiftUI
         case intensity = 0
         case settings = 1
         case volume = 2
+
+        var next: ExerciseMiddleRowMode {
+            switch self {
+            case .intensity:
+                return .settings
+            case .settings:
+                return .volume
+            case .volume:
+                return .intensity
+            }
+        }
     }
 
     struct ExerciseRunMiddleRow<Content: View>: View {

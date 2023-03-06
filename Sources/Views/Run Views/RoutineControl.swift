@@ -12,14 +12,11 @@ import os
 import SwiftUI
 
 import GroutLib
+import TrackerUI
 
 public struct RoutineControl: View {
-    #if os(iOS)
-        @Environment(\.verticalSizeClass) private var verticalSizeClass
-    #endif
-
     @Environment(\.managedObjectContext) private var viewContext
-    @EnvironmentObject private var router: MyRouter
+    @EnvironmentObject private var router: GroutRouter
 
     // MARK: - Parameters
 
@@ -45,38 +42,69 @@ public struct RoutineControl: View {
         self.startedAt = startedAt
     }
 
+    // MARK: - Locals
+
+    #if os(watchOS)
+        let verticalSpacing: CGFloat = 10
+        let minTitleHeight: CGFloat = 20
+        let horzButtonSpacing: CGFloat = 15
+        let maxFontSize: CGFloat = 35
+    #elseif os(iOS)
+        let verticalSpacing: CGFloat = 30
+        let minTitleHeight: CGFloat = 60
+        let maxButtonHeight: CGFloat = 150
+        let horzButtonSpacing: CGFloat = 30
+        let maxFontSize: CGFloat = 40
+    #endif
+
     // MARK: - Views
 
     public var body: some View {
-        GeometryReader { geo in
-            #if os(watchOS)
-                innerBody(geo)
-            #elseif os(iOS)
-                innerBody(geo, heightFactor: heightFactor)
-                    // NOTE padding needed on iPhone 8, 12, and possibly others (visible in light mode)
-                    .padding(.horizontal)
-            #endif
-        }
+        platformView
     }
 
-    private func innerBody(_ geo: GeometryProxy, heightFactor: CGFloat = 1.0) -> some View {
-        VStack(spacing: 9) {
-            top
-                .frame(height: geo.size.height * 3 / 13 * heightFactor)
-            middle
-                .frame(height: geo.size.height * 5 / 13 * heightFactor)
-            bottom
-                .frame(height: geo.size.height * 5 / 13 * heightFactor)
-        }
-    }
+    #if os(watchOS)
+        private var platformView: some View {
+            GeometryReader { geo in
+                VStack(spacing: verticalSpacing) {
+                    TitleText(routine.wrappedName, maxFontSize: maxFontSize)
+                        .foregroundColor(titleColor)
+                        .frame(minHeight: minTitleHeight)
+                        .frame(height: geo.size.height * 1 / 5)
 
-    private var top: some View {
-        TitleText(routine.wrappedName)
-            .foregroundColor(titleColor)
-    }
+                    middle
+                        .frame(height: geo.size.height * 2 / 5)
+
+                    bottom
+                        .frame(height: geo.size.height * 2 / 5)
+                }
+                .frame(maxHeight: .infinity, alignment: .top)
+            }
+        }
+    #endif
+
+    #if os(iOS)
+        private var platformView: some View {
+            VStack(spacing: verticalSpacing) {
+                TitleText(routine.wrappedName, maxFontSize: maxFontSize)
+                    .foregroundColor(titleColor)
+                    .frame(minHeight: minTitleHeight)
+                Group {
+                    middle
+
+                    bottom
+                }
+                .frame(maxHeight: maxButtonHeight)
+                Spacer()
+            }
+            .frame(maxHeight: .infinity, alignment: .top)
+            // NOTE padding needed on iPhone 8, 12, and possibly others (visible in light mode)
+            .padding(.horizontal)
+        }
+    #endif
 
     private var middle: some View {
-        HStack(alignment: .bottom) {
+        HStack(alignment: .bottom, spacing: horzButtonSpacing) {
             ActionButton(onShortPress: onStop,
                          imageSystemName: "xmark",
                          buttonText: "Stop",
@@ -87,7 +115,7 @@ public struct RoutineControl: View {
     }
 
     private var bottom: some View {
-        HStack(alignment: .bottom) {
+        HStack(alignment: .bottom, spacing: horzButtonSpacing) {
             ActionButton(onShortPress: onAdd,
                          imageSystemName: "plus", // plus.circle.fill
                          buttonText: "Add",
@@ -103,12 +131,6 @@ public struct RoutineControl: View {
     }
 
     // MARK: - Properties
-
-    #if os(iOS)
-        private var heightFactor: CGFloat {
-            verticalSizeClass == .regular ? 0.6 : 0.8
-        }
-    #endif
 
     private var onNextIncompleteColor: Color {
         hasRemaining ? exerciseNextColor : disabledColor
@@ -135,12 +157,13 @@ struct RoutineControl_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
-        routine.name = "Leg"
-        let e1 = Exercise.create(ctx, userOrder: 0)
+        routine.name = "Chest"
+        let e1 = Exercise.create(ctx, routine: routine, userOrder: 0)
         e1.name = "Lat Pulldown"
-        e1.routine = routine
+        // try? ctx.save()
         return NavigationStack {
             TestHolder(routine: routine)
         }

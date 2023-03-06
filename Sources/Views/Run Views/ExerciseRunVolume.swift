@@ -12,20 +12,20 @@ import CoreData
 import SwiftUI
 
 import GroutLib
+import TrackerUI
 
 struct ExerciseRunVolume: View {
     @ObservedObject var exercise: Exercise
     var onEdit: (URL) -> Void
-    #if os(watchOS)
-        @Binding var middleMode: ExerciseMiddleRowMode
-    #endif
+    var onTap: () -> Void
 
     var body: some View {
         #if os(watchOS)
             ExerciseRunMiddleRow(imageName: "dumbbell.fill",
                                  imageColor: exerciseSetsColor,
                                  onDetail: { onEdit(exercise.uriRepresentation) },
-                                 onTap: tapAction) {
+                                 onTap: onTap)
+            {
                 volumeText
             }
         #elseif os(iOS)
@@ -58,16 +58,6 @@ struct ExerciseRunVolume: View {
     private var textTintColor: Color {
         exercise.isDone ? completedColor : .primary
     }
-
-    // MARK: - Actions
-
-    #if os(watchOS)
-        private func tapAction() {
-            Haptics.play()
-
-            middleMode = .intensity
-        }
-    #endif
 }
 
 struct ExerciseRunVolume_Previews: PreviewProvider {
@@ -83,12 +73,12 @@ struct ExerciseRunVolume_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        let ctx = PersistenceManager.getPreviewContainer().viewContext
+        let manager = CoreDataStack.getPreviewStack()
+        let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Back & Bicep"
-        let e1 = Exercise.create(ctx, userOrder: 0)
+        let e1 = Exercise.create(ctx, routine: routine, userOrder: 0)
         e1.name = "Lat Pulldown"
-        e1.routine = routine
         e1.primarySetting = 4
         e1.intensityStep = 7.1
         return NavigationStack {

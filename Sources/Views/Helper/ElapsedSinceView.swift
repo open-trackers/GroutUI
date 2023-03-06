@@ -13,6 +13,8 @@ import SwiftUI
 import Compactor
 
 import GroutLib
+import TrackerLib
+import TrackerUI
 
 public struct ElapsedSinceView: View {
     // MARK: - Parameters
@@ -57,10 +59,10 @@ public struct ElapsedSinceView: View {
                 .lineLimit(1)
         }
         .onReceive(timer) { _ in
-            self.now = Date.now
+            now = Date.now
         }
         .onAppear {
-            self.now = Date.now
+            now = Date.now
         }
 //        .onDisappear {
 //            timer.upstream.connect().cancel()
