@@ -27,7 +27,7 @@ public struct ExerciseIntensity<Content: View>: View {
                 units: Binding<Int16>,
                 tint: Color,
                 isDefault: Bool = false,
-                content: @escaping () -> Content = { EmptyView() })
+                @ViewBuilder content: @escaping () -> Content = { EmptyView() })
     {
         _intensity = intensity
         _intensityStep = intensityStep
@@ -95,6 +95,7 @@ public struct ExerciseIntensity<Content: View>: View {
                 .foregroundStyle(tint)
         }
 
+        content()
 //        Section {
 //            Toggle(isOn: $exercise.invertedIntensity) {
 //                Text("Inverted")

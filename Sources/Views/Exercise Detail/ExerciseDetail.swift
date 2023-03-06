@@ -85,7 +85,7 @@ public struct ExerciseDetail: View {
                     inverted
                 }
             }
-            .navigationTitle("Exercise")
+            .navigationTitle(title)
         }
     #endif
 
@@ -144,5 +144,7 @@ struct ExerciseDetail_Previews: PreviewProvider {
         exercise.routine = routine
         return TestHolder(exercise: exercise)
             .environment(\.managedObjectContext, ctx)
+            .environmentObject(manager)
+            .accentColor(.orange)
     }
 }
