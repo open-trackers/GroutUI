@@ -242,14 +242,6 @@ public struct RoutineList: View {
                     try backgroundContext.save()
                 }
 
-                if !updatedCreatedAts {
-                    try updateCreatedAts(backgroundContext)
-                    try backgroundContext.save()
-                    logger.notice("\(#function): updated createdAts, where necessary")
-                    updatedArchiveIDs = true
-                    try backgroundContext.save()
-                }
-
                 #if os(watchOS)
                     // delete log records older than N days
                     guard let keepSince = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
