@@ -19,11 +19,9 @@ public struct GroutDestination: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var router: GroutRouter
 
-//    private var router: GroutRouter
     private var route: GroutRoute
 
     public init(_ route: GroutRoute) {
-//        self.router = router
         self.route = route
     }
 

@@ -116,7 +116,7 @@ struct ExerciseList_Previews: PreviewProvider {
         var routine: Routine
         @State var navData: Data?
         var body: some View {
-            NavStack(navData: $navData) {
+            GroutNavStack(navData: $navData) {
                 ExerciseList(routine: routine)
             }
         }

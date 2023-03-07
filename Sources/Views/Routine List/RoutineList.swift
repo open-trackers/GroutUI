@@ -83,7 +83,7 @@ public struct RoutineList: View {
             }
         }
         .fullScreenCover(item: $selectedRoutine) { url in
-            NavStack(navData: $routineRunNavData) {
+            GroutNavStack(navData: $routineRunNavData) {
                 VStack {
                     if let routine: Routine = Routine.get(viewContext, forURIRepresentation: url) {
                         RoutineRun(routine: routine,
