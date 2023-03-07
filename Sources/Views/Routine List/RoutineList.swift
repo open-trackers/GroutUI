@@ -53,8 +53,6 @@ public struct RoutineList: View {
     @SceneStorage("routine-run-nav") private var routineRunNavData: Data?
     @SceneStorage("run-selected-routine") private var selectedRoutine: URL? = nil
     @SceneStorage("run-started-at") private var startedAt: Date = .distantFuture
-    @SceneStorage("updated-archive-ids") private var updatedArchiveIDs: Bool = false
-    @SceneStorage("updated-created-ats") private var updatedCreatedAts: Bool = false
 
     // MARK: - Views
 
@@ -98,7 +96,6 @@ public struct RoutineList: View {
                 }
             }
         }
-        .task(priority: .utility, taskAction)
         .onReceive(startRoutinePublisher) { payload in
             logger.debug("onReceive: \(startRoutinePublisher.name.rawValue)")
             guard let routineURI = payload.object as? URL else { return }
@@ -225,52 +222,6 @@ public struct RoutineList: View {
             router.path.append(GroutRoute.about)
         }
     #endif
-
-    // MARK: - Background Task
-
-    @Sendable
-    private func taskAction() async {
-        logger.notice("\(#function) START")
-
-        await manager.container.performBackgroundTask { backgroundContext in
-            do {
-                if !updatedArchiveIDs {
-                    try updateArchiveIDs(backgroundContext)
-                    try backgroundContext.save()
-                    logger.notice("\(#function): updated archive IDs, where necessary")
-                    updatedArchiveIDs = true
-                    try backgroundContext.save()
-                }
-
-                #if os(watchOS)
-                    // delete log records older than N days
-                    guard let keepSince = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
-                    else { throw TrackerError.missingData(msg: "Clean: could not resolve date one year in past") }
-                    logger.notice("\(#function): keepSince=\(keepSince)")
-                    try cleanLogRecords(backgroundContext, keepSince: keepSince)
-                    try backgroundContext.save()
-                #endif
-
-                #if os(iOS)
-                    guard let mainStore = manager.getMainStore(backgroundContext),
-                          let archiveStore = manager.getArchiveStore(backgroundContext)
-                    else {
-                        logger.error("\(#function): unable to acquire configuration to transfer log records.")
-                        return
-                    }
-
-                    // move log records to archive store
-                    try transferToArchive(backgroundContext,
-                                          mainStore: mainStore,
-                                          archiveStore: archiveStore)
-                    try backgroundContext.save()
-                #endif
-            } catch {
-                logger.error("\(#function): \(error.localizedDescription)")
-            }
-        }
-        logger.notice("\(#function) END")
-    }
 }
 
 struct RoutineList_Previews: PreviewProvider {
