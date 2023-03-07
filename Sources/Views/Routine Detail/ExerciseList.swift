@@ -49,10 +49,14 @@ public struct ExerciseList: View {
                     Text("\(exercise.name ?? "unknown")")
                         .foregroundColor(exerciseColor)
                 }
+                #if os(watchOS)
+                .listItemTint(exerciseListItemTint)
+                #elseif os(iOS)
+                .listRowBackground(exerciseListItemTint)
+                #endif
             }
             .onMove(perform: moveAction)
             .onDelete(perform: deleteAction)
-            .listItemTint(exerciseListItemTint)
 
             #if os(watchOS)
                 AddExerciseButton(routine: routine)
