@@ -22,12 +22,12 @@ public struct GroutNavStack<Destination, Content>: View
     // MARK: - Parameters
 
     @Binding private var navData: Data?
-    private let stackIdentifier: UUID
+    private let stackIdentifier: String?
     private let destination: (GroutRouter, GroutRoute) -> Destination
     private let content: () -> Content
 
     public init(navData: Binding<Data?>,
-                stackIdentifier: UUID = UUID(),
+                stackIdentifier: String? = nil,
                 @ViewBuilder destination: @escaping (GroutRouter, GroutRoute) -> Destination = { GroutDestination($1).environmentObject($0) },
                 @ViewBuilder content: @escaping () -> Content)
     {
