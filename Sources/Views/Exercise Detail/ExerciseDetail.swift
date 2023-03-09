@@ -12,6 +12,7 @@ import os
 import SwiftUI
 
 import GroutLib
+import TrackerUI
 
 public struct ExerciseDetail: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -51,21 +52,39 @@ public struct ExerciseDetail: View {
             TabView(selection: $selectedTab) {
                 Form {
                     ExerciseName(exercise: exercise, tint: exerciseColor)
-                    ExerciseSettings(exercise: exercise, tint: exerciseColor)
                 }
                 .tag(0)
                 Form {
-                    ExerciseVolume(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
+                    ExerPrimarySettings(exercise: exercise, tint: exerciseColor)
                 }
                 .tag(1)
                 Form {
-                    ExerciseIntensity(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor) {
-                        inverted
-                    }
+                    ExerSecondarySettings(exercise: exercise, tint: exerciseColor)
                 }
                 .tag(2)
+                Form {
+                    ExerciseSets(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
+                }
+                .tag(3)
+                Form {
+                    ExerciseReps(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
+                }
+                .tag(4)
+                Form {
+                    ExerIntensity(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
+                }
+                .tag(5)
+                Form {
+                    ExerIntensityStep(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
+                }
+                .tag(6)
+                Form {
+                    ExerIntensityUnits(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
+                    ExerIntensityStepInvert(invertedIntensity: $exercise.invertedIntensity, tint: exerciseColor)
+                }
+                .tag(7)
             }
-            .tabViewStyle(.page)
+            .tabViewStyle(.page(indexDisplayMode: .always))
             .navigationTitle {
                 Text(title)
                     .foregroundColor(exerciseColorDarkBg)
@@ -82,29 +101,18 @@ public struct ExerciseDetail: View {
         private var platformView: some View {
             Form {
                 ExerciseName(exercise: exercise, tint: exerciseColor)
-                ExerciseSettings(exercise: exercise, tint: exerciseColor)
-                ExerciseVolume(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
-                ExerciseIntensity(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor) {
-                    inverted
-                }
+                ExerPrimarySettings(exercise: exercise, tint: exerciseColor)
+                ExerSecondarySettings(exercise: exercise, tint: exerciseColor)
+                ExerciseSets(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
+                ExerciseReps(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
+                ExerIntensity(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
+                ExerIntensityStep(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
+                ExerIntensityUnits(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
+                ExerIntensityStepInvert(invertedIntensity: $exercise.invertedIntensity, tint: exerciseColor)
             }
             .navigationTitle(title)
         }
     #endif
-
-    private var inverted: some View {
-        Section {
-            Toggle(isOn: $exercise.invertedIntensity) {
-                Text("Inverted")
-            }
-            .tint(exerciseColor)
-        } header: {
-            Text("Advance Direction")
-                .foregroundStyle(exerciseColor)
-        } footer: {
-            Text("Example: if inverted with step of 5, advance from 25 to 20")
-        }
-    }
 
     // MARK: - Properties
 

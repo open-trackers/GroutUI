@@ -49,21 +49,41 @@ struct ExerciseDefaults: View {
         private var platformView: some View {
             TabView(selection: $selectedTab) {
                 Form {
-                    ExerciseVolume(sets: $appSetting.defExSets,
-                                   repetitions: $appSetting.defExReps,
-                                   tint: exerciseColor)
+                    ExerciseSets(sets: $appSetting.defExSets,
+                                 repetitions: $appSetting.defExReps,
+                                 tint: exerciseColor)
                 }
                 .tag(0)
 
                 Form {
-                    ExerciseIntensity(intensity: $appSetting.defExIntensity,
+                    ExerciseReps(sets: $appSetting.defExSets,
+                                 repetitions: $appSetting.defExReps,
+                                 tint: exerciseColor)
+                }
+                .tag(1)
+
+                Form {
+                    ExerIntensity(intensity: $appSetting.defExIntensity,
+                                  intensityStep: $appSetting.defExIntensityStep,
+                                  units: $appSetting.defExUnits,
+                                  tint: exerciseColor)
+                }
+                .tag(2)
+
+                Form {
+                    ExerIntensityStep(intensity: $appSetting.defExIntensity,
                                       intensityStep: $appSetting.defExIntensityStep,
                                       units: $appSetting.defExUnits,
                                       tint: exerciseColor)
                 }
-                .tag(1)
+                .tag(3)
+
+                Form {
+                    ExerIntensityUnits(intensity: $appSetting.defExIntensity, intensityStep: $appSetting.defExIntensityStep, units: $appSetting.defExUnits, tint: exerciseColor)
+                }
+                .tag(4)
             }
-            .tabViewStyle(.page)
+            .tabViewStyle(.page(indexDisplayMode: .always))
             .navigationTitle {
                 Text(title)
                     .foregroundColor(exerciseColorDarkBg)
@@ -79,14 +99,19 @@ struct ExerciseDefaults: View {
     #if os(iOS)
         private var platformView: some View {
             Form {
-                ExerciseVolume(sets: $appSetting.defExSets,
-                               repetitions: $appSetting.defExReps,
-                               tint: exerciseColor)
+                ExerciseSets(sets: $appSetting.defExSets,
+                             repetitions: $appSetting.defExReps,
+                             tint: exerciseColor)
+                ExerciseReps(sets: $appSetting.defExSets,
+                             repetitions: $appSetting.defExReps,
+                             tint: exerciseColor)
 
-                ExerciseIntensity(intensity: $appSetting.defExIntensity,
-                                  intensityStep: $appSetting.defExIntensityStep,
-                                  units: $appSetting.defExUnits,
-                                  tint: exerciseColor)
+                ExerIntensity(intensity: $appSetting.defExIntensity,
+                              intensityStep: $appSetting.defExIntensityStep,
+                              units: $appSetting.defExUnits,
+                              tint: exerciseColor)
+
+                // TODO: other intensity things
             }
             .navigationTitle(title)
         }

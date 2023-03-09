@@ -1,5 +1,5 @@
 //
-//  ExerciseIntensity.swift
+//  ExerIntensity.swift
 //
 // Copyright 2022, 2023  OpenAlloc LLC
 //
@@ -12,7 +12,7 @@ import SwiftUI
 
 import GroutLib
 
-public struct ExerciseIntensity<Content: View>: View {
+struct ExerIntensity: View {
     // MARK: - Parameters
 
     @Binding private var intensity: Float
@@ -20,21 +20,21 @@ public struct ExerciseIntensity<Content: View>: View {
     @Binding private var units: Int16
     private let tint: Color
     private let isDefault: Bool
-    private let content: () -> Content
+//    private let content: () -> Content
 
-    public init(intensity: Binding<Float>,
-                intensityStep: Binding<Float>,
-                units: Binding<Int16>,
-                tint: Color,
-                isDefault: Bool = false,
-                @ViewBuilder content: @escaping () -> Content = { EmptyView() })
+    init(intensity: Binding<Float>,
+         intensityStep: Binding<Float>,
+         units: Binding<Int16>,
+         tint: Color,
+         isDefault: Bool = false)
+//                @ViewBuilder content: @escaping () -> Content = { EmptyView() })
     {
         _intensity = intensity
         _intensityStep = intensityStep
         _units = units
         self.tint = tint
         self.isDefault = isDefault
-        self.content = content
+//        self.content = content
     }
 
     // MARK: - Locals
@@ -45,7 +45,7 @@ public struct ExerciseIntensity<Content: View>: View {
 
     // MARK: - Views
 
-    public var body: some View {
+    var body: some View {
         Section {
             Stepper(value: $intensity, in: intensityRange, step: intensityStep) {
                 intensityText(intensity)
@@ -60,42 +60,42 @@ public struct ExerciseIntensity<Content: View>: View {
                 .foregroundStyle(tint)
         }
 
-        Section {
-            Stepper(value: $intensityStep, in: intensityStepRange, step: 0.1) {
-                intensityText(intensityStep)
-            }
-            .tint(tint)
-            Button(action: { intensityStep = 1 }) {
-                Text("Set to one (1)")
-                    .foregroundStyle(tint)
-            }
-        } header: {
-            Text("Intensity Step")
-                .foregroundStyle(tint)
-        }
+//        Section {
+//            Stepper(value: $intensityStep, in: intensityStepRange, step: 0.1) {
+//                intensityText(intensityStep)
+//            }
+//            .tint(tint)
+//            Button(action: { intensityStep = 1 }) {
+//                Text("Set to one (1)")
+//                    .foregroundStyle(tint)
+//            }
+//        } header: {
+//            Text("Intensity Step")
+//                .foregroundStyle(tint)
+//        }
+//
+//        Section {
+//            Picker(selection: $units) {
+//                ForEach(Units.allCases, id: \.self) { unit in
+//                    Text(unit.formattedDescription)
+//                        .font(.title3)
+//                        .tag(unit.rawValue)
+//                }
+//            } label: {
+//                EmptyView()
+//            }
+//            #if os(watchOS)
+//            .pickerStyle(.wheel)
+//            #endif
+//            .onChange(of: units) {
+//                units = $0
+//            }
+//        } header: {
+//            Text("Intensity Units")
+//                .foregroundStyle(tint)
+//        }
 
-        Section {
-            Picker(selection: $units) {
-                ForEach(Units.allCases, id: \.self) { unit in
-                    Text(unit.formattedDescription)
-                        .font(.title3)
-                        .tag(unit.rawValue)
-                }
-            } label: {
-                EmptyView()
-            }
-            #if os(watchOS)
-            .pickerStyle(.wheel)
-            #endif
-            .onChange(of: units) {
-                units = $0
-            }
-        } header: {
-            Text("Intensity Units")
-                .foregroundStyle(tint)
-        }
-
-        content()
+//        content()
 //        Section {
 //            Toggle(isOn: $exercise.invertedIntensity) {
 //                Text("Inverted")
@@ -132,10 +132,10 @@ public struct ExerciseIntensity<Content: View>: View {
     }
 }
 
-// struct ExerciseIntensity_Previews: PreviewProvider {
+// struct ExerIntensity_Previews: PreviewProvider {
 //    static var previews: some View {
 //        Form {
-//            ExerciseIntensity(exercise: exercise, tint: .green)
+//            ExerIntensity(exercise: exercise, tint: .green)
 //        }
 //    }
 // }

@@ -1,5 +1,5 @@
 //
-//  ExerciseName.swift
+//  ExerSecondarySettings.swift
 //
 // Copyright 2022, 2023  OpenAlloc LLC
 //
@@ -11,9 +11,8 @@
 import SwiftUI
 
 import GroutLib
-import TrackerUI
 
-struct ExerciseName: View {
+struct ExerSecondarySettings: View {
     // MARK: - Parameters
 
     @ObservedObject private var exercise: Exercise
@@ -27,24 +26,29 @@ struct ExerciseName: View {
     // MARK: - Views
 
     var body: some View {
+//        Section {
+//            Stepper(value: $exercise.primarySetting, in: settingRange, step: 1) {
+//                Text("\(exercise.primarySetting)")
+//            }
+//            .tint(tint)
+//        } header: {
+//            Text("Primary Setting")
+//                .foregroundStyle(tint)
+//        }
+
         Section {
-            TextFieldWithPresets($exercise.wrappedName,
-                                 prompt: "Enter exercise name",
-                                 presets: exercisePresets)
-            { _, _ in
-                // nothing to set other than the name
-            } label: {
-                Text($0)
-                    .foregroundStyle(.tint)
+            Stepper(value: $exercise.secondarySetting, in: settingRange, step: 1) {
+                Text("\(exercise.secondarySetting)")
             }
+            .tint(tint)
         } header: {
-            Text("Name")
+            Text("Secondary Setting")
                 .foregroundStyle(tint)
         }
     }
 }
 
-struct ExerciseName_Previews: PreviewProvider {
+struct ExerSecondarySettings_Previews: PreviewProvider {
     static var previews: some View {
         let manager = CoreDataStack.getPreviewStack()
         let ctx = manager.container.viewContext
@@ -52,6 +56,6 @@ struct ExerciseName_Previews: PreviewProvider {
         routine.name = "Beverage"
         let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
         exercise.name = "Lat Pulldown"
-        return Form { ExerciseName(exercise: exercise, tint: .orange) }
+        return Form { ExerSecondarySettings(exercise: exercise, tint: .blue) }
     }
 }

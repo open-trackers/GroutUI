@@ -1,5 +1,5 @@
 //
-//  ExerciseSettings.swift
+//  ExerPrimarySettings.swift
 //
 // Copyright 2022, 2023  OpenAlloc LLC
 //
@@ -12,20 +12,20 @@ import SwiftUI
 
 import GroutLib
 
-public struct ExerciseSettings: View {
+struct ExerPrimarySettings: View {
     // MARK: - Parameters
 
     @ObservedObject private var exercise: Exercise
     private let tint: Color
 
-    public init(exercise: Exercise, tint: Color) {
+    init(exercise: Exercise, tint: Color) {
         self.exercise = exercise
         self.tint = tint
     }
 
     // MARK: - Views
 
-    public var body: some View {
+    var body: some View {
         Section {
             Stepper(value: $exercise.primarySetting, in: settingRange, step: 1) {
                 Text("\(exercise.primarySetting)")
@@ -36,19 +36,19 @@ public struct ExerciseSettings: View {
                 .foregroundStyle(tint)
         }
 
-        Section {
-            Stepper(value: $exercise.secondarySetting, in: settingRange, step: 1) {
-                Text("\(exercise.secondarySetting)")
-            }
-            .tint(tint)
-        } header: {
-            Text("Secondary Setting")
-                .foregroundStyle(tint)
-        }
+//        Section {
+//            Stepper(value: $exercise.secondarySetting, in: settingRange, step: 1) {
+//                Text("\(exercise.secondarySetting)")
+//            }
+//            .tint(tint)
+//        } header: {
+//            Text("Secondary Setting")
+//                .foregroundStyle(tint)
+//        }
     }
 }
 
-struct ExerciseSettings_Previews: PreviewProvider {
+struct ExerPrimarySettings_Previews: PreviewProvider {
     static var previews: some View {
         let manager = CoreDataStack.getPreviewStack()
         let ctx = manager.container.viewContext
@@ -56,6 +56,6 @@ struct ExerciseSettings_Previews: PreviewProvider {
         routine.name = "Beverage"
         let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
         exercise.name = "Lat Pulldown"
-        return Form { ExerciseSettings(exercise: exercise, tint: .blue) }
+        return Form { ExerPrimarySettings(exercise: exercise, tint: .blue) }
     }
 }

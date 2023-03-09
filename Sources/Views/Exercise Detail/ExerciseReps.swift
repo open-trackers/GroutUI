@@ -1,5 +1,5 @@
 //
-//  ExerciseVolume.swift
+//  ExerciseSets.swift
 //
 // Copyright 2022, 2023  OpenAlloc LLC
 //
@@ -12,7 +12,7 @@ import SwiftUI
 
 import GroutLib
 
-public struct ExerciseVolume: View {
+struct ExerciseReps: View {
     // MARK: - Parameters
 
     @Binding private var sets: Int16
@@ -20,10 +20,10 @@ public struct ExerciseVolume: View {
     private let tint: Color
     private let isDefault: Bool
 
-    public init(sets: Binding<Int16>,
-                repetitions: Binding<Int16>,
-                tint: Color,
-                isDefault: Bool = false)
+    init(sets: Binding<Int16>,
+         repetitions: Binding<Int16>,
+         tint: Color,
+         isDefault: Bool = false)
     {
         // self.exercise = exercise
         _sets = sets
@@ -34,16 +34,16 @@ public struct ExerciseVolume: View {
 
     // MARK: - Views
 
-    public var body: some View {
-        Section {
-            Stepper(value: $sets, in: 0 ... 10, step: 1) {
-                Text("\(sets)")
-            }
-            .tint(tint)
-        } header: {
-            Text("Set Count")
-                .foregroundStyle(tint)
-        }
+    var body: some View {
+//        Section {
+//            Stepper(value: $sets, in: 0 ... 10, step: 1) {
+//                Text("\(sets)")
+//            }
+//            .tint(tint)
+//        } header: {
+//            Text("Set Count")
+//                .foregroundStyle(tint)
+//        }
 
         Section {
             Stepper(value: $repetitions, in: 0 ... 100, step: 1) {
@@ -57,12 +57,12 @@ public struct ExerciseVolume: View {
     }
 }
 
-struct ExerciseVolume_Previews: PreviewProvider {
+struct ExerciseReps_Previews: PreviewProvider {
     static var previews: some View {
         Form {
-            ExerciseVolume(sets: .constant(10),
-                           repetitions: .constant(13),
-                           tint: .green)
+            ExerciseReps(sets: .constant(10),
+                         repetitions: .constant(13),
+                         tint: .green)
         }
     }
 }
