@@ -38,10 +38,10 @@ public struct RoutineRun: View {
         _startedAt = startedAt
 
         _exercises = FetchRequest<Exercise>(entity: Exercise.entity(),
-                                            sortDescriptors: Routine.exerciseSort,
+                                            sortDescriptors: Exercise.byUserOrder(),
                                             predicate: routine.exercisePredicate)
         _incomplete = FetchRequest<Exercise>(entity: Exercise.entity(),
-                                             sortDescriptors: Routine.exerciseSort,
+                                             sortDescriptors: Exercise.byUserOrder(),
                                              predicate: routine.incompletePredicate)
         _isNew = isNew
 
