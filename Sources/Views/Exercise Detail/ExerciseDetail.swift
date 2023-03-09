@@ -32,7 +32,10 @@ public struct ExerciseDetail: View {
                                 category: String(describing: ExerciseDetail.self))
 
     #if os(watchOS)
-        @SceneStorage("exercise-detail-tab") private var selectedTab = 1
+        // NOTE no longer saving the tab in scene storage, because it has been
+        // annoying to not start out at the first tab when navigating to detail.
+        // @SceneStorage("exercise-detail-tab") private var selectedTab = 0
+        @State private var selectedTab: Int = 0
     #endif
 
     // MARK: - Views
@@ -50,17 +53,17 @@ public struct ExerciseDetail: View {
                     ExerciseName(exercise: exercise, tint: exerciseColor)
                     ExerciseSettings(exercise: exercise, tint: exerciseColor)
                 }
-                .tag(1)
+                .tag(0)
                 Form {
                     ExerciseVolume(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
                 }
-                .tag(2)
+                .tag(1)
                 Form {
                     ExerciseIntensity(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor) {
                         inverted
                     }
                 }
-                .tag(3)
+                .tag(2)
             }
             .tabViewStyle(.page)
             .navigationTitle {
@@ -68,7 +71,7 @@ public struct ExerciseDetail: View {
                     .foregroundColor(exerciseColorDarkBg)
                     .onTapGesture {
                         withAnimation {
-                            selectedTab = 1
+                            selectedTab = 0
                         }
                     }
             }

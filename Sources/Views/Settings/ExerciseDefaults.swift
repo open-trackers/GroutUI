@@ -33,7 +33,10 @@ struct ExerciseDefaults: View {
     // MARK: - Locals
 
     #if os(watchOS)
-        @SceneStorage("exercise-defaults-tab") private var selectedTab = 1
+        // NOTE no longer saving the tab in scene storage, because it has been
+        // annoying to not start out at the first tab when navigating to detail.
+        // @SceneStorage("exercise-defaults-tab") private var selectedTab =
+        @State private var selectedTab: Int = 0
     #endif
 
     // MARK: - Views
@@ -50,7 +53,7 @@ struct ExerciseDefaults: View {
                                    repetitions: $appSetting.defExReps,
                                    tint: exerciseColor)
                 }
-                .tag(1)
+                .tag(0)
 
                 Form {
                     ExerciseIntensity(intensity: $appSetting.defExIntensity,
@@ -58,7 +61,7 @@ struct ExerciseDefaults: View {
                                       units: $appSetting.defExUnits,
                                       tint: exerciseColor)
                 }
-                .tag(2)
+                .tag(1)
             }
             .tabViewStyle(.page)
             .navigationTitle {
@@ -66,7 +69,7 @@ struct ExerciseDefaults: View {
                     .foregroundColor(exerciseColorDarkBg)
                     .onTapGesture {
                         withAnimation {
-                            selectedTab = 1
+                            selectedTab = 0
                         }
                     }
             }
