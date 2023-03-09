@@ -80,9 +80,12 @@ public struct ExerciseDetail: View {
                 .tag(6)
                 Form {
                     ExerIntensityUnits(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
-                    ExerIntensityStepInvert(invertedIntensity: $exercise.invertedIntensity, tint: exerciseColor)
                 }
                 .tag(7)
+                Form {
+                    ExerIntensityStepInvert(invertedIntensity: $exercise.invertedIntensity, tint: exerciseColor)
+                }
+                .tag(8)
             }
             .tabViewStyle(.page(indexDisplayMode: .always))
             .navigationTitle {
