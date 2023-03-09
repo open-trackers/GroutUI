@@ -26,8 +26,8 @@ public struct ExerciseList: View {
     public init(routine: Routine) {
         self.routine = routine
 
-        let sort = [NSSortDescriptor(keyPath: \Exercise.userOrder, ascending: true)]
-        let pred = NSPredicate(format: "routine == %@", routine)
+        let sort = Exercise.byUserOrder()
+        let pred = Exercise.getPredicate(routine: routine)
         _exercises = FetchRequest<Exercise>(entity: Exercise.entity(),
                                             sortDescriptors: sort,
                                             predicate: pred)
