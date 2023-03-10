@@ -36,7 +36,35 @@ public struct ExerciseDetail: View {
         // NOTE no longer saving the tab in scene storage, because it has been
         // annoying to not start out at the first tab when navigating to detail.
         // @SceneStorage("exercise-detail-tab") private var selectedTab = 0
-        @State private var selectedTab: Int = 0
+        @State private var selectedTab: MyTabs = .name
+
+        enum MyTabs: Int, Tabable {
+            case name = 1
+            case primary = 2
+            case secondary = 3
+            case sets = 4
+            case reps = 5
+            case intensity = 6
+            case intensityStep = 7
+            case intensityUnit = 8
+            case intensityInvert = 9
+
+            static var first: MyTabs = .name
+            static var last: MyTabs = .intensityInvert
+
+            var description: String {
+                "\(rawValue)"
+            }
+
+            var previous: MyTabs? {
+                MyTabs(rawValue: rawValue - 1)
+            }
+
+            var next: MyTabs? {
+                MyTabs(rawValue: rawValue + 1)
+            }
+        }
+
     #endif
 
     // MARK: - Views
@@ -49,58 +77,63 @@ public struct ExerciseDetail: View {
 
     #if os(watchOS)
 
-    enum MyTabs: Int {
-        case name
-        case primary
-        case secondary
-        case sets
-        case reps
-        case intensity
-        case intensityStep
-        case intensityUnit
-    }
-    
         private var platformView: some View {
-            MyTabView(selection: $selectedTab) {
-                
-                MyTabItem(selection: $selectedTab, tagNo: 0) {
-                    ExerciseName(exercise: exercise, tint: exerciseColor)
+            VStack {
+                TabView(selection: $selectedTab) {
+                    Form {
+                        ExerciseName(exercise: exercise, tint: exerciseColor)
+                    }
+                    .tag(MyTabs.name)
+                    Form {
+                        ExerPrimarySettings(exercise: exercise, tint: exerciseColor)
+                    }
+                    .tag(MyTabs.primary)
+                    Form {
+                        ExerSecondarySettings(exercise: exercise, tint: exerciseColor)
+                    }
+                    .tag(MyTabs.secondary)
+                    Form {
+                        ExerciseSets(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
+                    }
+                    .tag(MyTabs.sets)
+                    Form {
+                        ExerciseReps(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
+                    }
+                    .tag(MyTabs.reps)
+                    Form {
+                        ExerIntensity(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
+                    }
+                    .tag(MyTabs.intensity)
+                    Form {
+                        ExerIntensityStep(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
+                    }
+                    .tag(MyTabs.intensityStep)
+                    Form {
+                        ExerIntensityUnits(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
+                    }
+                    .tag(MyTabs.intensityUnit)
+                    Form {
+                        ExerIntensityStepInvert(invertedIntensity: $exercise.invertedIntensity, tint: exerciseColor)
+                    }
+                    .tag(MyTabs.intensityInvert)
                 }
-                MyTabItem(selection: $selectedTab, tagNo: 1) {
-                    ExerPrimarySettings(exercise: exercise, tint: exerciseColor)
-                }
-                MyTabItem(selection: $selectedTab, tagNo: 2) {
-                    ExerSecondarySettings(exercise: exercise, tint: exerciseColor)
-                }
-                MyTabItem(selection: $selectedTab, tagNo: 3) {
-                    ExerciseSets(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
-                }
-                MyTabItem(selection: $selectedTab, tagNo: 4) {
-                    ExerciseReps(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
-                }
-                MyTabItem(selection: $selectedTab, tagNo: 5) {
-                    ExerIntensity(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
-                }
-                MyTabItem(selection: $selectedTab, tagNo: 6) {
-                    ExerIntensityStep(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
-                }
-                MyTabItem(selection: $selectedTab, tagNo: 7) {
-                    ExerIntensityUnits(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
-                }
-                MyTabItem(selection: $selectedTab, tagNo: 8) {
-                    ExerIntensityStepInvert(invertedIntensity: $exercise.invertedIntensity, tint: exerciseColor)
-                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .frame(maxHeight: .infinity)
+
+                MyTabControl(selectedTab: $selectedTab, tint: exerciseColor)
             }
+            .ignoresSafeArea(.all, edges: [.bottom]) // NOTE allows controls to be at bottom
             .navigationTitle {
                 Text(title)
                     .foregroundColor(exerciseColorDarkBg)
                     .onTapGesture {
                         withAnimation {
-                            selectedTab = 0
+                            selectedTab = MyTabs.first
                         }
                     }
             }
         }
+
     #endif
 
     #if os(iOS)
