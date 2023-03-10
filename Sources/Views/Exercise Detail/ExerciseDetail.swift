@@ -49,68 +49,48 @@ public struct ExerciseDetail: View {
 
     #if os(watchOS)
 
-        private func myTab(_ tagNo: Int,
-                           @ViewBuilder content: () -> some View) -> some View
-        {
-            VStack {
-                Form {
-                    content()
-                }
-                .frame(maxHeight: .infinity)
-
-                Spacer(minLength: 10) // needed to place button at bottom
-
-                HStack {
-                    Button(action: previousTabAction) {
-                        Image(systemName: "arrow.left.circle.fill")
-                    }
-                    Spacer()
-                    Button(action: nextTabAction) {
-                        Image(systemName: "arrow.right.circle.fill")
-                    }
-                }
-                .imageScale(.large)
-                .padding(.horizontal, 20)
-                .buttonStyle(.plain)
-                .foregroundStyle(exerciseColor)
-                .padding(.bottom)
-            }
-            .tag(tagNo)
-            // .border(.primary.opacity(0.2))
-            .ignoresSafeArea(.all, edges: [.bottom])
-        }
-
+    enum MyTabs: Int {
+        case name
+        case primary
+        case secondary
+        case sets
+        case reps
+        case intensity
+        case intensityStep
+        case intensityUnit
+    }
+    
         private var platformView: some View {
-            TabView(selection: $selectedTab) {
-                myTab(0) {
+            MyTabView(selection: $selectedTab) {
+                
+                MyTabItem(selection: $selectedTab, tagNo: 0) {
                     ExerciseName(exercise: exercise, tint: exerciseColor)
                 }
-                myTab(1) {
+                MyTabItem(selection: $selectedTab, tagNo: 1) {
                     ExerPrimarySettings(exercise: exercise, tint: exerciseColor)
                 }
-                myTab(2) {
+                MyTabItem(selection: $selectedTab, tagNo: 2) {
                     ExerSecondarySettings(exercise: exercise, tint: exerciseColor)
                 }
-                myTab(3) {
+                MyTabItem(selection: $selectedTab, tagNo: 3) {
                     ExerciseSets(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
                 }
-                myTab(4) {
+                MyTabItem(selection: $selectedTab, tagNo: 4) {
                     ExerciseReps(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
                 }
-                myTab(5) {
+                MyTabItem(selection: $selectedTab, tagNo: 5) {
                     ExerIntensity(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
                 }
-                myTab(6) {
+                MyTabItem(selection: $selectedTab, tagNo: 6) {
                     ExerIntensityStep(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
                 }
-                myTab(7) {
+                MyTabItem(selection: $selectedTab, tagNo: 7) {
                     ExerIntensityUnits(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
                 }
-                myTab(8) {
+                MyTabItem(selection: $selectedTab, tagNo: 8) {
                     ExerIntensityStepInvert(invertedIntensity: $exercise.invertedIntensity, tint: exerciseColor)
                 }
             }
-            .tabViewStyle(.page)
             .navigationTitle {
                 Text(title)
                     .foregroundColor(exerciseColorDarkBg)
@@ -151,21 +131,6 @@ public struct ExerciseDetail: View {
     }
 
     // MARK: - Actions
-
-    #if os(watchOS)
-
-        private func previousTabAction() {
-            if selectedTab == 0 { selectedTab = 8 } else {
-                selectedTab -= 1
-            }
-        }
-
-        private func nextTabAction() {
-            if selectedTab == 8 { selectedTab = 0 } else {
-                selectedTab += 1
-            }
-        }
-    #endif
 
     private func onDisappearAction() {
         do {
