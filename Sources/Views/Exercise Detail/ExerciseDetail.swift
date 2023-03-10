@@ -87,7 +87,7 @@ public struct ExerciseDetail: View {
                 }
                 .tag(8)
             }
-            .tabViewStyle(.page(indexDisplayMode: .always))
+            .tabViewStyle(.page)
             .navigationTitle {
                 Text(title)
                     .foregroundColor(exerciseColorDarkBg)
