@@ -75,12 +75,12 @@ public struct RoutineDetail: View {
             VStack {
                 TabView(selection: $selectedTab) {
                     Form {
-                        RoutineName(routine: routine)
+                        RoutDetName(routine: routine)
                     }
                     .tag(Tab.name)
                     Form {
                         FormColorPicker(color: $color)
-                        RoutineImage(routine: routine)
+                        RoutDetImage(routine: routine)
                     }
                     .tag(Tab.colorImage)
                     FakeSection(title: "Exercises") {
@@ -111,10 +111,10 @@ public struct RoutineDetail: View {
     #if os(iOS)
         private var platformView: some View {
             Form {
-                RoutineName(routine: routine)
+                RoutDetName(routine: routine)
                 FormColorPicker(color: $color)
-                RoutineImage(routine: routine)
-                RoutineExercises(routine: routine)
+                RoutDetImage(routine: routine)
+                RoutDetExercises(routine: routine)
             }
             .navigationTitle(title)
         }

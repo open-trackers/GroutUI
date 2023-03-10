@@ -1,5 +1,5 @@
 //
-//  RoutineExercises.swift
+//  RoutDetImage.swift
 //
 // Copyright 2022, 2023  OpenAlloc LLC
 //
@@ -13,9 +13,7 @@ import SwiftUI
 import GroutLib
 import TrackerUI
 
-public struct RoutineExercises: View {
-    @EnvironmentObject private var router: GroutRouter
-
+public struct RoutDetImage: View {
     // MARK: - Parameters
 
     @ObservedObject private var routine: Routine
@@ -30,40 +28,30 @@ public struct RoutineExercises: View {
 
     public var body: some View {
         Section {
-            Button(action: exerciseListAction) {
-                HStack {
-                    Text("Exercises")
-                    Spacer()
-                    Text(exerciseCount > 0 ? String(format: "%d", exerciseCount) : "none")
-                    #if os(watchOS)
-                        .foregroundStyle(exerciseColorDarkBg)
-                    #endif
-                }
+            ImageStepper(initialName: routine.imageName,
+                         imageNames: systemImageNames)
+            {
+                routine.imageName = $0
             }
-        } footer: {
-            Text("The exercises available for this routine.")
+            #if os(watchOS)
+            .imageScale(.small)
+            #elseif os(iOS)
+            .imageScale(.large)
+            #endif
+        } header: {
+            Text("Image")
         }
     }
 
     // MARK: - Properties
-
-    private var exerciseCount: Int {
-        routine.exercises?.count ?? 0
-    }
-
-    // MARK: - Actions
-
-    private func exerciseListAction() {
-        router.path.append(GroutRoute.exerciseList(routine.uriRepresentation))
-    }
 }
 
-struct RoutineExercises_Previews: PreviewProvider {
+struct RoutDetImage_Previews: PreviewProvider {
     struct TestHolder: View {
         var routine: Routine
         var body: some View {
             Form {
-                RoutineExercises(routine: routine)
+                RoutDetImage(routine: routine)
             }
         }
     }
@@ -73,9 +61,6 @@ struct RoutineExercises_Previews: PreviewProvider {
         let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Beverage"
-        let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
-        exercise.routine = routine
-        exercise.name = "Stout"
         return TestHolder(routine: routine)
             .environment(\.managedObjectContext, ctx)
             .environmentObject(manager)

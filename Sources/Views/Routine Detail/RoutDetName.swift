@@ -1,5 +1,5 @@
 //
-//  RoutineName.swift
+//  RoutDetName.swift
 //
 // Copyright 2022, 2023  OpenAlloc LLC
 //
@@ -13,7 +13,7 @@ import SwiftUI
 import GroutLib
 import TrackerUI
 
-public struct RoutineName: View {
+public struct RoutDetName: View {
     // MARK: - Parameters
 
     @ObservedObject private var routine: Routine
@@ -45,12 +45,12 @@ public struct RoutineName: View {
     // MARK: - Properties
 }
 
-struct RoutineName_Previews: PreviewProvider {
+struct RoutDetName_Previews: PreviewProvider {
     struct TestHolder: View {
         var routine: Routine
         var body: some View {
             Form {
-                RoutineName(routine: routine)
+                RoutDetName(routine: routine)
             }
         }
     }
