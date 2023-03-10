@@ -1,8 +1,11 @@
 //
 //  RoutineDetail.swift
 //
+// Copyright 2022, 2023  OpenAlloc LLC
 //
-//  Created by Reed Esau on 12/25/22.
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
 import os
@@ -39,7 +42,24 @@ public struct RoutineDetail: View {
         // NOTE no longer saving the tab in scene storage, because it has been
         // annoying to not start out at the first tab when navigating to detail.
         // @SceneStorage("routine-detail-tab") private var selectedTab: Int = 0
-        @State private var selectedTab: Int = 0
+        @State private var selectedTab: Tab = .first
+
+        enum Tab: Int, ControlBarProtocol {
+            case name = 1
+            case colorImage = 2
+            case exercises = 3
+
+            static var first: Tab = .name
+            static var last: Tab = .exercises
+
+            var previous: Tab? {
+                Tab(rawValue: rawValue - 1)
+            }
+
+            var next: Tab? {
+                Tab(rawValue: rawValue + 1)
+            }
+        }
     #endif
 
     // MARK: - Views
@@ -52,31 +72,35 @@ public struct RoutineDetail: View {
 
     #if os(watchOS)
         private var platformView: some View {
-            TabView(selection: $selectedTab) {
-                Form {
-                    RoutineName(routine: routine)
-                    FormColorPicker(color: $color)
-                    RoutineImage(routine: routine)
+            VStack {
+                TabView(selection: $selectedTab) {
+                    Form {
+                        RoutineName(routine: routine)
+                    }
+                    .tag(Tab.name)
+                    Form {
+                        FormColorPicker(color: $color)
+                        RoutineImage(routine: routine)
+                    }
+                    .tag(Tab.colorImage)
+                    FakeSection(title: "Exercises") {
+                        ExerciseList(routine: routine)
+                    }
+                    .tag(Tab.exercises)
                 }
-                .tabItem {
-                    Text("Properties")
-                }
-                .tag(0)
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .frame(maxHeight: .infinity)
 
-                FakeSection(title: "Exercises") {
-                    ExerciseList(routine: routine)
-                }
-                .tabItem {
-                    Text("Exercises")
-                }
-                .tag(1)
+                ControlBar(selection: $selectedTab, tint: routineColor)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom)
             }
-            .tabViewStyle(.page)
+            .ignoresSafeArea(.all, edges: [.bottom]) // NOTE allows control bar to be at bottom
             .navigationTitle {
                 NavTitle(title, color: routineColor)
                     .onTapGesture {
                         withAnimation {
-                            selectedTab = 0
+                            selectedTab = .first
                         }
                     }
             }
@@ -139,5 +163,6 @@ struct RoutineDetail_Previews: PreviewProvider {
         exercise.routine = routine
         return TestHolder(routine: routine)
             .environment(\.managedObjectContext, ctx)
+            .accentColor(.orange)
     }
 }
