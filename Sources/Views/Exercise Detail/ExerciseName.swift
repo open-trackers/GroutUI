@@ -35,11 +35,11 @@ struct ExerciseName: View {
                 // nothing to set other than the name
             } label: {
                 Text($0)
-                    .foregroundStyle(.tint)
+                // .foregroundStyle(.tint)
             }
+            .tint(tint)
         } header: {
             Text("Name")
-                .foregroundStyle(tint)
         }
     }
 }

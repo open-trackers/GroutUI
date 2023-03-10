@@ -92,7 +92,6 @@ struct ExerIntensityUnits<Content: View>: View {
             }
         } header: {
             Text("Intensity Units")
-                .foregroundStyle(tint)
         }
 
         content()

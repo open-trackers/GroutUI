@@ -48,44 +48,67 @@ public struct ExerciseDetail: View {
     }
 
     #if os(watchOS)
+
+        private func myTab(_ tagNo: Int,
+                           @ViewBuilder content: () -> some View) -> some View
+        {
+            VStack {
+                Form {
+                    content()
+                }
+                .frame(maxHeight: .infinity)
+
+                Spacer(minLength: 10) // needed to place button at bottom
+
+                HStack {
+                    Button(action: previousTabAction) {
+                        Image(systemName: "arrow.left.circle.fill")
+                    }
+                    Spacer()
+                    Button(action: nextTabAction) {
+                        Image(systemName: "arrow.right.circle.fill")
+                    }
+                }
+                .imageScale(.large)
+                .padding(.horizontal, 20)
+                .buttonStyle(.plain)
+                .foregroundStyle(exerciseColor)
+                .padding(.bottom)
+            }
+            .tag(tagNo)
+            // .border(.primary.opacity(0.2))
+            .ignoresSafeArea(.all, edges: [.bottom])
+        }
+
         private var platformView: some View {
             TabView(selection: $selectedTab) {
-                Form {
+                myTab(0) {
                     ExerciseName(exercise: exercise, tint: exerciseColor)
                 }
-                .tag(0)
-                Form {
+                myTab(1) {
                     ExerPrimarySettings(exercise: exercise, tint: exerciseColor)
                 }
-                .tag(1)
-                Form {
+                myTab(2) {
                     ExerSecondarySettings(exercise: exercise, tint: exerciseColor)
                 }
-                .tag(2)
-                Form {
+                myTab(3) {
                     ExerciseSets(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
                 }
-                .tag(3)
-                Form {
+                myTab(4) {
                     ExerciseReps(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
                 }
-                .tag(4)
-                Form {
+                myTab(5) {
                     ExerIntensity(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
                 }
-                .tag(5)
-                Form {
+                myTab(6) {
                     ExerIntensityStep(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
                 }
-                .tag(6)
-                Form {
+                myTab(7) {
                     ExerIntensityUnits(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
                 }
-                .tag(7)
-                Form {
+                myTab(8) {
                     ExerIntensityStepInvert(invertedIntensity: $exercise.invertedIntensity, tint: exerciseColor)
                 }
-                .tag(8)
             }
             .tabViewStyle(.page)
             .navigationTitle {
@@ -128,6 +151,21 @@ public struct ExerciseDetail: View {
     }
 
     // MARK: - Actions
+
+    #if os(watchOS)
+
+        private func previousTabAction() {
+            if selectedTab == 0 { selectedTab = 8 } else {
+                selectedTab -= 1
+            }
+        }
+
+        private func nextTabAction() {
+            if selectedTab == 8 { selectedTab = 0 } else {
+                selectedTab += 1
+            }
+        }
+    #endif
 
     private func onDisappearAction() {
         do {

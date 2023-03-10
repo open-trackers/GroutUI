@@ -57,7 +57,6 @@ struct ExerIntensity: View {
             }
         } header: {
             Text("Intensity")
-                .foregroundStyle(tint)
         }
 
 //        Section {

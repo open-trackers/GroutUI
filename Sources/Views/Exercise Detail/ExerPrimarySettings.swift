@@ -33,7 +33,6 @@ struct ExerPrimarySettings: View {
             .tint(tint)
         } header: {
             Text("Primary Setting")
-                .foregroundStyle(tint)
         }
 
 //        Section {

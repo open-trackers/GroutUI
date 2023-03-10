@@ -42,7 +42,6 @@ struct ExerciseSets: View {
             .tint(tint)
         } header: {
             Text("Set Count")
-                .foregroundStyle(tint)
         }
 
 //        Section {

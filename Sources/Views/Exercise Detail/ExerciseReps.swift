@@ -52,7 +52,6 @@ struct ExerciseReps: View {
             .tint(tint)
         } header: {
             Text("Repetition Count")
-                .foregroundStyle(tint)
         }
     }
 }

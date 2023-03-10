@@ -55,7 +55,6 @@ struct ExerIntensityStepInvert: View {
             .tint(tint)
         } header: {
             Text("Advance Direction")
-                .foregroundStyle(tint)
         } footer: {
             Text("Example: if inverted with step of 5, advance from 25 to 20")
         }

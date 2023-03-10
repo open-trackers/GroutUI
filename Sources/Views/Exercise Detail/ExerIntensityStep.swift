@@ -71,7 +71,6 @@ struct ExerIntensityStep<Content: View>: View {
             }
         } header: {
             Text("Intensity Step")
-                .foregroundStyle(tint)
         }
 
         content()

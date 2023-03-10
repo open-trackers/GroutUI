@@ -43,7 +43,6 @@ struct ExerSecondarySettings: View {
             .tint(tint)
         } header: {
             Text("Secondary Setting")
-                .foregroundStyle(tint)
         }
     }
 }
