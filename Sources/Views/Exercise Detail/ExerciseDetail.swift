@@ -36,9 +36,9 @@ public struct ExerciseDetail: View {
         // NOTE no longer saving the tab in scene storage, because it has been
         // annoying to not start out at the first tab when navigating to detail.
         // @SceneStorage("exercise-detail-tab") private var selectedTab = 0
-        @State private var selectedTab: MyTabs = .name
+        @State private var selectedTab: Tab = .first
 
-        enum MyTabs: Int, Tabable {
+        enum Tab: Int, ControlBarProtocol {
             case name = 1
             case primary = 2
             case secondary = 3
@@ -49,19 +49,15 @@ public struct ExerciseDetail: View {
             case intensityUnit = 8
             case intensityInvert = 9
 
-            static var first: MyTabs = .name
-            static var last: MyTabs = .intensityInvert
+            static var first: Tab = .name
+            static var last: Tab = .intensityInvert
 
-            var description: String {
-                "\(rawValue)"
+            var previous: Tab? {
+                Tab(rawValue: rawValue - 1)
             }
 
-            var previous: MyTabs? {
-                MyTabs(rawValue: rawValue - 1)
-            }
-
-            var next: MyTabs? {
-                MyTabs(rawValue: rawValue + 1)
+            var next: Tab? {
+                Tab(rawValue: rawValue + 1)
             }
         }
 
@@ -83,52 +79,54 @@ public struct ExerciseDetail: View {
                     Form {
                         ExerciseName(exercise: exercise, tint: exerciseColor)
                     }
-                    .tag(MyTabs.name)
+                    .tag(Tab.name)
                     Form {
                         ExerPrimarySettings(exercise: exercise, tint: exerciseColor)
                     }
-                    .tag(MyTabs.primary)
+                    .tag(Tab.primary)
                     Form {
                         ExerSecondarySettings(exercise: exercise, tint: exerciseColor)
                     }
-                    .tag(MyTabs.secondary)
+                    .tag(Tab.secondary)
                     Form {
                         ExerciseSets(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
                     }
-                    .tag(MyTabs.sets)
+                    .tag(Tab.sets)
                     Form {
                         ExerciseReps(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
                     }
-                    .tag(MyTabs.reps)
+                    .tag(Tab.reps)
                     Form {
                         ExerIntensity(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
                     }
-                    .tag(MyTabs.intensity)
+                    .tag(Tab.intensity)
                     Form {
                         ExerIntensityStep(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
                     }
-                    .tag(MyTabs.intensityStep)
+                    .tag(Tab.intensityStep)
                     Form {
                         ExerIntensityUnits(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
                     }
-                    .tag(MyTabs.intensityUnit)
+                    .tag(Tab.intensityUnit)
                     Form {
                         ExerIntensityStepInvert(invertedIntensity: $exercise.invertedIntensity, tint: exerciseColor)
                     }
-                    .tag(MyTabs.intensityInvert)
+                    .tag(Tab.intensityInvert)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .frame(maxHeight: .infinity)
 
-                MyTabControl(selectedTab: $selectedTab, tint: exerciseColor)
+                ControlBar(selection: $selectedTab, tint: exerciseColor)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom)
             }
-            .ignoresSafeArea(.all, edges: [.bottom]) // NOTE allows controls to be at bottom
+            .ignoresSafeArea(.all, edges: [.bottom]) // NOTE allows control bar to be at bottom
             .navigationTitle {
                 Text(title)
                     .foregroundColor(exerciseColorDarkBg)
                     .onTapGesture {
                         withAnimation {
-                            selectedTab = MyTabs.first
+                            selectedTab = .first
                         }
                     }
             }

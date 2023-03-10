@@ -21,6 +21,7 @@ import SwiftUI
 
 struct ExerciseDefaults: View {
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.managedObjectContext) private var viewContext
 
     // MARK: - Parameters
 
@@ -32,64 +33,96 @@ struct ExerciseDefaults: View {
 
     // MARK: - Locals
 
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                                category: String(describing: ExerciseDefaults.self))
+
     #if os(watchOS)
         // NOTE no longer saving the tab in scene storage, because it has been
         // annoying to not start out at the first tab when navigating to detail.
         // @SceneStorage("exercise-defaults-tab") private var selectedTab =
-        @State private var selectedTab: Int = 0
+        @State private var selectedTab: Tab = .first
+
+        enum Tab: Int, ControlBarProtocol {
+            case sets = 1
+            case reps = 2
+            case intensity = 3
+            case intensityStep = 4
+            case intensityUnit = 5
+
+            static var first: Tab = .sets
+            static var last: Tab = .intensityUnit
+
+            var previous: Tab? {
+                Tab(rawValue: rawValue - 1)
+            }
+
+            var next: Tab? {
+                Tab(rawValue: rawValue + 1)
+            }
+        }
     #endif
 
     // MARK: - Views
 
     public var body: some View {
         platformView
+            .symbolRenderingMode(.hierarchical)
+            .onDisappear(perform: disappearAction)
     }
 
     #if os(watchOS)
         private var platformView: some View {
-            TabView(selection: $selectedTab) {
-                Form {
-                    ExerciseSets(sets: $appSetting.defExSets,
-                                 repetitions: $appSetting.defExReps,
-                                 tint: exerciseColor)
-                }
-                .tag(0)
+            VStack {
+                TabView(selection: $selectedTab) {
+                    Form {
+                        ExerciseSets(sets: $appSetting.defExSets,
+                                     repetitions: $appSetting.defExReps,
+                                     tint: exerciseColor)
+                    }
+                    .tag(Tab.sets)
 
-                Form {
-                    ExerciseReps(sets: $appSetting.defExSets,
-                                 repetitions: $appSetting.defExReps,
-                                 tint: exerciseColor)
-                }
-                .tag(1)
+                    Form {
+                        ExerciseReps(sets: $appSetting.defExSets,
+                                     repetitions: $appSetting.defExReps,
+                                     tint: exerciseColor)
+                    }
+                    .tag(Tab.reps)
 
-                Form {
-                    ExerIntensity(intensity: $appSetting.defExIntensity,
-                                  intensityStep: $appSetting.defExIntensityStep,
-                                  units: $appSetting.defExUnits,
-                                  tint: exerciseColor)
-                }
-                .tag(2)
-
-                Form {
-                    ExerIntensityStep(intensity: $appSetting.defExIntensity,
+                    Form {
+                        ExerIntensity(intensity: $appSetting.defExIntensity,
                                       intensityStep: $appSetting.defExIntensityStep,
                                       units: $appSetting.defExUnits,
                                       tint: exerciseColor)
-                }
-                .tag(3)
+                    }
+                    .tag(Tab.intensity)
 
-                Form {
-                    ExerIntensityUnits(intensity: $appSetting.defExIntensity, intensityStep: $appSetting.defExIntensityStep, units: $appSetting.defExUnits, tint: exerciseColor)
+                    Form {
+                        ExerIntensityStep(intensity: $appSetting.defExIntensity,
+                                          intensityStep: $appSetting.defExIntensityStep,
+                                          units: $appSetting.defExUnits,
+                                          tint: exerciseColor)
+                    }
+                    .tag(Tab.intensityStep)
+
+                    Form {
+                        ExerIntensityUnits(intensity: $appSetting.defExIntensity, intensityStep: $appSetting.defExIntensityStep, units: $appSetting.defExUnits, tint: exerciseColor)
+                    }
+                    .tag(Tab.intensityUnit)
                 }
-                .tag(4)
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .frame(maxHeight: .infinity)
+
+                ControlBar(selection: $selectedTab, tint: exerciseColor)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom)
             }
-            .tabViewStyle(.page(indexDisplayMode: .always))
+            .ignoresSafeArea(.all, edges: [.bottom]) // NOTE allows control bar to be at bottom
             .navigationTitle {
                 Text(title)
                     .foregroundColor(exerciseColorDarkBg)
                     .onTapGesture {
                         withAnimation {
-                            selectedTab = 0
+                            selectedTab = .first
                         }
                     }
             }
@@ -123,6 +156,16 @@ struct ExerciseDefaults: View {
 
     private var exerciseColor: Color {
         colorScheme == .light ? exerciseColorLiteBg : exerciseColorDarkBg
+    }
+
+    // MARK: - Actions
+
+    private func disappearAction() {
+        do {
+            try viewContext.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
     }
 }
 
