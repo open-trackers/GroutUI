@@ -127,6 +127,7 @@ public struct ExerciseDetail: View {
                     }
                     .tag(Tab.intensityInvert)
                 }
+                .animation(.easeInOut(duration: 0.25), value: selectedTab)
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .frame(maxHeight: .infinity)
 

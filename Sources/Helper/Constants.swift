@@ -45,9 +45,6 @@ public let editDelaySeconds: TimeInterval = 0.1
 // How long to delay before showing first incomplete exercise, when starting routine
 public let newFirstIncompleteSeconds: TimeInterval = 0.25
 
-// How long for tab animation to next exercise
-public let exerciseAnimationDurationSeconds: TimeInterval = 0.25
-
 // public let colorSchemeModeKey = "colorScheme"
 public let exportFormatKey = "exportFormat"
 

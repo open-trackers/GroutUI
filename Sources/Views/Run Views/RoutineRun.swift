@@ -89,7 +89,7 @@ public struct RoutineRun: View {
                     }
             }
         }
-        .animation(.easeInOut(duration: exerciseAnimationDurationSeconds), value: selectedTab)
+        .animation(.easeInOut(duration: 0.25), value: selectedTab)
         .tabViewStyle(.page(indexDisplayMode: .always))
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {

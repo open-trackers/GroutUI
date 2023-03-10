@@ -88,6 +88,7 @@ public struct RoutineDetail: View {
                     }
                     .tag(Tab.exercises)
                 }
+                .animation(.easeInOut(duration: 0.25), value: selectedTab)
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .frame(maxHeight: .infinity)
 

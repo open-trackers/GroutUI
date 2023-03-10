@@ -107,6 +107,7 @@ struct ExerciseDefaults: View {
                     }
                     .tag(Tab.intensityUnit)
                 }
+                .animation(.easeInOut(duration: 0.25), value: selectedTab)
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .frame(maxHeight: .infinity)
 
