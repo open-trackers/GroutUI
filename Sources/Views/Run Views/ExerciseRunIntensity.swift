@@ -27,7 +27,7 @@ struct ExerciseRunIntensity: View {
     var body: some View {
         #if os(watchOS)
             Stepper(value: $exercise.lastIntensity,
-                    in: 0.0 ... Exercise.intensityMaxValue,
+                    in: Exercise.intensityRange,
                     step: exercise.intensityStep)
             {
                 intensityText
@@ -49,7 +49,7 @@ struct ExerciseRunIntensity: View {
         #elseif os(iOS)
             GroupBox {
                 GroutStepper(value: $exercise.lastIntensity,
-                             in: 0.0 ... Exercise.intensityMaxValue,
+                             in: Exercise.intensityRange,
                              step: exercise.intensityStep)
                 {
                     intensityText

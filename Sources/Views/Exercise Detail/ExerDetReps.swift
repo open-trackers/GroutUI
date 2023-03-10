@@ -1,5 +1,5 @@
 //
-//  ExerciseSets.swift
+//  ExDetReps.swift
 //
 // Copyright 2022, 2023  OpenAlloc LLC
 //
@@ -12,39 +12,22 @@ import SwiftUI
 
 import GroutLib
 
-struct ExerciseReps: View {
+struct ExDetReps: View {
     // MARK: - Parameters
 
-    @Binding private var sets: Int16
     @Binding private var repetitions: Int16
     private let tint: Color
-    private let isDefault: Bool
 
-    init(sets: Binding<Int16>,
-         repetitions: Binding<Int16>,
-         tint: Color,
-         isDefault: Bool = false)
+    init(repetitions: Binding<Int16>,
+         tint: Color)
     {
-        // self.exercise = exercise
-        _sets = sets
         _repetitions = repetitions
         self.tint = tint
-        self.isDefault = isDefault
     }
 
     // MARK: - Views
 
     var body: some View {
-//        Section {
-//            Stepper(value: $sets, in: 0 ... 10, step: 1) {
-//                Text("\(sets)")
-//            }
-//            .tint(tint)
-//        } header: {
-//            Text("Set Count")
-//                .foregroundStyle(tint)
-//        }
-
         Section {
             Stepper(value: $repetitions, in: 0 ... 100, step: 1) {
                 Text("\(repetitions)")
@@ -59,9 +42,8 @@ struct ExerciseReps: View {
 struct ExerciseReps_Previews: PreviewProvider {
     static var previews: some View {
         Form {
-            ExerciseReps(sets: .constant(10),
-                         repetitions: .constant(13),
-                         tint: .green)
+            ExDetReps(repetitions: .constant(13),
+                      tint: .green)
         }
     }
 }

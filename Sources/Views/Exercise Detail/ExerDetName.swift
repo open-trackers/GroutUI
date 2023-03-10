@@ -1,5 +1,5 @@
 //
-//  ExerciseName.swift
+//  ExDetName.swift
 //
 // Copyright 2022, 2023  OpenAlloc LLC
 //
@@ -13,14 +13,14 @@ import SwiftUI
 import GroutLib
 import TrackerUI
 
-struct ExerciseName: View {
+struct ExDetName: View {
     // MARK: - Parameters
 
-    @ObservedObject private var exercise: Exercise
+    @Binding private var name: String
     private let tint: Color
 
-    init(exercise: Exercise, tint: Color) {
-        self.exercise = exercise
+    init(name: Binding<String>, tint: Color) {
+        _name = name
         self.tint = tint
     }
 
@@ -28,7 +28,7 @@ struct ExerciseName: View {
 
     var body: some View {
         Section {
-            TextFieldWithPresets($exercise.wrappedName,
+            TextFieldWithPresets($name,
                                  prompt: "Enter exercise name",
                                  presets: exercisePresets)
             { _, _ in
@@ -50,8 +50,8 @@ struct ExerciseName_Previews: PreviewProvider {
         let ctx = manager.container.viewContext
         let routine = Routine.create(ctx, userOrder: 0)
         routine.name = "Beverage"
-        let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
+        @ObservedObject var exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
         exercise.name = "Lat Pulldown"
-        return Form { ExerciseName(exercise: exercise, tint: .orange) }
+        return Form { ExDetName(name: $exercise.wrappedName, tint: .orange) }
     }
 }

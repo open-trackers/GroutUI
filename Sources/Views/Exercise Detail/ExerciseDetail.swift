@@ -77,39 +77,53 @@ public struct ExerciseDetail: View {
             VStack {
                 TabView(selection: $selectedTab) {
                     Form {
-                        ExerciseName(exercise: exercise, tint: exerciseColor)
+                        ExDetName(name: $exercise.wrappedName,
+                                  tint: exerciseColor)
                     }
                     .tag(Tab.name)
                     Form {
-                        ExerPrimarySettings(exercise: exercise, tint: exerciseColor)
+                        ExDetSetting(value: $exercise.primarySetting,
+                                     tint: exerciseColor,
+                                     title: "Primary Setting")
                     }
                     .tag(Tab.primary)
                     Form {
-                        ExerSecondarySettings(exercise: exercise, tint: exerciseColor)
+                        ExDetSetting(value: $exercise.secondarySetting,
+                                     tint: exerciseColor,
+                                     title: "Secondary Setting")
                     }
                     .tag(Tab.secondary)
                     Form {
-                        ExerciseSets(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
+                        ExDetSets(sets: $exercise.sets,
+                                  tint: exerciseColor)
                     }
                     .tag(Tab.sets)
                     Form {
-                        ExerciseReps(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
+                        ExDetReps(repetitions: $exercise.repetitions,
+                                  tint: exerciseColor)
                     }
                     .tag(Tab.reps)
                     Form {
-                        ExerIntensity(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
+                        ExDetIntensity(intensity: $exercise.lastIntensity,
+                                       intensityStep: exercise.intensityStep,
+                                       units: Units(rawValue: exercise.units),
+                                       tint: exerciseColor)
                     }
                     .tag(Tab.intensity)
                     Form {
-                        ExerIntensityStep(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
+                        ExDetIntensityStep(intensityStep: $exercise.intensityStep,
+                                           units: Units(rawValue: exercise.units),
+                                           tint: exerciseColor)
                     }
                     .tag(Tab.intensityStep)
                     Form {
-                        ExerIntensityUnits(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
+                        ExDetIntensityUnits(rawUnits: $exercise.units,
+                                            tint: exerciseColor)
                     }
                     .tag(Tab.intensityUnit)
                     Form {
-                        ExerIntensityStepInvert(invertedIntensity: $exercise.invertedIntensity, tint: exerciseColor)
+                        ExDetIntensityStepInvert(invertedIntensity: $exercise.invertedIntensity,
+                                                 tint: exerciseColor)
                     }
                     .tag(Tab.intensityInvert)
                 }
@@ -137,15 +151,29 @@ public struct ExerciseDetail: View {
     #if os(iOS)
         private var platformView: some View {
             Form {
-                ExerciseName(exercise: exercise, tint: exerciseColor)
-                ExerPrimarySettings(exercise: exercise, tint: exerciseColor)
-                ExerSecondarySettings(exercise: exercise, tint: exerciseColor)
-                ExerciseSets(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
-                ExerciseReps(sets: $exercise.sets, repetitions: $exercise.repetitions, tint: exerciseColor)
-                ExerIntensity(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
-                ExerIntensityStep(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
-                ExerIntensityUnits(intensity: $exercise.lastIntensity, intensityStep: $exercise.intensityStep, units: $exercise.units, tint: exerciseColor)
-                ExerIntensityStepInvert(invertedIntensity: $exercise.invertedIntensity, tint: exerciseColor)
+                ExDetName(name: $exercise.wrappedName,
+                          tint: exerciseColor)
+                ExDetSetting(value: $exercise.primarySetting,
+                             tint: exerciseColor,
+                             title: "Primary Setting")
+                ExDetSetting(value: $exercise.secondarySetting,
+                             tint: exerciseColor,
+                             title: "Secondary Setting")
+                ExDetSets(sets: $exercise.sets,
+                          tint: exerciseColor)
+                ExDetReps(repetitions: $exercise.repetitions,
+                          tint: exerciseColor)
+                ExDetIntensity(intensity: $exercise.lastIntensity,
+                               intensityStep: exercise.intensityStep,
+                               units: Units(rawValue: exercise.units),
+                               tint: exerciseColor)
+                ExDetIntensityStep(intensityStep: $exercise.intensityStep,
+                                   units: Units(rawValue: exercise.units),
+                                   tint: exerciseColor)
+                ExDetIntensityUnits(rawUnits: $exercise.units,
+                                    tint: exerciseColor)
+                ExDetIntensityStepInvert(invertedIntensity: $exercise.invertedIntensity,
+                                         tint: exerciseColor)
             }
             .navigationTitle(title)
         }

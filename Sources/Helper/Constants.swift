@@ -36,8 +36,6 @@ public let numberWeight: Font.Weight = .light
 
 public let numberFont: Font = .title2
 
-public let settingRange: ClosedRange<Int16> = 0 ... 50
-
 // How frequently to update time strings in RoutineCell
 public let routineSinceUpdateSeconds: TimeInterval = 60
 

@@ -18,6 +18,6 @@ public extension Exercise {
     }
 
     var atMax: Bool {
-        Exercise.intensityMaxValue <= lastIntensity
+        lastIntensity.isGreaterThanOrEqual(to: Exercise.intensityRange.upperBound, accuracy: 0.01)
     }
 }

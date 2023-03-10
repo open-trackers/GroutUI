@@ -75,37 +75,35 @@ struct ExerciseDefaults: View {
             VStack {
                 TabView(selection: $selectedTab) {
                     Form {
-                        ExerciseSets(sets: $appSetting.defExSets,
-                                     repetitions: $appSetting.defExReps,
-                                     tint: exerciseColor)
+                        ExDetSets(sets: $appSetting.defExSets,
+                                  tint: exerciseColor)
                     }
                     .tag(Tab.sets)
 
                     Form {
-                        ExerciseReps(sets: $appSetting.defExSets,
-                                     repetitions: $appSetting.defExReps,
-                                     tint: exerciseColor)
+                        ExDetReps(repetitions: $appSetting.defExReps,
+                                  tint: exerciseColor)
                     }
                     .tag(Tab.reps)
 
                     Form {
-                        ExerIntensity(intensity: $appSetting.defExIntensity,
-                                      intensityStep: $appSetting.defExIntensityStep,
-                                      units: $appSetting.defExUnits,
-                                      tint: exerciseColor)
+                        ExDetIntensity(intensity: $appSetting.defExIntensity,
+                                       intensityStep: appSetting.defExIntensityStep,
+                                       units: Units(rawValue: appSetting.defExUnits),
+                                       tint: exerciseColor)
                     }
                     .tag(Tab.intensity)
 
                     Form {
-                        ExerIntensityStep(intensity: $appSetting.defExIntensity,
-                                          intensityStep: $appSetting.defExIntensityStep,
-                                          units: $appSetting.defExUnits,
-                                          tint: exerciseColor)
+                        ExDetIntensityStep(intensityStep: $appSetting.defExIntensityStep,
+                                           units: Units(rawValue: appSetting.defExUnits),
+                                           tint: exerciseColor)
                     }
                     .tag(Tab.intensityStep)
 
                     Form {
-                        ExerIntensityUnits(intensity: $appSetting.defExIntensity, intensityStep: $appSetting.defExIntensityStep, units: $appSetting.defExUnits, tint: exerciseColor)
+                        ExDetIntensityUnits(rawUnits: $appSetting.defExUnits,
+                                            tint: exerciseColor)
                     }
                     .tag(Tab.intensityUnit)
                 }
@@ -132,19 +130,19 @@ struct ExerciseDefaults: View {
     #if os(iOS)
         private var platformView: some View {
             Form {
-                ExerciseSets(sets: $appSetting.defExSets,
-                             repetitions: $appSetting.defExReps,
-                             tint: exerciseColor)
-                ExerciseReps(sets: $appSetting.defExSets,
-                             repetitions: $appSetting.defExReps,
-                             tint: exerciseColor)
-
-                ExerIntensity(intensity: $appSetting.defExIntensity,
-                              intensityStep: $appSetting.defExIntensityStep,
-                              units: $appSetting.defExUnits,
-                              tint: exerciseColor)
-
-                // TODO: other intensity things
+                ExDetSets(sets: $appSetting.defExSets,
+                          tint: exerciseColor)
+                ExDetReps(repetitions: $appSetting.defExReps,
+                          tint: exerciseColor)
+                ExDetIntensity(intensity: $appSetting.defExIntensity,
+                               intensityStep: appSetting.defExIntensityStep,
+                               units: Units(rawValue: appSetting.defExUnits),
+                               tint: exerciseColor)
+                ExDetIntensityStep(intensityStep: $appSetting.defExIntensityStep,
+                                   units: Units(rawValue: appSetting.defExUnits),
+                                   tint: exerciseColor)
+                ExDetIntensityUnits(rawUnits: $appSetting.defExUnits,
+                                    tint: exerciseColor)
             }
             .navigationTitle(title)
         }
