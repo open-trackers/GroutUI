@@ -138,11 +138,11 @@ public struct ExerciseDetail: View {
             .navigationTitle {
                 Text(title)
                     .foregroundColor(exerciseColorDarkBg)
-                    .onTapGesture {
-                        withAnimation {
-                            selectedTab = .first
-                        }
-                    }
+//                    .onTapGesture {
+//                        withAnimation {
+//                            selectedTab = .first
+//                        }
+//                    }
             }
         }
 

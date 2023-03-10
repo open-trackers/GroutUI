@@ -98,11 +98,11 @@ public struct RoutineDetail: View {
             .ignoresSafeArea(.all, edges: [.bottom]) // NOTE allows control bar to be at bottom
             .navigationTitle {
                 NavTitle(title, color: routineColor)
-                    .onTapGesture {
-                        withAnimation {
-                            selectedTab = .first
-                        }
-                    }
+//                    .onTapGesture {
+//                        withAnimation {
+//                            selectedTab = .first
+//                        }
+//                    }
             }
         }
     #endif
