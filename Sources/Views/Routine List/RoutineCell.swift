@@ -44,7 +44,7 @@ public struct RoutineCell: View {
     // MARK: - Views
 
     public var body: some View {
-        // NOTE onShortPress true to clear lastCompleted in each Exercise
+        // NOTE: onShortPress true to clear lastCompleted in each Exercise
         Cell(element: routine,
              now: $now,
              defaultImageName: "dumbbell.fill",

@@ -45,7 +45,7 @@ public struct RoutineList: View {
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                                 category: String(describing: RoutineList.self))
 
-    // NOTE not stored, to allow resume/restore of started routine
+    // NOTE: not stored, to allow resume/restore of started routine
     @State private var isNew = false
 
     @State private var showGettingStarted = false

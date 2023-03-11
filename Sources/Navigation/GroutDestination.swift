@@ -30,7 +30,7 @@ public struct GroutDestination: View {
     public var body: some View {
         switch route {
         case .settings:
-            // NOTE that this is only being used for watch settings
+            // NOTE: that this is only being used for watch settings
             if let appSetting = try? AppSetting.getOrCreate(viewContext) {
                 GroutSettings(appSetting: appSetting, onRestoreToDefaults: {})
             } else {

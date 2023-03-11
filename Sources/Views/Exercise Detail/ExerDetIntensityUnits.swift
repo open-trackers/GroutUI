@@ -51,7 +51,7 @@ struct ExDetIntensityUnits: View {
 
     private func intensityText(_ intensityValue: Float) -> some View {
         Text(formattedIntensity(intensityValue))
-            // NOTE needed on watchOS to reduce text size
+            // NOTE: needed on watchOS to reduce text size
             .minimumScaleFactor(0.1)
             .lineLimit(1)
         #if os(watchOS)

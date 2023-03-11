@@ -39,7 +39,7 @@ public struct RoutineDetail: View {
                                 category: String(describing: RoutineDetail.self))
 
     #if os(watchOS)
-        // NOTE no longer saving the tab in scene storage, because it has been
+        // NOTE: no longer saving the tab in scene storage, because it has been
         // annoying to not start out at the first tab when navigating to detail.
         // @SceneStorage("routine-detail-tab") private var selectedTab: Int = 0
         @State private var selectedTab: Tab = .first
@@ -96,7 +96,7 @@ public struct RoutineDetail: View {
                     .padding(.horizontal, 20)
                     .padding(.bottom)
             }
-            .ignoresSafeArea(.all, edges: [.bottom]) // NOTE allows control bar to be at bottom
+            .ignoresSafeArea(.all, edges: [.bottom]) // NOTE: allows control bar to be at bottom
             .navigationTitle {
                 NavTitle(title, color: routineColor)
 //                    .onTapGesture {

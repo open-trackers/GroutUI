@@ -98,7 +98,7 @@ public struct RoutineControl: View {
                 Spacer()
             }
             .frame(maxHeight: .infinity, alignment: .top)
-            // NOTE padding needed on iPhone 8, 12, and possibly others (visible in light mode)
+            // NOTE: padding needed on iPhone 8, 12, and possibly others (visible in light mode)
             .padding(.horizontal)
         }
     #endif

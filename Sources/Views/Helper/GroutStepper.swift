@@ -66,7 +66,7 @@ import TrackerUI
             }
         }
 
-        // NOTE using onTapGesture rather than action to allow use in Form.
+        // NOTE: using onTapGesture rather than action to allow use in Form.
         private func button(_ systemName: String,
                             maxHeight: CGFloat,
                             action: @escaping () -> Void) -> some View
