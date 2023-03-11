@@ -27,7 +27,7 @@ public struct ElapsedSinceView: View {
 
     // MARK: - Locals
 
-    private let tc: TimeCompactor = .init(ifZero: "", style: .short, roundSmallToWhole: false)
+    private static let tc: TimeCompactor = .init(ifZero: "", style: .short, roundSmallToWhole: false)
 
     @State private var now = Date()
     private let timer = Timer.publish(every: 1,
@@ -73,7 +73,7 @@ public struct ElapsedSinceView: View {
 
     private var remainingStr: String {
         formatElapsed(timeInterval: elapsedTime, timeElapsedFormat: timeElapsedFormat)
-            ?? tc.string(from: elapsedTime as NSNumber)
+            ?? Self.tc.string(from: elapsedTime as NSNumber)
             ?? ""
     }
 
