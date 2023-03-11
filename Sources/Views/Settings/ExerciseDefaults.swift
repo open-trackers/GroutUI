@@ -42,7 +42,7 @@ struct ExerciseDefaults: View {
         // @SceneStorage("exercise-defaults-tab") private var selectedTab =
         @State private var selectedTab: Tab = .first
 
-        enum Tab: Int, ControlBarProtocol {
+        enum Tab: Int, ControlBarred {
             case sets = 1
             case reps = 2
             case intensity = 3

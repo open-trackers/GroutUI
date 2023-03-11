@@ -44,7 +44,7 @@ public struct RoutineDetail: View {
         // @SceneStorage("routine-detail-tab") private var selectedTab: Int = 0
         @State private var selectedTab: Tab = .first
 
-        enum Tab: Int, ControlBarProtocol {
+        enum Tab: Int, ControlBarred {
             case name = 1
             case colorImage = 2
             case exercises = 3

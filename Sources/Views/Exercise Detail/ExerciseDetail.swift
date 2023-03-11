@@ -38,7 +38,7 @@ public struct ExerciseDetail: View {
         // @SceneStorage("exercise-detail-tab") private var selectedTab = 0
         @State private var selectedTab: Tab = .first
 
-        enum Tab: Int, ControlBarProtocol {
+        enum Tab: Int, ControlBarred {
             case name = 1
             case primary = 2
             case secondary = 3
