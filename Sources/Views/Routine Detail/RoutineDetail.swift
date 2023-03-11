@@ -72,38 +72,20 @@ public struct RoutineDetail: View {
 
     #if os(watchOS)
         private var platformView: some View {
-            VStack {
-                TabView(selection: $selectedTab) {
-                    Form {
-                        RoutDetName(routine: routine)
-                    }
-                    .tag(Tab.name)
-                    Form {
-                        FormColorPicker(color: $color)
-                        RoutDetImage(routine: routine)
-                    }
-                    .tag(Tab.colorImage)
-                    FakeSection(title: "Exercises") {
-                        ExerciseList(routine: routine)
-                    }
-                    .tag(Tab.exercises)
+            ControlBarTabView(selection: $selectedTab, tint: routineColor, title: title) {
+                Form {
+                    RoutDetName(routine: routine)
                 }
-                .animation(.easeInOut(duration: 0.25), value: selectedTab)
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .frame(maxHeight: .infinity)
-
-                ControlBar(selection: $selectedTab, tint: routineColor)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom)
-            }
-            .ignoresSafeArea(.all, edges: [.bottom]) // NOTE: allows control bar to be at bottom
-            .navigationTitle {
-                NavTitle(title, color: routineColor)
-//                    .onTapGesture {
-//                        withAnimation {
-//                            selectedTab = .first
-//                        }
-//                    }
+                .tag(Tab.name)
+                Form {
+                    FormColorPicker(color: $color)
+                    RoutDetImage(routine: routine)
+                }
+                .tag(Tab.colorImage)
+                FakeSection(title: "Exercises") {
+                    ExerciseList(routine: routine)
+                }
+                .tag(Tab.exercises)
             }
         }
     #endif

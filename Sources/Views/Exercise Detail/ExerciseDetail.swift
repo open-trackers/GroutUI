@@ -74,76 +74,57 @@ public struct ExerciseDetail: View {
     #if os(watchOS)
 
         private var platformView: some View {
-            VStack {
-                TabView(selection: $selectedTab) {
-                    Form {
-                        ExDetName(name: $exercise.wrappedName,
-                                  tint: exerciseColor)
-                    }
-                    .tag(Tab.name)
-                    Form {
-                        ExDetSetting(value: $exercise.primarySetting,
-                                     tint: exerciseColor,
-                                     title: "Primary Setting")
-                    }
-                    .tag(Tab.primary)
-                    Form {
-                        ExDetSetting(value: $exercise.secondarySetting,
-                                     tint: exerciseColor,
-                                     title: "Secondary Setting")
-                    }
-                    .tag(Tab.secondary)
-                    Form {
-                        ExDetSets(sets: $exercise.sets,
-                                  tint: exerciseColor)
-                    }
-                    .tag(Tab.sets)
-                    Form {
-                        ExDetReps(repetitions: $exercise.repetitions,
-                                  tint: exerciseColor)
-                    }
-                    .tag(Tab.reps)
-                    Form {
-                        ExDetIntensity(intensity: $exercise.lastIntensity,
-                                       intensityStep: exercise.intensityStep,
+            ControlBarTabView(selection: $selectedTab, tint: exerciseColor, title: title) {
+                Form {
+                    ExDetName(name: $exercise.wrappedName,
+                              tint: exerciseColor)
+                }
+                .tag(Tab.name)
+                Form {
+                    ExDetSetting(value: $exercise.primarySetting,
+                                 tint: exerciseColor,
+                                 title: "Primary Setting")
+                }
+                .tag(Tab.primary)
+                Form {
+                    ExDetSetting(value: $exercise.secondarySetting,
+                                 tint: exerciseColor,
+                                 title: "Secondary Setting")
+                }
+                .tag(Tab.secondary)
+                Form {
+                    ExDetSets(sets: $exercise.sets,
+                              tint: exerciseColor)
+                }
+                .tag(Tab.sets)
+                Form {
+                    ExDetReps(repetitions: $exercise.repetitions,
+                              tint: exerciseColor)
+                }
+                .tag(Tab.reps)
+                Form {
+                    ExDetIntensity(intensity: $exercise.lastIntensity,
+                                   intensityStep: exercise.intensityStep,
+                                   units: Units(rawValue: exercise.units),
+                                   tint: exerciseColor)
+                }
+                .tag(Tab.intensity)
+                Form {
+                    ExDetIntensityStep(intensityStep: $exercise.intensityStep,
                                        units: Units(rawValue: exercise.units),
                                        tint: exerciseColor)
-                    }
-                    .tag(Tab.intensity)
-                    Form {
-                        ExDetIntensityStep(intensityStep: $exercise.intensityStep,
-                                           units: Units(rawValue: exercise.units),
-                                           tint: exerciseColor)
-                    }
-                    .tag(Tab.intensityStep)
-                    Form {
-                        ExDetIntensityUnits(rawUnits: $exercise.units,
-                                            tint: exerciseColor)
-                    }
-                    .tag(Tab.intensityUnit)
-                    Form {
-                        ExDetIntensityStepInvert(invertedIntensity: $exercise.invertedIntensity,
-                                                 tint: exerciseColor)
-                    }
-                    .tag(Tab.intensityInvert)
                 }
-                .animation(.easeInOut(duration: 0.25), value: selectedTab)
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .frame(maxHeight: .infinity)
-
-                ControlBar(selection: $selectedTab, tint: exerciseColor)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom)
-            }
-            .ignoresSafeArea(.all, edges: [.bottom]) // NOTE: allows control bar to be at bottom
-            .navigationTitle {
-                Text(title)
-                    .foregroundColor(exerciseColorDarkBg)
-//                    .onTapGesture {
-//                        withAnimation {
-//                            selectedTab = .first
-//                        }
-//                    }
+                .tag(Tab.intensityStep)
+                Form {
+                    ExDetIntensityUnits(rawUnits: $exercise.units,
+                                        tint: exerciseColor)
+                }
+                .tag(Tab.intensityUnit)
+                Form {
+                    ExDetIntensityStepInvert(invertedIntensity: $exercise.invertedIntensity,
+                                             tint: exerciseColor)
+                }
+                .tag(Tab.intensityInvert)
             }
         }
 

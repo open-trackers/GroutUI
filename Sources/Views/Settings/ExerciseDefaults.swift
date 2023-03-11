@@ -72,58 +72,39 @@ struct ExerciseDefaults: View {
 
     #if os(watchOS)
         private var platformView: some View {
-            VStack {
-                TabView(selection: $selectedTab) {
-                    Form {
-                        ExDetSets(sets: $appSetting.defExSets,
-                                  tint: exerciseColor)
-                    }
-                    .tag(Tab.sets)
+            ControlBarTabView(selection: $selectedTab, tint: exerciseColor, title: title) {
+                Form {
+                    ExDetSets(sets: $appSetting.defExSets,
+                              tint: exerciseColor)
+                }
+                .tag(Tab.sets)
 
-                    Form {
-                        ExDetReps(repetitions: $appSetting.defExReps,
-                                  tint: exerciseColor)
-                    }
-                    .tag(Tab.reps)
+                Form {
+                    ExDetReps(repetitions: $appSetting.defExReps,
+                              tint: exerciseColor)
+                }
+                .tag(Tab.reps)
 
-                    Form {
-                        ExDetIntensity(intensity: $appSetting.defExIntensity,
-                                       intensityStep: appSetting.defExIntensityStep,
+                Form {
+                    ExDetIntensity(intensity: $appSetting.defExIntensity,
+                                   intensityStep: appSetting.defExIntensityStep,
+                                   units: Units(rawValue: appSetting.defExUnits),
+                                   tint: exerciseColor)
+                }
+                .tag(Tab.intensity)
+
+                Form {
+                    ExDetIntensityStep(intensityStep: $appSetting.defExIntensityStep,
                                        units: Units(rawValue: appSetting.defExUnits),
                                        tint: exerciseColor)
-                    }
-                    .tag(Tab.intensity)
-
-                    Form {
-                        ExDetIntensityStep(intensityStep: $appSetting.defExIntensityStep,
-                                           units: Units(rawValue: appSetting.defExUnits),
-                                           tint: exerciseColor)
-                    }
-                    .tag(Tab.intensityStep)
-
-                    Form {
-                        ExDetIntensityUnits(rawUnits: $appSetting.defExUnits,
-                                            tint: exerciseColor)
-                    }
-                    .tag(Tab.intensityUnit)
                 }
-                .animation(.easeInOut(duration: 0.25), value: selectedTab)
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .frame(maxHeight: .infinity)
+                .tag(Tab.intensityStep)
 
-                ControlBar(selection: $selectedTab, tint: exerciseColor)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom)
-            }
-            .ignoresSafeArea(.all, edges: [.bottom]) // NOTE: allows control bar to be at bottom
-            .navigationTitle {
-                Text(title)
-                    .foregroundColor(exerciseColorDarkBg)
-//                    .onTapGesture {
-//                        withAnimation {
-//                            selectedTab = .first
-//                        }
-//                    }
+                Form {
+                    ExDetIntensityUnits(rawUnits: $appSetting.defExUnits,
+                                        tint: exerciseColor)
+                }
+                .tag(Tab.intensityUnit)
             }
         }
     #endif
