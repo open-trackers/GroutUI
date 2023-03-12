@@ -71,7 +71,8 @@ public struct RoutineList: View {
         #if os(watchOS)
         // .navigationBarTitleDisplayMode(.large)
         .navigationTitle {
-            NavTitle(title)
+            Text(title)
+                .foregroundStyle(routineColor)
         }
         #elseif os(iOS)
         .navigationTitle(title)
