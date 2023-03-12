@@ -36,9 +36,9 @@ public struct ExerciseDetail: View {
         // NOTE: no longer saving the tab in scene storage, because it has been
         // annoying to not start out at the first tab when navigating to detail.
         // @SceneStorage("exercise-detail-tab") private var selectedTab = 0
-        @State private var selectedTab: Tab = .first
+        @State private var selectedTab: Tab = .name
 
-        enum Tab: Int, ControlBarred {
+        enum Tab: Int, CaseIterable {
             case name = 1
             case primary = 2
             case secondary = 3
@@ -48,17 +48,6 @@ public struct ExerciseDetail: View {
             case intensityStep = 7
             case intensityUnit = 8
             case intensityInvert = 9
-
-            static var first: Tab = .name
-            static var last: Tab = .intensityInvert
-
-            var previous: Tab? {
-                Tab(rawValue: rawValue - 1)
-            }
-
-            var next: Tab? {
-                Tab(rawValue: rawValue + 1)
-            }
         }
 
     #endif

@@ -40,25 +40,14 @@ struct ExerciseDefaults: View {
         // NOTE: no longer saving the tab in scene storage, because it has been
         // annoying to not start out at the first tab when navigating to detail.
         // @SceneStorage("exercise-defaults-tab") private var selectedTab =
-        @State private var selectedTab: Tab = .first
+        @State private var selectedTab: Tab = .sets
 
-        enum Tab: Int, ControlBarred {
+        enum Tab: Int, CaseIterable {
             case sets = 1
             case reps = 2
             case intensity = 3
             case intensityStep = 4
             case intensityUnit = 5
-
-            static var first: Tab = .sets
-            static var last: Tab = .intensityUnit
-
-            var previous: Tab? {
-                Tab(rawValue: rawValue - 1)
-            }
-
-            var next: Tab? {
-                Tab(rawValue: rawValue + 1)
-            }
         }
     #endif
 
