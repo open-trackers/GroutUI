@@ -31,10 +31,30 @@ struct ExDetIntensityStep: View {
                          specifier: specifier,
                          forceFocus: forceFocus)
                 .tint(tint)
-            Button(action: { intensityStep = 1 }) {
-                Text("Set to one (1)")
-                    .foregroundStyle(tint)
+            HStack {
+                Text("Clear")
+                    .onTapGesture {
+                        intensityStep = 0
+                    }
+                #if os(iOS)
+                    Spacer()
+                    Text("+1")
+                        .onTapGesture {
+                            intensityStep += 1
+                        }
+                    Spacer()
+                    Text("+5")
+                        .onTapGesture {
+                            intensityStep += 5
+                        }
+                #endif
+                Spacer()
+                Text("+10")
+                    .onTapGesture {
+                        intensityStep += 10
+                    }
             }
+            .foregroundStyle(tint)
         } header: {
             Text("Intensity Step")
         }
@@ -45,28 +65,6 @@ struct ExDetIntensityStep: View {
         guard let units else { return prefix }
         return "\(prefix) \(units.abbreviation)"
     }
-
-//    private func intensityText(_ intensityValue: Float) -> some View {
-//        Text(formattedIntensity(intensityValue))
-//            // NOTE: needed on watchOS to reduce text size
-//            .minimumScaleFactor(0.1)
-//            .lineLimit(1)
-//        #if os(watchOS)
-//            .modify {
-//                if #available(iOS 16.1, watchOS 9.1, *) {
-//                    $0.fontDesign(.rounded)
-//                }
-//            }
-//        #endif
-//    }
-//
-//    private func formattedIntensity(_ intensity: Float) -> String {
-//        if let units {
-//            return formatIntensity(intensity, units: units, withUnits: true, isFractional: true)
-//        } else {
-//            return formatIntensity(intensity, units: .none, withUnits: false, isFractional: true)
-//        }
-//    }
 }
 
 // struct ExDetIntensity_Previews: PreviewProvider {
