@@ -35,6 +35,12 @@ public struct AddExerciseButton: View {
         AddElementButton(elementName: "Exercise",
                          onCreate: createAction,
                          onAfterSave: afterSaveAction)
+        #if os(watchOS)
+            .font(.title3)
+            .tint(exerciseColorDarkBg)
+            .foregroundStyle(.tint)
+            .symbolRenderingMode(.hierarchical)
+        #endif
     }
 
     // MARK: - Properties

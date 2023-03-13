@@ -60,9 +60,6 @@ public struct ExerciseList: View {
 
             #if os(watchOS)
                 AddExerciseButton(routine: routine)
-                    .font(.title3)
-                    .tint(exerciseColorDarkBg)
-                    .foregroundStyle(.tint)
             #endif
         }
         #if os(iOS)
@@ -132,5 +129,7 @@ struct ExerciseList_Previews: PreviewProvider {
         exercise.routine = routine
         return TestHolder(routine: routine)
             .environment(\.managedObjectContext, ctx)
+            .environmentObject(manager)
+            .accentColor(.orange)
     }
 }

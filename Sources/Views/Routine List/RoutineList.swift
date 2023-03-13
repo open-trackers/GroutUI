@@ -36,7 +36,7 @@ public struct RoutineList: View {
 
     private let startRoutinePublisher = NotificationCenter.default.publisher(for: .startRoutine)
 
-    private let title = "Routines"
+    private let title = "Gym Routines"
 
     @AppStorage("routine-is-new-user") private var isNewUser: Bool = true
 
@@ -61,9 +61,11 @@ public struct RoutineList: View {
                  addButton: { AddRoutineButton() })
         {
             #if os(watchOS)
-                AddRoutineButton()
-                settingsButton
-                aboutButton
+                Group {
+                    AddRoutineButton()
+                    settingsButton
+                    aboutButton
+                }
             #elseif os(iOS)
                 EmptyView()
             #endif
