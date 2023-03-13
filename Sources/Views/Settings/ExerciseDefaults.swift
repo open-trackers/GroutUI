@@ -64,13 +64,15 @@ struct ExerciseDefaults: View {
             ControlBarTabView(selection: $selectedTab, tint: exerciseColor, title: title) {
                 Form {
                     ExDetSets(sets: $appSetting.defExSets,
-                              tint: exerciseColor)
+                              tint: exerciseColor,
+                              forceFocus: true)
                 }
                 .tag(Tab.sets)
 
                 Form {
                     ExDetReps(repetitions: $appSetting.defExReps,
-                              tint: exerciseColor)
+                              tint: exerciseColor,
+                              forceFocus: true)
                 }
                 .tag(Tab.reps)
 
@@ -78,20 +80,23 @@ struct ExerciseDefaults: View {
                     ExDetIntensity(intensity: $appSetting.defExIntensity,
                                    intensityStep: appSetting.defExIntensityStep,
                                    units: Units(rawValue: appSetting.defExUnits),
-                                   tint: exerciseColor)
+                                   tint: exerciseColor,
+                                   forceFocus: true)
                 }
                 .tag(Tab.intensity)
 
                 Form {
                     ExDetIntensityStep(intensityStep: $appSetting.defExIntensityStep,
                                        units: Units(rawValue: appSetting.defExUnits),
-                                       tint: exerciseColor)
+                                       tint: exerciseColor,
+                                       forceFocus: true)
                 }
                 .tag(Tab.intensityStep)
 
                 Form {
                     ExDetIntensityUnits(rawUnits: $appSetting.defExUnits,
-                                        tint: exerciseColor)
+                                        tint: exerciseColor,
+                                        forceFocus: true)
                 }
                 .tag(Tab.intensityUnit)
             }

@@ -15,18 +15,9 @@ import GroutLib
 struct ExDetSets: View {
     // MARK: - Parameters
 
-    @Binding private var sets: Int16
-    private let tint: Color
-    private let forceFocus: Bool
-
-    init(sets: Binding<Int16>,
-         tint: Color,
-         forceFocus: Bool = false)
-    {
-        _sets = sets
-        self.tint = tint
-        self.forceFocus = forceFocus
-    }
+    @Binding var sets: Int16
+    let tint: Color
+    var forceFocus: Bool = false
 
     // MARK: - Locals
 

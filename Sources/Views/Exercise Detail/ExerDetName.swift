@@ -16,13 +16,8 @@ import TrackerUI
 struct ExDetName: View {
     // MARK: - Parameters
 
-    @Binding private var name: String
-    private let tint: Color
-
-    init(name: Binding<String>, tint: Color) {
-        _name = name
-        self.tint = tint
-    }
+    @Binding var name: String
+    let tint: Color
 
     // MARK: - Views
 

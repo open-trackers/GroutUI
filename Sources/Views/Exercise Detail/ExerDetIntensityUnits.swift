@@ -15,18 +15,9 @@ import GroutLib
 struct ExDetIntensityUnits: View {
     // MARK: - Parameters
 
-    @Binding private var rawUnits: Int16
-    private let tint: Color
-    private let forceFocus: Bool
-
-    init(rawUnits: Binding<Int16>,
-         tint: Color,
-         forceFocus: Bool = false)
-    {
-        _rawUnits = rawUnits
-        self.tint = tint
-        self.forceFocus = forceFocus
-    }
+    @Binding var rawUnits: Int16
+    let tint: Color
+    var forceFocus: Bool = false
 
     // MARK: - Locals
 
@@ -61,28 +52,6 @@ struct ExDetIntensityUnits: View {
             Text("Intensity Units")
         }
     }
-
-//    private func intensityText(_ intensityValue: Float) -> some View {
-//        Text(formattedIntensity(intensityValue))
-//            // NOTE: needed on watchOS to reduce text size
-//            .minimumScaleFactor(0.1)
-//            .lineLimit(1)
-//        #if os(watchOS)
-//            .modify {
-//                if #available(iOS 16.1, watchOS 9.1, *) {
-//                    $0.fontDesign(.rounded)
-//                }
-//            }
-//        #endif
-//    }
-//
-//    private func formattedIntensity(_ intensity: Float) -> String {
-//        if let _units = Units(rawValue: rawUnits) {
-//            return formatIntensity(intensity, units: _units, withUnits: true, isFractional: true)
-//        } else {
-//            return formatIntensity(intensity, units: .none, withUnits: false, isFractional: true)
-//        }
-//    }
 }
 
 // struct ExDetIntensity_Previews: PreviewProvider {

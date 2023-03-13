@@ -15,18 +15,9 @@ import GroutLib
 struct ExDetReps: View {
     // MARK: - Parameters
 
-    @Binding private var repetitions: Int16
-    private let tint: Color
-    private let forceFocus: Bool
-
-    init(repetitions: Binding<Int16>,
-         tint: Color,
-         forceFocus: Bool = false)
-    {
-        _repetitions = repetitions
-        self.tint = tint
-        self.forceFocus = forceFocus
-    }
+    @Binding var repetitions: Int16
+    let tint: Color
+    var forceFocus: Bool = false
 
     // MARK: - Locals
 

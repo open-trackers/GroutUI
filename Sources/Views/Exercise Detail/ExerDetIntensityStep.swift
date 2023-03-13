@@ -16,21 +16,10 @@ import TrackerUI
 struct ExDetIntensityStep: View {
     // MARK: - Parameters
 
-    @Binding private var intensityStep: Float
-    private let units: Units?
-    private let tint: Color
-    private let forceFocus: Bool
-
-    init(intensityStep: Binding<Float>,
-         units: Units?,
-         tint: Color,
-         forceFocus: Bool = false)
-    {
-        _intensityStep = intensityStep
-        self.units = units
-        self.tint = tint
-        self.forceFocus = forceFocus
-    }
+    @Binding var intensityStep: Float
+    let units: Units?
+    let tint: Color
+    var forceFocus: Bool = false
 
     // MARK: - Views
 
@@ -41,10 +30,6 @@ struct ExDetIntensityStep: View {
                          step: 0.1,
                          specifier: specifier,
                          forceFocus: forceFocus)
-
-//            Stepper(value: $intensityStep, in: Exercise.intensityStepRange, step: 0.1) {
-//                intensityText(intensityStep)
-//            }
                 .tint(tint)
             Button(action: { intensityStep = 1 }) {
                 Text("Set to one (1)")

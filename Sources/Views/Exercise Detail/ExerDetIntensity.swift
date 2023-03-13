@@ -16,24 +16,11 @@ import TrackerUI
 struct ExDetIntensity: View {
     // MARK: - Parameters
 
-    @Binding private var intensity: Float
-    private let intensityStep: Float
-    private let units: Units?
-    private let tint: Color
-    private let forceFocus: Bool
-
-    init(intensity: Binding<Float>,
-         intensityStep: Float,
-         units: Units?,
-         tint: Color,
-         forceFocus: Bool = false)
-    {
-        _intensity = intensity
-        self.intensityStep = intensityStep
-        self.units = units
-        self.tint = tint
-        self.forceFocus = forceFocus
-    }
+    @Binding var intensity: Float
+    let intensityStep: Float
+    let units: Units?
+    let tint: Color
+    var forceFocus: Bool = false
 
     // MARK: - Views
 

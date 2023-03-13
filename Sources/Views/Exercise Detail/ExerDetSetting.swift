@@ -15,18 +15,15 @@ import GroutLib
 struct ExDetSetting: View {
     // MARK: - Parameters
 
-    @Binding private var value: Int16
-    private let tint: Color
-    private let title: String
+    @Binding var value: Int16
+    let tint: Color
+    let title: String
+    var forceFocus: Bool = false
 
-    init(value: Binding<Int16>,
-         tint: Color,
-         title: String)
-    {
-        _value = value
-        self.tint = tint
-        self.title = title
-    }
+    // MARK: - Locals
+
+    // used to force focus for digital crown, assuming it's the only stepper in (detail) view
+    @FocusState private var focusedField: Bool
 
     // MARK: - Views
 
@@ -36,6 +33,11 @@ struct ExDetSetting: View {
                 Text("\(value)")
             }
             .tint(tint)
+            .focused($focusedField)
+            .onAppear {
+                guard forceFocus else { return }
+                focusedField = true
+            }
         } header: {
             Text(title)
         }

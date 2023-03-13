@@ -15,15 +15,8 @@ import GroutLib
 struct ExDetIntensityStepInvert: View {
     // MARK: - Parameters
 
-    @Binding private var invertedIntensity: Bool
-    private let tint: Color
-
-    init(invertedIntensity: Binding<Bool>,
-         tint: Color)
-    {
-        _invertedIntensity = invertedIntensity
-        self.tint = tint
-    }
+    @Binding var invertedIntensity: Bool
+    let tint: Color
 
     // MARK: - Views
 
