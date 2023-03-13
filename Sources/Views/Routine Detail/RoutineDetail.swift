@@ -68,7 +68,7 @@ public struct RoutineDetail: View {
                 .tag(Tab.name)
                 Form {
                     FormColorPicker(color: $color)
-                    RoutDetImage(routine: routine)
+                    RoutDetImage(routine: routine, forceFocus: true)
                 }
                 .tag(Tab.colorImage)
                 FakeSection(title: "Exercises") {
@@ -84,7 +84,7 @@ public struct RoutineDetail: View {
             Form {
                 RoutDetName(routine: routine)
                 FormColorPicker(color: $color)
-                RoutDetImage(routine: routine)
+                RoutDetImage(routine: routine, forceFocus: false)
                 RoutDetExercises(routine: routine)
             }
             .navigationTitle(title)

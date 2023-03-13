@@ -13,23 +13,19 @@ import SwiftUI
 import GroutLib
 import TrackerUI
 
-public struct RoutDetImage: View {
+struct RoutDetImage: View {
     // MARK: - Parameters
 
-    @ObservedObject private var routine: Routine
-
-    public init(routine: Routine) {
-        self.routine = routine
-    }
-
-    // MARK: - Locals
+    @ObservedObject var routine: Routine
+    var forceFocus: Bool
 
     // MARK: - Views
 
     public var body: some View {
         Section {
             ImageStepper(initialName: routine.imageName,
-                         imageNames: systemImageNames)
+                         imageNames: systemImageNames,
+                         forceFocus: forceFocus)
             {
                 routine.imageName = $0
             }
@@ -51,7 +47,7 @@ struct RoutDetImage_Previews: PreviewProvider {
         var routine: Routine
         var body: some View {
             Form {
-                RoutDetImage(routine: routine)
+                RoutDetImage(routine: routine, forceFocus: false)
             }
         }
     }
