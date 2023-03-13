@@ -97,7 +97,7 @@ public struct ExerciseDetail: View {
                 .tag(Tab.reps)
                 Form {
                     ExDetIntensity(intensity: $exercise.lastIntensity,
-                                   intensityStep: exercise.intensityStep,
+                                   // intensityStep: exercise.intensityStep,
                                    units: Units(rawValue: exercise.units),
                                    tint: exerciseColor,
                                    forceFocus: true)
@@ -142,7 +142,7 @@ public struct ExerciseDetail: View {
                 ExDetReps(repetitions: $exercise.repetitions,
                           tint: exerciseColor)
                 ExDetIntensity(intensity: $exercise.lastIntensity,
-                               intensityStep: exercise.intensityStep,
+                               // intensityStep: exercise.intensityStep,
                                units: Units(rawValue: exercise.units),
                                tint: exerciseColor)
                 ExDetIntensityStep(intensityStep: $exercise.intensityStep,
