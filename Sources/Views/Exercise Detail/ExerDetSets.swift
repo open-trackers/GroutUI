@@ -17,13 +17,21 @@ struct ExDetSets: View {
 
     @Binding private var sets: Int16
     private let tint: Color
+    private let forceFocus: Bool
 
     init(sets: Binding<Int16>,
-         tint: Color)
+         tint: Color,
+         forceFocus: Bool = false)
     {
         _sets = sets
         self.tint = tint
+        self.forceFocus = forceFocus
     }
+
+    // MARK: - Locals
+
+    // used to force focus for digital crown, assuming it's the only stepper in (detail) view
+    @FocusState private var focusedField: Bool
 
     // MARK: - Views
 
@@ -33,6 +41,11 @@ struct ExDetSets: View {
                 Text("\(sets)")
             }
             .tint(tint)
+            .focused($focusedField)
+            .onAppear {
+                guard forceFocus else { return }
+                focusedField = true
+            }
         } header: {
             Text("Set Count")
         }

@@ -72,41 +72,48 @@ public struct ExerciseDetail: View {
                 Form {
                     ExDetSetting(value: $exercise.primarySetting,
                                  tint: exerciseColor,
-                                 title: "Primary Setting")
+                                 title: "Primary Setting",
+                                 forceFocus: true)
                 }
                 .tag(Tab.primary)
                 Form {
                     ExDetSetting(value: $exercise.secondarySetting,
                                  tint: exerciseColor,
-                                 title: "Secondary Setting")
+                                 title: "Secondary Setting",
+                                 forceFocus: true)
                 }
                 .tag(Tab.secondary)
                 Form {
                     ExDetSets(sets: $exercise.sets,
-                              tint: exerciseColor)
+                              tint: exerciseColor,
+                              forceFocus: true)
                 }
                 .tag(Tab.sets)
                 Form {
                     ExDetReps(repetitions: $exercise.repetitions,
-                              tint: exerciseColor)
+                              tint: exerciseColor,
+                              forceFocus: true)
                 }
                 .tag(Tab.reps)
                 Form {
                     ExDetIntensity(intensity: $exercise.lastIntensity,
                                    intensityStep: exercise.intensityStep,
                                    units: Units(rawValue: exercise.units),
-                                   tint: exerciseColor)
+                                   tint: exerciseColor,
+                                   forceFocus: true)
                 }
                 .tag(Tab.intensity)
                 Form {
                     ExDetIntensityStep(intensityStep: $exercise.intensityStep,
                                        units: Units(rawValue: exercise.units),
-                                       tint: exerciseColor)
+                                       tint: exerciseColor,
+                                       forceFocus: true)
                 }
                 .tag(Tab.intensityStep)
                 Form {
                     ExDetIntensityUnits(rawUnits: $exercise.units,
-                                        tint: exerciseColor)
+                                        tint: exerciseColor,
+                                        forceFocus: true)
                 }
                 .tag(Tab.intensityUnit)
                 Form {

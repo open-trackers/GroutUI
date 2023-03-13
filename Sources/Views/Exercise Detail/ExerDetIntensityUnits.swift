@@ -17,13 +17,21 @@ struct ExDetIntensityUnits: View {
 
     @Binding private var rawUnits: Int16
     private let tint: Color
+    private let forceFocus: Bool
 
     init(rawUnits: Binding<Int16>,
-         tint: Color)
+         tint: Color,
+         forceFocus: Bool = false)
     {
         _rawUnits = rawUnits
         self.tint = tint
+        self.forceFocus = forceFocus
     }
+
+    // MARK: - Locals
+
+    // used to force focus for digital crown, assuming it's the only stepper in (detail) view
+    @FocusState private var focusedField: Bool
 
     // MARK: - Views
 
@@ -44,32 +52,37 @@ struct ExDetIntensityUnits: View {
             .onChange(of: rawUnits) {
                 rawUnits = $0
             }
+            .focused($focusedField)
+            .onAppear {
+                guard forceFocus else { return }
+                focusedField = true
+            }
         } header: {
             Text("Intensity Units")
         }
     }
 
-    private func intensityText(_ intensityValue: Float) -> some View {
-        Text(formattedIntensity(intensityValue))
-            // NOTE: needed on watchOS to reduce text size
-            .minimumScaleFactor(0.1)
-            .lineLimit(1)
-        #if os(watchOS)
-            .modify {
-                if #available(iOS 16.1, watchOS 9.1, *) {
-                    $0.fontDesign(.rounded)
-                }
-            }
-        #endif
-    }
-
-    private func formattedIntensity(_ intensity: Float) -> String {
-        if let _units = Units(rawValue: rawUnits) {
-            return formatIntensity(intensity, units: _units, withUnits: true, isFractional: true)
-        } else {
-            return formatIntensity(intensity, units: .none, withUnits: false, isFractional: true)
-        }
-    }
+//    private func intensityText(_ intensityValue: Float) -> some View {
+//        Text(formattedIntensity(intensityValue))
+//            // NOTE: needed on watchOS to reduce text size
+//            .minimumScaleFactor(0.1)
+//            .lineLimit(1)
+//        #if os(watchOS)
+//            .modify {
+//                if #available(iOS 16.1, watchOS 9.1, *) {
+//                    $0.fontDesign(.rounded)
+//                }
+//            }
+//        #endif
+//    }
+//
+//    private func formattedIntensity(_ intensity: Float) -> String {
+//        if let _units = Units(rawValue: rawUnits) {
+//            return formatIntensity(intensity, units: _units, withUnits: true, isFractional: true)
+//        } else {
+//            return formatIntensity(intensity, units: .none, withUnits: false, isFractional: true)
+//        }
+//    }
 }
 
 // struct ExDetIntensity_Previews: PreviewProvider {
