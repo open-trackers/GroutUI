@@ -66,6 +66,8 @@ public struct RoutineList: View {
                     settingsButton
                     aboutButton
                 }
+                .accentColor(.orange) // NOTE: make the images really orange
+                .symbolRenderingMode(.hierarchical)
             #elseif os(iOS)
                 EmptyView()
             #endif
@@ -251,6 +253,6 @@ struct RoutineList_Previews: PreviewProvider {
         return TestHolder()
             .environment(\.managedObjectContext, ctx)
             .environmentObject(manager)
-            .accentColor(.orange)
+        // .accentColor(.green)
     }
 }

@@ -11,11 +11,14 @@
 import SwiftUI
 
 public let routineColor: Color = .accentColor
-public let routineListItemTint: Color = .accentColor.opacity(0.2)
+public let routineColorDarkBg: Color = routineColor.opacity(0.8)
+public let routineColorLiteBg: Color = .primary
+public let routineListItemTint: Color = routineColor.opacity(0.2)
 
-public let exerciseColorDarkBg: Color = .yellow.opacity(0.8)
+public let exerciseColor: Color = .yellow
+public let exerciseColorDarkBg: Color = exerciseColor.opacity(0.8)
 public let exerciseColorLiteBg: Color = .primary
-public let exerciseListItemTint: Color = .yellow.opacity(0.2)
+public let exerciseListItemTint: Color = exerciseColor.opacity(0.2)
 
 public let stopColor: Color = .pink
 

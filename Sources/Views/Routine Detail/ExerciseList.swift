@@ -60,6 +60,9 @@ public struct ExerciseList: View {
 
             #if os(watchOS)
                 AddExerciseButton(routine: routine)
+                    .accentColor(exerciseColorDarkBg)
+                    .symbolRenderingMode(.hierarchical)
+
             #endif
         }
         #if os(iOS)
