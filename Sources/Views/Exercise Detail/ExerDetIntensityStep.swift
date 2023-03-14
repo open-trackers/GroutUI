@@ -32,27 +32,15 @@ struct ExDetIntensityStep: View {
                          forceFocus: forceFocus)
                 .tint(tint)
             HStack {
-                Text("Clear")
-                    .onTapGesture {
-                        intensityStep = 0
-                    }
+                FormTextButton("Clear") { intensityStep = 0 }
                 #if os(iOS)
                     Spacer()
-                    Text("+1")
-                        .onTapGesture {
-                            intensityStep += 1
-                        }
+                    FormTextButton("+1") { intensityStep += 1 }
                     Spacer()
-                    Text("+5")
-                        .onTapGesture {
-                            intensityStep += 5
-                        }
+                    FormTextButton("+5") { intensityStep += 5 }
                 #endif
                 Spacer()
-                Text("+10")
-                    .onTapGesture {
-                        intensityStep += 10
-                    }
+                FormTextButton("+10") { intensityStep += 10 }
             }
             .foregroundStyle(tint)
         } header: {

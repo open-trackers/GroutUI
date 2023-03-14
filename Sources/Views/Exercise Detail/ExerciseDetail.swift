@@ -49,7 +49,6 @@ public struct ExerciseDetail: View {
             case intensityUnit = 8
             case intensityInvert = 9
         }
-
     #endif
 
     // MARK: - Views
@@ -97,7 +96,6 @@ public struct ExerciseDetail: View {
                 .tag(Tab.reps)
                 Form {
                     ExDetIntensity(intensity: $exercise.lastIntensity,
-                                   // intensityStep: exercise.intensityStep,
                                    units: Units(rawValue: exercise.units),
                                    tint: exerciseColor,
                                    forceFocus: true)

@@ -11,6 +11,7 @@
 import SwiftUI
 
 import GroutLib
+import TrackerUI
 
 struct ExDetSets: View {
     // MARK: - Parameters
@@ -19,24 +20,16 @@ struct ExDetSets: View {
     let tint: Color
     var forceFocus: Bool = false
 
-    // MARK: - Locals
-
-    // used to force focus for digital crown, assuming it's the only stepper in (detail) view
-    @FocusState private var focusedField: Bool
-
     // MARK: - Views
 
     var body: some View {
         Section {
-            Stepper(value: $sets, in: 0 ... 10, step: 1) {
-                Text("\(sets)")
-            }
-            .tint(tint)
-            .focused($focusedField)
-            .onAppear {
-                guard forceFocus else { return }
-                focusedField = true
-            }
+            ValueStepper(value: $sets,
+                         in: 0 ... 10,
+                         step: 1,
+                         specifier: "%d",
+                         forceFocus: forceFocus)
+                .tint(tint)
         } header: {
             Text("Set Count")
         }

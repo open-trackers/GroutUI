@@ -11,6 +11,7 @@
 import SwiftUI
 
 import GroutLib
+import TrackerUI
 
 struct ExDetSetting: View {
     // MARK: - Parameters
@@ -20,38 +21,24 @@ struct ExDetSetting: View {
     let title: String
     var forceFocus: Bool = false
 
-    // MARK: - Locals
-
-    // used to force focus for digital crown, assuming it's the only stepper in (detail) view
-    @FocusState private var focusedField: Bool
-
     // MARK: - Views
 
     var body: some View {
         Section {
-            Stepper(value: $value, in: Exercise.settingRange, step: 1) {
-                Text("\(value)")
-            }
-            .tint(tint)
-            .focused($focusedField)
-            .onAppear {
-                guard forceFocus else { return }
-                focusedField = true
-            }
+            ValueStepper(value: $value,
+                         in: Exercise.settingRange,
+                         step: 1,
+                         specifier: "%d",
+                         forceFocus: forceFocus)
+                .tint(tint)
         } header: {
             Text(title)
         }
     }
 }
 
-// struct ExDetSetting_Previews: PreviewProvider {
-//    static var previews: some View {
-//        let manager = CoreDataStack.getPreviewStack()
-//        let ctx = manager.container.viewContext
-//        let routine = Routine.create(ctx, userOrder: 0)
-//        routine.name = "Beverage"
-//        let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
-//        exercise.name = "Lat Pulldown"
-//        return Form { ExDetSetting(exercise: exercise, tint: .blue) }
-//    }
-// }
+struct ExDetSetting_Previews: PreviewProvider {
+    static var previews: some View {
+        Form { ExDetSetting(value: .constant(100), tint: .blue, title: "Hello") }
+    }
+}
