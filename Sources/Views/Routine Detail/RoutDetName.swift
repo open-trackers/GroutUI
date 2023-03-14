@@ -37,6 +37,7 @@ public struct RoutDetName: View {
                 Text($0)
                     .foregroundStyle(.tint)
             }
+            .textInputAutocapitalization(.words)
         } header: {
             Text("Name")
         }
