@@ -55,6 +55,7 @@ struct ExerciseDefaults: View {
 
     public var body: some View {
         platformView
+            .accentColor(exerciseColor)
             .symbolRenderingMode(.hierarchical)
             .onDisappear(perform: disappearAction)
     }
@@ -78,18 +79,13 @@ struct ExerciseDefaults: View {
 
                 Form {
                     ExDetIntensity(intensity: $appSetting.defExIntensity,
-                                   intensityStep: appSetting.defExIntensityStep,
-                                   units: Units(rawValue: appSetting.defExUnits),
-                                   tint: exerciseColor,
-                                   forceFocus: true)
+                                   units: Units(rawValue: appSetting.defExUnits))
                 }
                 .tag(Tab.intensity)
 
                 Form {
                     ExDetIntensityStep(intensityStep: $appSetting.defExIntensityStep,
-                                       units: Units(rawValue: appSetting.defExUnits),
-                                       tint: exerciseColor,
-                                       forceFocus: true)
+                                       units: Units(rawValue: appSetting.defExUnits))
                 }
                 .tag(Tab.intensityStep)
 
@@ -111,12 +107,9 @@ struct ExerciseDefaults: View {
                 ExDetReps(repetitions: $appSetting.defExReps,
                           tint: exerciseColor)
                 ExDetIntensity(intensity: $appSetting.defExIntensity,
-                               intensityStep: appSetting.defExIntensityStep,
-                               units: Units(rawValue: appSetting.defExUnits),
-                               tint: exerciseColor)
+                               units: Units(rawValue: appSetting.defExUnits))
                 ExDetIntensityStep(intensityStep: $appSetting.defExIntensityStep,
-                                   units: Units(rawValue: appSetting.defExUnits),
-                                   tint: exerciseColor)
+                                   units: Units(rawValue: appSetting.defExUnits))
                 ExDetIntensityUnits(rawUnits: $appSetting.defExUnits,
                                     tint: exerciseColor)
             }

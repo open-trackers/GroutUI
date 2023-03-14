@@ -17,33 +17,19 @@ struct ExDetIntensity: View {
     // MARK: - Parameters
 
     @Binding var intensity: Float
-    var intensityStep: Float = 0.1
     let units: Units?
-    let tint: Color
-    var forceFocus: Bool = false
 
     // MARK: - Views
 
     var body: some View {
         Section {
-            ValueStepper(value: $intensity,
-                         in: Exercise.intensityRange,
-                         step: intensityStep,
-                         specifier: specifier,
-                         forceFocus: forceFocus)
-                .tint(tint)
-            HStack {
-                FormTextButton("Clear") { intensity = 0 }
-                #if os(iOS)
-                    Spacer()
-                    FormTextButton("+10") { intensity += 10 }
-                    Spacer()
-                    FormTextButton("+50") { intensity += 50 }
-                #endif
-                Spacer()
-                FormTextButton("+100") { intensity += 100 }
+            FormFloatPad(selection: $intensity,
+                         precision: Exercise.intensityPrecision,
+                         upperBound: Exercise.intensityRange.upperBound)
+            {
+                Text("\($0, specifier: specifier)")
+                    .font(.title2)
             }
-            .foregroundStyle(tint)
         } header: {
             Text("Intensity")
         }
