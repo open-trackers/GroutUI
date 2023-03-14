@@ -36,6 +36,9 @@ struct ExDetName: View {
         } header: {
             Text("Name")
         }
+        #if os(iOS)
+        .font(.title3)
+        #endif
     }
 }
 
