@@ -23,11 +23,11 @@ struct ExDetIntensityStep: View {
 
     var body: some View {
         Section {
-            FormFloatPad(selection: $intensityStep,
+            FormFloatPad(value: $intensityStep,
                          precision: Exercise.intensityStepPrecision,
                          upperBound: Exercise.intensityStepRange.upperBound)
             {
-                Text("\($0, specifier: specifier)")
+                Text("\($0 ?? 0, specifier: specifier)")
                     .font(.title2)
             }
         } header: {
