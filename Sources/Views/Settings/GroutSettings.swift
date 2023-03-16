@@ -55,10 +55,8 @@ public struct GroutSettings<Content>: View
             Section {
                 Toggle("Always advance intensity on long press", isOn: $alwaysAdvanceOnLongPress)
                     .tint(.accentColor)
-
             } header: {
                 Text("\(Image(systemName: "checkmark")) Done Button")
-                    .foregroundStyle(.tint)
             }
 
             Section {
@@ -66,7 +64,6 @@ public struct GroutSettings<Content>: View
                     .tint(.accentColor)
             } header: {
                 Text("\(Image(systemName: "fossil.shell.fill")) History")
-                    .foregroundStyle(.tint)
             } footer: {
                 #if os(watchOS)
                     Text("Recent history will be stored locally for up to 1 year. Periodically run iPhone/iPad app for long-term storage and review.")
@@ -87,7 +84,6 @@ public struct GroutSettings<Content>: View
             // additional platform-specific settings content, if any
             content()
         }
-        // .navigationTitle("Settings")
     }
 
     private var exerciseColor: Color {
