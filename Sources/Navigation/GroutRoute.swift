@@ -22,6 +22,8 @@ public enum GroutRoute: Hashable, Codable {
     case exerciseList(_ routineUri: URL)
     case exerciseRunList(_ routineRunUri: URL)
     case exerciseDefaults
+    case routineRunRecent
+    case routineRunList
 
     private func uriSuffix(_ uri: URL) -> String {
         "[\(uri.absoluteString.suffix(12))]"
