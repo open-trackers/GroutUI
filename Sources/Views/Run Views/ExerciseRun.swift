@@ -22,6 +22,7 @@ public struct ExerciseRun: View {
 
     #if os(iOS)
         @Environment(\.verticalSizeClass) private var verticalSizeClass
+        @Environment(\.horizontalSizeClass) private var horizontalSizeClass
         @Environment(\.colorScheme) private var colorScheme
     #endif
 
@@ -63,13 +64,16 @@ public struct ExerciseRun: View {
         @SceneStorage("middle-mode") private var middleMode: ExerciseMiddleRowMode = .intensity
     #endif
 
+    #if os(watchOS)
+        private let maxFontSize: CGFloat = 60
+    #elseif os(iOS)
+        private let maxFontSize: CGFloat = 80
+    #endif
+
     // MARK: - Views
 
     public var body: some View {
-        GeometryReader { _ in
-            VStack(alignment: .center) {
-                content
-            }
+        platformContent
             .onDisappear {
                 shortPressDone = false // to avoid double presses
             }
@@ -92,12 +96,11 @@ public struct ExerciseRun: View {
                     }
                 }
             }
-        }
     }
 
-    private var content: some View {
-        GeometryReader { geo in
-            #if os(watchOS)
+    #if os(watchOS)
+        private var platformContent: some View {
+            GeometryReader { geo in
                 VStack {
                     titleText
                         .frame(height: geo.size.height * 3 / 13)
@@ -117,46 +120,39 @@ public struct ExerciseRun: View {
                     navigationRow
                         .frame(height: geo.size.height * 5 / 13)
                 }
-            #elseif os(iOS)
-                VStack {
-                    titleText
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    if verticalSizeClass == .regular {
-                        HStack(alignment: .top) {
-                            Group {
-                                settings
-                                volume
-                            }
-                            .frame(height: geo.size.height * 0.25)
-                        }
-                        .fixedSize(horizontal: false, vertical: true)
-                        intensity
-                            .frame(height: geo.size.height * 0.25)
-                    } else {
-                        HStack(alignment: .top) {
-                            Group {
-                                settings
-                                volume
-                                intensity
-                                    .frame(width: geo.size.width * 0.4)
-                            }
-                            .frame(maxHeight: geo.size.height * 0.4)
-                        }
-                        .fixedSize(horizontal: false, vertical: true)
-                    }
-                    Spacer()
-                    navigationRow
-                        .frame(height: geo.size.height * 0.25)
-                }
-                // leave space at bottom for page indicator
-                .padding(.bottom, geo.size.height / 10)
-                .padding(.horizontal)
-            #endif
+            }
         }
-    }
+    #endif
+
+    #if os(iOS)
+        private var platformContent: some View {
+            VStack {
+                titleText
+                if verticalSizeClass == .regular {
+                    HStack(alignment: .top) {
+                        settings
+                        volume
+                    }
+                    intensity
+                } else {
+                    HStack(alignment: .top) {
+                        Group {
+                            settings
+                            volume
+                            intensity
+                        }
+                    }
+                }
+                navigationRow
+                    .padding(.top)
+                Spacer()
+            }
+            .padding(.horizontal)
+        }
+    #endif
 
     private var settings: some View {
-        ExerciseRunSettings(exercise: exercise, onEdit: onEdit) {
+        ExerciseRunSettings(exercise: exercise, labelFont: labelFont, onEdit: onEdit) {
             #if os(watchOS)
                 Haptics.play()
                 middleMode = middleMode.next
@@ -165,7 +161,7 @@ public struct ExerciseRun: View {
     }
 
     private var volume: some View {
-        ExerciseRunVolume(exercise: exercise, onEdit: onEdit) {
+        ExerciseRunVolume(exercise: exercise, labelFont: labelFont, onEdit: onEdit) {
             #if os(watchOS)
                 Haptics.play()
                 middleMode = middleMode.next
@@ -174,7 +170,7 @@ public struct ExerciseRun: View {
     }
 
     private var intensity: some View {
-        ExerciseRunIntensity(exercise: exercise) {
+        ExerciseRunIntensity(exercise: exercise, labelFont: labelFont) {
             #if os(watchOS)
                 Haptics.play()
                 middleMode = middleMode.next
@@ -187,6 +183,7 @@ public struct ExerciseRun: View {
             ActionButton(onShortPress: isDone ? undoAction : doneAction,
                          imageSystemName: isDone ? "arrow.uturn.backward" : "checkmark",
                          buttonText: isDone ? "Undo" : "Done",
+                         labelFont: labelFont,
                          tint: shortPressDone ? disabledColor : (isDone ? exerciseUndoColor : exerciseDoneColor),
                          onLongPress: isDone ? nil : doneLongPressAction)
                 .disabled(shortPressDone)
@@ -194,6 +191,7 @@ public struct ExerciseRun: View {
             ActionButton(onShortPress: nextAction,
                          imageSystemName: "arrow.forward",
                          buttonText: "Next",
+                         labelFont: labelFont,
                          tint: nextColor,
                          onLongPress: nil)
                 .disabled(!hasNext)
@@ -201,11 +199,24 @@ public struct ExerciseRun: View {
     }
 
     private var titleText: some View {
-        TitleText(exercise.wrappedName)
+        TitleText(exercise.wrappedName, maxFontSize: maxFontSize)
             .foregroundColor(titleColor)
     }
 
     // MARK: - Properties
+
+    // NOTE: mirrored in RoutineControl
+    private var labelFont: Font {
+        #if os(watchOS)
+            .body
+        #elseif os(iOS)
+            if horizontalSizeClass == .regular, verticalSizeClass == .regular {
+                return .largeTitle
+            } else {
+                return .title2
+            }
+        #endif
+    }
 
     private var titleColor: Color {
         #if os(watchOS)
@@ -231,10 +242,6 @@ public struct ExerciseRun: View {
     private var nextColor: Color {
         hasNextIncomplete() ? exerciseNextColor : disabledColor
     }
-
-//    private var alertTitle: String {
-//        "Advance intensity from \(exercise.formattedIntensity(exercise.lastIntensity)) to \(exercise.formattedIntensity(exercise.advancedIntensity))?"
-//    }
 
     // MARK: - Actions
 
@@ -326,6 +333,7 @@ struct ExerciseRun_Previews: PreviewProvider {
         // try? ctx.save()
         return NavigationStack {
             TestHolder(exercise: e1)
+                .accentColor(.orange)
         }
     }
 }

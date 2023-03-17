@@ -15,7 +15,17 @@ import TrackerUI
 
 struct ExerciseRunIntensity: View {
     @ObservedObject var exercise: Exercise
-    var onTap: () -> Void
+    let labelFont: Font
+    let onTap: () -> Void
+
+    internal init(exercise: Exercise,
+                  labelFont: Font = .headline,
+                  onTap: @escaping () -> Void)
+    {
+        self.exercise = exercise
+        self.labelFont = labelFont
+        self.onTap = onTap
+    }
 
     #if os(watchOS)
         private let maxFontSize: CGFloat = 60
@@ -59,6 +69,7 @@ struct ExerciseRunIntensity: View {
                 .foregroundColor(textTintColor)
             } label: {
                 Text("Intensity")
+                    .font(labelFont)
                     .foregroundStyle(.tint)
             }
             .frame(maxHeight: maxHeight)

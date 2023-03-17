@@ -20,9 +20,13 @@ public struct ElapsedSinceView: View {
     // MARK: - Parameters
 
     private var startedAt: Date
+    private var labelFont: Font
 
-    public init(startedAt: Date) {
+    public init(startedAt: Date,
+                labelFont: Font = .body)
+    {
         self.startedAt = startedAt
+        self.labelFont = labelFont
     }
 
     // MARK: - Locals
@@ -57,6 +61,7 @@ public struct ElapsedSinceView: View {
 
             Text("Elapsed")
                 .lineLimit(1)
+                .font(labelFont)
         }
         .onReceive(timer) { _ in
             now = Date.now

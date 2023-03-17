@@ -18,6 +18,11 @@ public struct RoutineControl: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var router: GroutRouter
 
+    #if os(iOS)
+        @Environment(\.verticalSizeClass) private var verticalSizeClass
+        @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    #endif
+
     // MARK: - Parameters
 
     private var routine: Routine
@@ -108,9 +113,11 @@ public struct RoutineControl: View {
             ActionButton(onShortPress: onStop,
                          imageSystemName: "xmark",
                          buttonText: "Stop",
+                         labelFont: labelFont,
                          tint: stopColor,
                          onLongPress: nil)
-            ElapsedSinceView(startedAt: startedAt)
+            ElapsedSinceView(startedAt: startedAt,
+                             labelFont: labelFont)
         }
     }
 
@@ -119,11 +126,13 @@ public struct RoutineControl: View {
             ActionButton(onShortPress: onAdd,
                          imageSystemName: "plus", // plus.circle.fill
                          buttonText: "Add",
+                         labelFont: labelFont,
                          tint: exerciseColorDarkBg,
                          onLongPress: nil)
             ActionButton(onShortPress: { onNextIncomplete(nil) },
                          imageSystemName: "arrow.forward",
                          buttonText: "Next",
+                         labelFont: labelFont,
                          tint: onNextIncompleteColor,
                          onLongPress: nil)
                 .disabled(!hasRemaining)
@@ -131,6 +140,19 @@ public struct RoutineControl: View {
     }
 
     // MARK: - Properties
+
+    // NOTE: mirrored in ExerciseRun
+    private var labelFont: Font {
+        #if os(watchOS)
+            .body
+        #elseif os(iOS)
+            if horizontalSizeClass == .regular, verticalSizeClass == .regular {
+                return .largeTitle
+            } else {
+                return .title2
+            }
+        #endif
+    }
 
     private var onNextIncompleteColor: Color {
         hasRemaining ? exerciseNextColor : disabledColor
@@ -166,6 +188,7 @@ struct RoutineControl_Previews: PreviewProvider {
         // try? ctx.save()
         return NavigationStack {
             TestHolder(routine: routine)
+                .accentColor(.orange)
         }
     }
 }

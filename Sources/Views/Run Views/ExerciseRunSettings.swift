@@ -16,8 +16,26 @@ import TrackerUI
 
 struct ExerciseRunSettings: View {
     @ObservedObject var exercise: Exercise
-    var onEdit: (URL) -> Void
-    var onTap: () -> Void
+    let labelFont: Font
+    let onEdit: (URL) -> Void
+    let onTap: () -> Void
+
+    internal init(exercise: Exercise,
+                  labelFont: Font = .headline,
+                  onEdit: @escaping (URL) -> Void,
+                  onTap: @escaping () -> Void)
+    {
+        self.exercise = exercise
+        self.labelFont = labelFont
+        self.onEdit = onEdit
+        self.onTap = onTap
+    }
+
+    #if os(watchOS)
+        private let maxFontSize: CGFloat = 60
+    #elseif os(iOS)
+        private let maxFontSize: CGFloat = 80
+    #endif
 
     var body: some View {
         #if os(watchOS)
@@ -36,6 +54,7 @@ struct ExerciseRunSettings: View {
                     .frame(maxHeight: .infinity)
             } label: {
                 Label("Settings", systemImage: "gearshape.fill")
+                    .font(labelFont)
                     .foregroundStyle(.tint)
             }
         #endif
@@ -44,7 +63,8 @@ struct ExerciseRunSettings: View {
     private var settingsText: some View {
         HStack {
             if exercise.primarySetting == 0, exercise.secondarySetting == 0 {
-                TitleText("None")
+                TitleText("None", maxFontSize: maxFontSize)
+                    .font(.largeTitle)
                     .foregroundStyle(exerciseGearColor)
                     .padding()
             }
@@ -57,9 +77,7 @@ struct ExerciseRunSettings: View {
                     NumberImage(exercise.secondarySetting, isCircle: false, disabled: exercise.isDone)
                 }
             }
-            #if os(watchOS)
             .padding(.vertical)
-            #endif
         }
     }
 }
@@ -68,11 +86,12 @@ struct ExerciseRunSettings_Previews: PreviewProvider {
     struct TestHolder: View {
         var exercise: Exercise
         var body: some View {
-            ExerciseRun(exercise: exercise,
-                        routineStartedAt: Date.now,
-                        onNextIncomplete: { _ in },
-                        hasNextIncomplete: { true },
-                        onEdit: { _ in })
+            ExerciseRunSettings(exercise: exercise, onEdit: { _ in }, onTap: {})
+//            ExerciseRun(exercise: exercise,
+//                        routineStartedAt: Date.now,
+//                        onNextIncomplete: { _ in },
+//                        hasNextIncomplete: { true },
+//                        onEdit: { _ in })
         }
     }
 

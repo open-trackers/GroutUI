@@ -16,8 +16,26 @@ import TrackerUI
 
 struct ExerciseRunVolume: View {
     @ObservedObject var exercise: Exercise
-    var onEdit: (URL) -> Void
-    var onTap: () -> Void
+    let labelFont: Font
+    let onEdit: (URL) -> Void
+    let onTap: () -> Void
+
+    internal init(exercise: Exercise,
+                  labelFont: Font = .headline,
+                  onEdit: @escaping (URL) -> Void,
+                  onTap: @escaping () -> Void)
+    {
+        self.exercise = exercise
+        self.labelFont = labelFont
+        self.onEdit = onEdit
+        self.onTap = onTap
+    }
+
+    #if os(watchOS)
+        private let maxFontSize: CGFloat = 60
+    #elseif os(iOS)
+        private let maxFontSize: CGFloat = 80
+    #endif
 
     var body: some View {
         #if os(watchOS)
@@ -27,23 +45,26 @@ struct ExerciseRunVolume: View {
                                  onTap: onTap)
             {
                 volumeText
+                    .font(.title)
             }
         #elseif os(iOS)
             GroupBox {
                 volumeText
+                    .font(.largeTitle)
                     .padding()
 
                     // NOTE: needed to vertically expand GroupBox
                     .frame(maxHeight: .infinity)
             } label: {
-                Label("Sets/Reps", systemImage: "dumbbell.fill")
+                Label("Set/Rep", systemImage: "dumbbell.fill")
+                    .font(labelFont)
                     .foregroundStyle(.tint)
             }
         #endif
     }
 
     private var volumeText: some View {
-        TitleText("\(exercise.sets)/\(exercise.repetitions)")
+        TitleText("\(exercise.sets)/\(exercise.repetitions)", maxFontSize: maxFontSize)
             .foregroundStyle(textTintColor)
             .lineLimit(1)
             .modify {
@@ -64,11 +85,12 @@ struct ExerciseRunVolume_Previews: PreviewProvider {
     struct TestHolder: View {
         var exercise: Exercise
         var body: some View {
-            ExerciseRun(exercise: exercise,
-                        routineStartedAt: Date.now,
-                        onNextIncomplete: { _ in },
-                        hasNextIncomplete: { true },
-                        onEdit: { _ in })
+            ExerciseRunVolume(exercise: exercise, onEdit: { _ in }, onTap: {})
+//            ExerciseRun(exercise: exercise,
+//                        routineStartedAt: Date.now,
+//                        onNextIncomplete: { _ in },
+//                        hasNextIncomplete: { true },
+//                        onEdit: { _ in })
         }
     }
 
