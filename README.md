@@ -7,6 +7,16 @@ For full details, including free download links from the App Store, visit:
 * [_Open Trackers_ Website](https://open-trackers.github.io) - website for _Gym Routine Tracker_ and _Daily Calorie Tracker_ apps
 * [_Open Trackers_ Project](https://github.com/open-trackers) - Github site for the development project, including full source code
 
+## Important Note
+
+Do not add this package as a dependency to projects outside the _Open Trackers_ project!
+
+The code in this package is not stable. It may change at any time, including removal, to support the apps and other packages in the _Open Trackers_ project.
+
+You are nevertheless welcome to take what you need, provided you continue to meet the terms of the license (typically MPL-2.0). 
+
+Better yet, spin the borrowed code off into its own stable package. Let us know, as we may wish to add it as a dependency.
+
 ## License
 
 Copyright 2022, 2023 OpenAlloc LLC
