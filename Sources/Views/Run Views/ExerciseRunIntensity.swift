@@ -30,8 +30,7 @@ struct ExerciseRunIntensity: View {
     #if os(watchOS)
         private let maxFontSize: CGFloat = 60
     #elseif os(iOS)
-        private let maxHeight: CGFloat = 180
-        private let maxFontSize: CGFloat = 80
+        private let maxFontSize: CGFloat = 100
     #endif
 
     var body: some View {
@@ -72,7 +71,6 @@ struct ExerciseRunIntensity: View {
                     .font(labelFont)
                     .foregroundStyle(.tint)
             }
-            .frame(maxHeight: maxHeight)
         #endif
     }
 

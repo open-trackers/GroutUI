@@ -64,7 +64,6 @@ struct ExerciseRunSettings: View {
         HStack {
             if exercise.primarySetting == 0, exercise.secondarySetting == 0 {
                 TitleText("None", maxFontSize: maxFontSize)
-                    .font(.largeTitle)
                     .foregroundStyle(exerciseGearColor)
                     .padding()
             }

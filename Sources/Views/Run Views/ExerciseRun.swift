@@ -126,28 +126,35 @@ public struct ExerciseRun: View {
 
     #if os(iOS)
         private var platformContent: some View {
-            VStack {
-                titleText
-                if verticalSizeClass == .regular {
-                    HStack(alignment: .top) {
-                        settings
-                        volume
-                    }
-                    intensity
-                } else {
-                    HStack(alignment: .top) {
-                        Group {
-                            settings
-                            volume
+            GeometryReader { geo in
+                let isPortrait = geo.size.height > geo.size.width
+                VStack {
+                    titleText
+                        .frame(maxHeight: geo.size.height / 5)
+                    Group {
+                        if isPortrait {
+                            HStack(alignment: .top) {
+                                settings
+                                volume
+                            }
                             intensity
+                        } else {
+                            HStack(alignment: .top) {
+                                settings
+                                volume
+                                intensity
+                                    .frame(width: geo.size.width * 2 / 5)
+                            }
                         }
                     }
+                    .frame(maxHeight: .infinity)
+                    navigationRow
+                        .padding(.top)
+                    Spacer()
                 }
-                navigationRow
-                    .padding(.top)
-                Spacer()
+                .padding(.horizontal)
+                .padding(.bottom, 30) // allow space for index indicator
             }
-            .padding(.horizontal)
         }
     #endif
 
