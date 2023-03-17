@@ -16,7 +16,7 @@ import GroutLib
 import TrackerLib
 
 /// Preserves 'fresh' zRoutines in .main store no older than thresholdSecs. Deletes those 'stale' ones earlier.
-public let freshThresholdSecs: TimeInterval = 86400 * 7   // one week
+public let freshThresholdSecs: TimeInterval = 86400 * 7 // one week
 
 private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                             category: "BackgroundHandlers")
