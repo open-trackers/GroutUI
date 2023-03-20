@@ -18,10 +18,10 @@ import GroutLib
 public struct SinceText: View {
     // MARK: - Parameters
 
-    private var startedAt: Date?
-    private var duration: TimeInterval
+    private let startedAt: Date?
+    private let duration: TimeInterval
     @Binding private var now: Date
-    private var compactorStyle: TimeCompactor.Style
+    private let compactorStyle: TimeCompactor.Style
 
     public init(startedAt: Date?, duration: TimeInterval, now: Binding<Date>, compactorStyle: TimeCompactor.Style) {
         self.startedAt = startedAt
