@@ -51,7 +51,7 @@ public struct RecentRoutineRun<Content: View>: View {
         if let routineRun = routineRuns.first {
             content(routineRun)
         } else {
-            Text("No activity for today.") // shouldn't appear; included here defensively
+            Text("No recent activity.") // shouldn't appear; included here defensively
         }
     }
 }
