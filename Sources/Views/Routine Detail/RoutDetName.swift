@@ -34,7 +34,7 @@ public struct RoutDetName: View {
             { _, _ in
                 // nothing to set other than the name
             } label: {
-                Text($0)
+                Text($0.description)
                     .foregroundStyle(.tint)
             }
             #if os(iOS)
