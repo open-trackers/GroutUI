@@ -10,6 +10,8 @@
 
 import SwiftUI
 
+import TextFieldPreset
+
 import GroutLib
 import TrackerUI
 
@@ -23,12 +25,11 @@ struct ExDetName: View {
 
     var body: some View {
         Section {
-            TextFieldWithPresets($name,
-                                 prompt: "Enter exercise name",
-                                 presets: exercisePresets)
-            { _, _ in
-                // nothing to set other than the name
-            } label: {
+            TextFieldPreset($name,
+                            prompt: "Enter exercise name",
+                            axis: .vertical,
+                            presets: exercisePresets)
+            {
                 Text($0.description)
                 // .foregroundStyle(.tint)
             }

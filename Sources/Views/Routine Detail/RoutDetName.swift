@@ -10,6 +10,8 @@
 
 import SwiftUI
 
+import TextFieldPreset
+
 import GroutLib
 import TrackerUI
 
@@ -28,12 +30,11 @@ public struct RoutDetName: View {
 
     public var body: some View {
         Section {
-            TextFieldWithPresets($routine.wrappedName,
-                                 prompt: "Enter routine name",
-                                 presets: routinePresets)
-            { _, _ in
-                // nothing to set other than the name
-            } label: {
+            TextFieldPreset($routine.wrappedName,
+                            prompt: "Enter routine name",
+                            axis: .vertical,
+                            presets: routinePresets)
+            {
                 Text($0.description)
                     .foregroundStyle(.tint)
             }
