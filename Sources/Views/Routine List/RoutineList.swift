@@ -38,17 +38,11 @@ public struct RoutineList: View {
 
     private let title = "Gym Routines"
 
-    @AppStorage("routine-is-new-user") private var isNewUser: Bool = true
-
-    // @AppStorage(storageKeyRoutineIsNewUser) private var isNewUser: Bool = true
-
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
                                 category: String(describing: RoutineList.self))
 
     // NOTE: not stored, to allow resume/restore of started routine
     @State private var isNew = false
-
-    @State private var showGettingStarted = false
 
     @SceneStorage("routine-run-nav") private var routineRunNavData: Data?
     @SceneStorage("run-selected-routine") private var selectedRoutine: URL? = nil
@@ -84,10 +78,6 @@ public struct RoutineList: View {
         #elseif os(iOS)
         .navigationTitle(title)
         #endif
-        .onAppear(perform: appearAction)
-        .gettingStarted(show: $showGettingStarted) {
-            GettingStarted()
-        }
         .fullScreenCover(item: $selectedRoutine) { url in
             GroutNavStack(navData: $routineRunNavData) {
                 VStack {
@@ -151,17 +141,6 @@ public struct RoutineList: View {
     }
 
     // MARK: - Actions
-
-    private func appearAction() {
-        guard isNewUser else { return }
-        isNewUser = false
-        logger.debug("\(#function): is new user")
-        if firstRoutine == nil {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                showGettingStarted = true
-            }
-        }
-    }
 
     private func detailAction(_ uri: URL) {
         logger.notice("\(#function)")
