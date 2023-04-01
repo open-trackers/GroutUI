@@ -79,22 +79,26 @@ public struct AddExerciseButton: View {
 
     // MARK: - Actions
 
-    private func cancelBulkAddAction() {
-        showBulkAdd = false
-    }
-
-    private func bulkAddAction() {
-        do {
-            // produce an ordered array of presets from the unordered set
-            let presets = exercisePresets.flatMap(\.value).filter { selected.contains($0) }
-
-            try Exercise.bulkCreate(viewContext, routine: routine, presets: presets)
-            try viewContext.save()
-        } catch {
-            logger.error("\(#function): \(error.localizedDescription)")
+    #if os(iOS)
+        private func cancelBulkAddAction() {
+            showBulkAdd = false
         }
-        showBulkAdd = false
-    }
+    #endif
+
+    #if os(iOS)
+        private func bulkAddAction() {
+            do {
+                // produce an ordered array of presets from the unordered set
+                let presets = exercisePresets.flatMap(\.value).filter { selected.contains($0) }
+
+                try Exercise.bulkCreate(viewContext, routine: routine, presets: presets)
+                try viewContext.save()
+            } catch {
+                logger.error("\(#function): \(error.localizedDescription)")
+            }
+            showBulkAdd = false
+        }
+    #endif
 
     private func longPressAction() {
         #if os(watchOS)
@@ -109,7 +113,7 @@ public struct AddExerciseButton: View {
                                  routine: routine,
                                  userOrder: maxOrder + 1)
         do {
-            try nu.updateFromAppSettings(viewContext)
+            try nu.populate(viewContext)
         } catch {
             logger.error("\(#function): \(error.localizedDescription)")
         }

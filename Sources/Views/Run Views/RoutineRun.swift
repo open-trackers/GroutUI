@@ -172,7 +172,7 @@ public struct RoutineRun: View {
             Haptics.play()
             let nu = Exercise.create(viewContext, routine: routine, userOrder: maxOrder + 1)
             do {
-                try nu.updateFromAppSettings(viewContext)
+                try nu.populate(viewContext)
                 try viewContext.save()
             } catch {
                 logger.error("\(#function): \(error.localizedDescription)")

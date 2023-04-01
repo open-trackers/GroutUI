@@ -85,10 +85,8 @@ public struct RoutineList: View {
         .navigationTitle(title)
         #endif
         .onAppear(perform: appearAction)
-        .sheet(isPresented: $showGettingStarted) {
-            NavigationStack {
-                GettingStarted(show: $showGettingStarted)
-            }
+        .gettingStarted(show: $showGettingStarted) {
+            GettingStarted()
         }
         .fullScreenCover(item: $selectedRoutine) { url in
             GroutNavStack(navData: $routineRunNavData) {
