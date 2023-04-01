@@ -90,6 +90,7 @@ public struct AddExerciseButton: View {
             do {
                 // produce an ordered array of presets from the unordered set
                 let presets = exercisePresets.flatMap(\.value).filter { selected.contains($0) }
+                selected.removeAll()
 
                 try Exercise.bulkCreate(viewContext, routine: routine, presets: presets)
                 try viewContext.save()
