@@ -49,9 +49,9 @@ public struct AddExerciseButton: View {
         #if os(iOS)
             .sheet(isPresented: $showBulkAdd) {
                 NavigationStack {
-                    PresetsPickerMulti(selected: $selected,
-                                       presets: exercisePresets,
-                                       label: { Text($0.description) })
+                    BulkPresetsPicker(selected: $selected,
+                                      presets: exercisePresets,
+                                      label: { Text($0.description) })
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
                                 Button("Cancel", action: cancelBulkAddAction)
