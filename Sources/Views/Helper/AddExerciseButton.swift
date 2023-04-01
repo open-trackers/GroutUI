@@ -12,6 +12,8 @@ import CoreData
 import os
 import SwiftUI
 
+import TextFieldPreset
+
 import GroutLib
 import TrackerUI
 
@@ -29,12 +31,39 @@ public struct AddExerciseButton: View {
 
     // MARK: - Locals
 
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                                category: String(describing: AddExerciseButton.self))
+
+    #if os(iOS)
+        @State private var showBulkAdd = false
+        @State private var selected = Set<ExercisePreset>()
+    #endif
+
     // MARK: - Views
 
     public var body: some View {
         AddElementButton(elementName: "Exercise",
+                         onLongPress: longPressAction,
                          onCreate: createAction,
                          onAfterSave: afterSaveAction)
+        #if os(iOS)
+            .sheet(isPresented: $showBulkAdd) {
+                NavigationStack {
+                    PresetsPickerMulti(selected: $selected,
+                                       presets: exercisePresets,
+                                       label: { Text($0.description) })
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Cancel", action: cancelBulkAddAction)
+                            }
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Add Exercises", action: bulkAddAction)
+                                    .disabled(selected.count == 0)
+                            }
+                        }
+                }
+            }
+        #endif
     }
 
     // MARK: - Properties
@@ -43,12 +72,37 @@ public struct AddExerciseButton: View {
         do {
             return try Exercise.maxUserOrder(viewContext, routine: routine) ?? 0
         } catch {
-            // logger.error("\(#function): \(error.localizedDescription)")
+            logger.error("\(#function): \(error.localizedDescription)")
         }
         return 0
     }
 
     // MARK: - Actions
+
+    private func cancelBulkAddAction() {
+        showBulkAdd = false
+    }
+
+    private func bulkAddAction() {
+        do {
+            // produce an ordered array of presets from the unordered set
+            let presets = exercisePresets.flatMap(\.value).filter { selected.contains($0) }
+
+            try Exercise.bulkCreate(viewContext, routine: routine, presets: presets)
+            try viewContext.save()
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
+        showBulkAdd = false
+    }
+
+    private func longPressAction() {
+        #if os(watchOS)
+            Haptics.play(.warning)
+        #elseif os(iOS)
+            showBulkAdd = true
+        #endif
+    }
 
     private func createAction() -> Exercise {
         let nu = Exercise.create(viewContext,
@@ -57,7 +111,7 @@ public struct AddExerciseButton: View {
         do {
             try nu.updateFromAppSettings(viewContext)
         } catch {
-            // logger.error("\(#function): \(error.localizedDescription)")
+            logger.error("\(#function): \(error.localizedDescription)")
         }
         return nu
     }

@@ -8,6 +8,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
+import os
 import SwiftUI
 
 import TextFieldPreset
@@ -16,10 +17,17 @@ import GroutLib
 import TrackerUI
 
 struct ExDetName: View {
+    @Environment(\.managedObjectContext) private var viewContext
+
     // MARK: - Parameters
 
     @Binding var name: String
     let tint: Color
+
+    // MARK: - Locals
+
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!,
+                                category: String(describing: ExDetName.self))
 
     // MARK: - Views
 
@@ -28,12 +36,10 @@ struct ExDetName: View {
             TextFieldPreset($name,
                             prompt: "Enter exercise name",
                             axis: .vertical,
-                            presets: exercisePresets)
-            {
-                Text($0.description)
-                // .foregroundStyle(.tint)
-            }
-            .tint(tint)
+                            presets: exercisePresets,
+                            pickerLabel: { Text($0.description) },
+                            onSelect: { _ in })
+                .tint(tint)
         } header: {
             Text("Name")
         }
