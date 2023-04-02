@@ -77,25 +77,29 @@ public struct ExerciseRun: View {
             .onDisappear {
                 shortPressDone = false // to avoid double presses
             }
-            .confirmationDialog("Long Press", isPresented: $showAdvanceAlert) {
-                VStack {
-                    Button("Remain at \(exercise.formattedIntensity(exercise.lastIntensity, withUnits: true))") {
-                        markDone(withAdvance: false)
-                    }
-                    Button("Advance to \(exercise.formattedIntensity(exercise.advancedIntensity, withUnits: true))") {
-                        markDone(withAdvance: true)
-                    }
-                    Button("Always advance on long press") {
-                        alwaysAdvanceOnLongPress = true
-                        markDone(withAdvance: true)
-                    }
-                    Button(role: .cancel) {
-                        shortPressDone = false
-                    } label: {
-                        Text("Cancel")
-                    }
+            // NOTE: using an alert, as confirmationDialog may be clipped at top of view on iPad
+            // .confirmationDialog(
+            .alert("Long Press",
+                   isPresented: $showAdvanceAlert)
+        {
+            VStack {
+                Button("Remain at \(exercise.formattedIntensity(exercise.lastIntensity, withUnits: true))") {
+                    markDone(withAdvance: false)
+                }
+                Button("Advance to \(exercise.formattedIntensity(exercise.advancedIntensity, withUnits: true))") {
+                    markDone(withAdvance: true)
+                }
+                Button("Always advance on long press") {
+                    alwaysAdvanceOnLongPress = true
+                    markDone(withAdvance: true)
+                }
+                Button(role: .cancel) {
+                    shortPressDone = false
+                } label: {
+                    Text("Cancel")
                 }
             }
+        }
     }
 
     #if os(watchOS)
