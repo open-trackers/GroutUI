@@ -82,22 +82,20 @@ public struct ExerciseRun: View {
             .alert("Long Press",
                    isPresented: $showAdvanceAlert)
         {
-            VStack {
-                Button("Remain at \(exercise.formattedIntensity(exercise.lastIntensity, withUnits: true))") {
-                    markDone(withAdvance: false)
-                }
-                Button("Advance to \(exercise.formattedIntensity(exercise.advancedIntensity, withUnits: true))") {
-                    markDone(withAdvance: true)
-                }
-                Button("Always advance on long press") {
-                    alwaysAdvanceOnLongPress = true
-                    markDone(withAdvance: true)
-                }
-                Button(role: .cancel) {
-                    shortPressDone = false
-                } label: {
-                    Text("Cancel")
-                }
+            Button("Remain at \(exercise.formattedIntensity(exercise.lastIntensity, withUnits: true))") {
+                markDone(withAdvance: false)
+            }
+            Button("Advance to \(exercise.formattedIntensity(exercise.advancedIntensity, withUnits: true))") {
+                markDone(withAdvance: true)
+            }
+            Button("Always advance on long press") {
+                alwaysAdvanceOnLongPress = true
+                markDone(withAdvance: true)
+            }
+            Button(role: .cancel) {
+                shortPressDone = false
+            } label: {
+                Text("Cancel")
             }
         }
     }
