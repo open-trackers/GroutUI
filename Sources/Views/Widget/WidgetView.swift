@@ -26,7 +26,13 @@ public struct WidgetView: View {
 
     // MARK: - Locals
 
-    private static let tc = NumberCompactor(ifZero: "0", roundSmallToWhole: true)
+    #if os(watchOS)
+        private static let style: TimeCompactor.Style = .short
+    #elseif os(iOS)
+        private static let style: TimeCompactor.Style = .medium
+    #endif
+
+    private static let tc = TimeCompactor(ifZero: "", style: Self.style)
 
     // MARK: - Views
 
@@ -34,50 +40,38 @@ public struct WidgetView: View {
         #if os(watchOS)
             gauge
         #elseif os(iOS)
-            Section {
-                gauge
-            } header: {
-                Text("Daily Calories")
-                    .foregroundColor(.secondary)
+            VStack {
+                Section {
+                    gauge
+                } header: {
+                    Text("Last routine")
+                        .lineLimit(1)
+                        .foregroundColor(.secondary)
+                }
             }
+            .padding(10)
         #endif
     }
 
     private var gauge: some View {
-        Gauge(value: percent, in: 0.0 ... 1.0) {
-            Text("CAL")
-            // .foregroundColor(isOver ? .red : .primary)
-        } currentValueLabel: {
-            Text(caloriesStr)
+        ZStack {
+            Text(sinceStr)
+                .foregroundColor(.primary)
+            Circle()
+                .strokeBorder(Gradient(colors: colors), lineWidth: 5)
         }
-        .gaugeStyle(.accessoryCircular)
         .tint(Gradient(colors: colors))
     }
 
     // MARK: - Properties
 
-    private var caloriesStr: String {
-        "X"
-        // Self.tc.string(from: entry.currentCalories as NSNumber) ?? ""
+    private var sinceStr: String {
+        Self.tc.string(from: entry.timeInterval as NSNumber) ?? ""
     }
 
     private var colors: [Color] {
         let c = entry.pairs.map(\.color)
         return c.first == nil ? [.accentColor] : c
-    }
-
-//    private var remaining: Int {
-//        entry.timeInterval - entry.currentCalories // may be negative
-//    }
-
-//    private var isOver: Bool {
-//        entry.timeInterval < entry.currentCalories
-//    }
-
-    private var percent: Float {
-        0.1
-//        guard entry.timeInterval > 0 else { return 0 }
-//        return Float(entry.currentCalories) / Float(entry.timeInterval)
     }
 }
 
