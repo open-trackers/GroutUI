@@ -17,7 +17,7 @@ public struct Provider: TimelineProvider {
     public init() {}
 
     public func placeholder(in _: Context) -> WidgetEntry {
-        WidgetEntry(date: Date(), timeInterval: 2000, pairs: [
+        WidgetEntry(date: Date(), name: "Back & Bicep", timeInterval: 2000, pairs: [
             WidgetEntry.Pair(.red, 0.34),
             WidgetEntry.Pair(.green, 0.33),
             WidgetEntry.Pair(.blue, 0.33),

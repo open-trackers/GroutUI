@@ -29,7 +29,7 @@ public struct WidgetView: View {
     #if os(watchOS)
         private static let style: TimeCompactor.Style = .short
     #elseif os(iOS)
-        private static let style: TimeCompactor.Style = .medium
+        private static let style: TimeCompactor.Style = .short
     #endif
 
     private static let tc = TimeCompactor(ifZero: "", style: Self.style)
@@ -44,7 +44,7 @@ public struct WidgetView: View {
                 Section {
                     gauge
                 } header: {
-                    Text("Last routine")
+                    Text(entry.name)
                         .lineLimit(1)
                         .foregroundColor(.secondary)
                 }
@@ -58,15 +58,21 @@ public struct WidgetView: View {
             Text(sinceStr)
                 .foregroundColor(.primary)
             Circle()
-                .strokeBorder(Gradient(colors: colors), lineWidth: 5)
+                .strokeBorder(
+                    AngularGradient(gradient: gradient, center: .center),
+                    lineWidth: 10)
         }
         .tint(Gradient(colors: colors))
     }
 
     // MARK: - Properties
 
+    private var gradient: Gradient {
+        Gradient(colors: colors)
+    }
+    
     private var sinceStr: String {
-        Self.tc.string(from: entry.timeInterval as NSNumber) ?? ""
+        "\(Self.tc.string(from: entry.timeInterval as NSNumber) ?? "") ago"
     }
 
     private var colors: [Color] {
@@ -77,7 +83,7 @@ public struct WidgetView: View {
 
 struct WidgetView_Previews: PreviewProvider {
     static var previews: some View {
-        let entry = WidgetEntry(timeInterval: 2000)
+        let entry = WidgetEntry(name: "Back & Bicep", timeInterval: 2000)
         return WidgetView(entry: entry)
             .accentColor(.blue)
             .previewContext(WidgetPreviewContext(family: .accessoryCircular))
