@@ -8,10 +8,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 
-import SwiftUI
-import WidgetKit
-
 import Compactor
+import SwiftUI
 
 import GroutLib
 
@@ -58,9 +56,8 @@ public struct WidgetView: View {
             Text(sinceStr)
                 .foregroundColor(.primary)
             Circle()
-                .strokeBorder(
-                    AngularGradient(gradient: gradient, center: .center),
-                    lineWidth: 10)
+                .strokeBorder(AngularGradient(gradient: gradient, center: .center),
+                              lineWidth: 10)
         }
         .tint(Gradient(colors: colors))
     }
@@ -70,9 +67,9 @@ public struct WidgetView: View {
     private var gradient: Gradient {
         Gradient(colors: colors)
     }
-    
+
     private var sinceStr: String {
-        "\(Self.tc.string(from: entry.timeInterval as NSNumber) ?? "") ago"
+        Self.tc.string(from: entry.timeInterval as NSNumber) ?? ""
     }
 
     private var colors: [Color] {
@@ -86,6 +83,6 @@ struct WidgetView_Previews: PreviewProvider {
         let entry = WidgetEntry(name: "Back & Bicep", timeInterval: 2000)
         return WidgetView(entry: entry)
             .accentColor(.blue)
-            .previewContext(WidgetPreviewContext(family: .accessoryCircular))
+        // .previewContext(WidgetPreviewContext(family: .accessoryCircular))
     }
 }
