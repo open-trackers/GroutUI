@@ -47,7 +47,7 @@ public struct RoutineCell: View {
         // NOTE: onShortPress true to clear lastCompleted in each Exercise
         Cell(element: routine,
              now: $now,
-             defaultImageName: "dumbbell.fill",
+             defaultImageName: defaultImageName,
              subtitle: subtitle,
              onDetail: { onDetail(uri) },
              onShortPress: { onShortPress(uri) })

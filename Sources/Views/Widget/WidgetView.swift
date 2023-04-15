@@ -12,8 +12,11 @@ import Compactor
 import SwiftUI
 
 import GroutLib
+import TrackerUI
 
 public struct WidgetView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     // MARK: - Parameters
 
     private let entry: Provider.Entry
@@ -27,60 +30,75 @@ public struct WidgetView: View {
     #if os(watchOS)
         private static let style: TimeCompactor.Style = .short
     #elseif os(iOS)
-        private static let style: TimeCompactor.Style = .short
+        private static let style: TimeCompactor.Style = .medium
     #endif
 
-    private static let tc = TimeCompactor(ifZero: "", style: Self.style)
+    private static let tc = TimeCompactor(ifZero: nil, style: Self.style)
 
     // MARK: - Views
 
     public var body: some View {
-        #if os(watchOS)
-            gauge
-        #elseif os(iOS)
-            VStack {
-                Section {
-                    gauge
-                } header: {
-                    Text(entry.name)
-                        .lineLimit(1)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(10)
-        #endif
+        platformView
     }
 
-    private var gauge: some View {
-        ZStack {
-            Text(sinceStr)
-                .foregroundColor(.primary)
-            Circle()
-                .strokeBorder(AngularGradient(gradient: gradient, center: .center),
-                              lineWidth: 10)
+    private var cellForeground: Color {
+        .primary.opacity(colorScheme == .light ? 0.8 : 1.0)
+    }
+
+    #if os(watchOS)
+        private var platformView: some View {
+            VStack {
+                Image(systemName: entry.imageName ?? defaultImageName)
+                Text(sinceStr)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(CellBackground(color: entry.color))
+//            ZStack {
+//                Text(sinceStr)
+//                    .foregroundColor(.primary)
+//                Circle()
+//                    .background(CellBackground(color: entry.color))
+//                    //.strokeBorder(entry.color ?? .accentColor, lineWidth: 3)
+//            }
         }
-        .tint(Gradient(colors: colors))
+    #endif
+
+    #if os(iOS)
+        private var platformView: some View {
+            VStack(alignment: .leading, spacing: 15) {
+                Image(systemName: entry.imageName ?? defaultImageName)
+                    .imageScale(.large)
+                Text(entry.name)
+                    .font(.title2)
+                    .bold()
+                    .lineLimit(1)
+                Text("\(sinceStr) ago")
+                    .font(.body)
+                    .italic()
+                    .opacity(0.8)
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .padding(.horizontal)
+            .foregroundColor(cellForeground)
+            .background(CellBackground(color: entry.color))
+        }
+    #endif
+
+    private var cellBackground: some View {
+        CellBackground(color: entry.color)
     }
 
     // MARK: - Properties
 
-    private var gradient: Gradient {
-        Gradient(colors: colors)
-    }
-
     private var sinceStr: String {
         Self.tc.string(from: entry.timeInterval as NSNumber) ?? ""
-    }
-
-    private var colors: [Color] {
-        let c = entry.pairs.map(\.color)
-        return c.first == nil ? [.accentColor] : c
     }
 }
 
 struct WidgetView_Previews: PreviewProvider {
     static var previews: some View {
-        let entry = WidgetEntry(name: "Back & Bicep", timeInterval: 2000)
+        let entry = WidgetEntry(name: "Back & Bicep", imageName: nil, timeInterval: 2000, color: .orange)
         return WidgetView(entry: entry)
             .accentColor(.blue)
         // .previewContext(WidgetPreviewContext(family: .accessoryCircular))
