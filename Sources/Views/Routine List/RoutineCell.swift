@@ -67,7 +67,7 @@ public struct RoutineCell: View {
         #if os(watchOS)
             .short
         #else
-                .full
+            .full
         #endif
     }
 }

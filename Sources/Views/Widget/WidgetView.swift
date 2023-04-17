@@ -53,13 +53,6 @@ public struct WidgetView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(CellBackground(color: entry.color))
-//            ZStack {
-//                Text(sinceStr)
-//                    .foregroundColor(.primary)
-//                Circle()
-//                    .background(CellBackground(color: entry.color))
-//                    //.strokeBorder(entry.color ?? .accentColor, lineWidth: 3)
-//            }
         }
     #endif
 
@@ -68,10 +61,11 @@ public struct WidgetView: View {
             VStack(alignment: .leading, spacing: 15) {
                 Image(systemName: entry.imageName ?? defaultImageName)
                     .imageScale(.large)
-                Text(entry.name)
-                    .font(.title2)
-                    .bold()
-                    .lineLimit(1)
+                TitleText(entry.name)
+//                Text(entry.name)
+//                    .font(.title3)
+//                    .bold()
+//                    .lineLimit(1)
                 Text("\(sinceStr) ago")
                     .font(.body)
                     .italic()
