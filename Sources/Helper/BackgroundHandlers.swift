@@ -77,6 +77,12 @@ public func handleTaskAction(_ manager: CoreDataStack) async {
                                       thresholdSecs: freshThresholdSecs)
                 try backgroundContext.save()
             #endif
+
+            // update the widget(s), if any
+            try WidgetEntry.refresh(backgroundContext,
+                                    reload: true,
+                                    defaultColor: .accentColor)
+
         } catch {
             logger.error("\(#function): \(error.localizedDescription)")
         }
