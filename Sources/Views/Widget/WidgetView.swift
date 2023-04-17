@@ -61,11 +61,9 @@ public struct WidgetView: View {
             VStack(alignment: .leading, spacing: 15) {
                 Image(systemName: entry.imageName ?? defaultImageName)
                     .imageScale(.large)
-                TitleText(entry.name)
-//                Text(entry.name)
-//                    .font(.title3)
-//                    .bold()
-//                    .lineLimit(1)
+                Spacer()
+                TitleText(entry.name, lineLimit: 2)
+                Spacer()
                 Text("\(sinceStr) ago")
                     .font(.body)
                     .italic()
@@ -73,7 +71,7 @@ public struct WidgetView: View {
                     .lineLimit(1)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .padding(.horizontal)
+            .padding()
             .foregroundColor(cellForeground)
             .background(CellBackground(color: entry.color))
         }
