@@ -58,7 +58,7 @@ public struct WidgetView: View {
 
     #if os(iOS)
         private var platformView: some View {
-            VStack(alignment: .leading, spacing: 15) {
+            VStack(alignment: .leading) {
                 Image(systemName: entry.imageName ?? defaultImageName)
                     .imageScale(.large)
                 Spacer()
