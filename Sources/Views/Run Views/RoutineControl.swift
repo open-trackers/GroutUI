@@ -116,8 +116,9 @@ public struct RoutineControl: View {
                          labelFont: labelFont,
                          tint: stopColor,
                          onLongPress: nil)
-            ElapsedSinceView(startedAt: startedAt,
-                             labelFont: labelFont)
+            ElapsedView(startedAt: startedAt,
+                        labelFont: labelFont,
+                        tint: routineColor)
         }
     }
 
