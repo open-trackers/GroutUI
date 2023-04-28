@@ -40,14 +40,15 @@ public struct ExerciseDetail: View {
 
         enum Tab: Int, CaseIterable {
             case name = 1
-            case primary = 2
-            case secondary = 3
-            case sets = 4
-            case reps = 5
-            case intensity = 6
-            case intensityStep = 7
-            case intensityUnit = 8
-            case intensityInvert = 9
+            case routine = 2
+            case primary = 3
+            case secondary = 4
+            case sets = 5
+            case reps = 6
+            case intensity = 7
+            case intensityStep = 8
+            case intensityUnit = 9
+            case intensityInvert = 10
         }
     #endif
 
@@ -61,7 +62,6 @@ public struct ExerciseDetail: View {
     }
 
     #if os(watchOS)
-
         private var platformView: some View {
             ControlBarTabView(selection: $selectedTab, tint: exerciseColor, title: title) {
                 Form {
@@ -69,6 +69,14 @@ public struct ExerciseDetail: View {
                               tint: exerciseColor)
                 }
                 .tag(Tab.name)
+                Form {
+                    if let routine = exercise.routine {
+                        ExDetRoutine(routine: routine, onSelect: selectRoutineAction)
+                    } else {
+                        Text("Routine not available")
+                    }
+                }
+                .tag(Tab.routine)
                 Form {
                     ExDetSetting(value: $exercise.primarySetting,
                                  tint: exerciseColor,
@@ -126,6 +134,9 @@ public struct ExerciseDetail: View {
             Form {
                 ExDetName(name: $exercise.wrappedName,
                           tint: exerciseColor)
+                if let routine = exercise.routine {
+                    ExDetRoutine(routine: routine, onSelect: selectRoutineAction)
+                }
                 ExDetSetting(value: $exercise.primarySetting,
                              tint: exerciseColor,
                              title: "Primary Setting")
@@ -161,6 +172,18 @@ public struct ExerciseDetail: View {
 
     // MARK: - Actions
 
+    // if user selects a new routine, the exercise should no longer be in routine's list of exercises
+    private func selectRoutineAction(nuRoutineArchiveID: UUID?) {
+        guard let nuRoutineArchiveID,
+              nuRoutineArchiveID != exercise.routine?.archiveID else { return }
+        do {
+            guard let nu = try Routine.get(viewContext, archiveID: nuRoutineArchiveID) else { return }
+            exercise.routine = nu
+        } catch {
+            logger.error("\(#function): \(error.localizedDescription)")
+        }
+    }
+
     private func onDisappearAction() {
         do {
             try viewContext.save()
@@ -183,11 +206,12 @@ struct ExerciseDetail_Previews: PreviewProvider {
     static var previews: some View {
         let manager = CoreDataStack.getPreviewStack()
         let ctx = manager.container.viewContext
-        let routine = Routine.create(ctx, userOrder: 0)
-        routine.name = "Back & Bicep"
-        let exercise = Exercise.create(ctx, routine: routine, userOrder: 0)
+        let routine1 = Routine.create(ctx, userOrder: 0)
+        routine1.name = "Back & Bicep"
+        let routine2 = Routine.create(ctx, userOrder: 1)
+        routine2.name = "Check & Shoulders"
+        let exercise = Exercise.create(ctx, routine: routine1, userOrder: 0)
         exercise.name = "Lat Pulldown"
-        exercise.routine = routine
         return TestHolder(exercise: exercise)
             .environment(\.managedObjectContext, ctx)
             .environmentObject(manager)
