@@ -177,8 +177,10 @@ public struct ExerciseDetail: View {
         guard let nuRoutineArchiveID,
               nuRoutineArchiveID != exercise.routine?.archiveID else { return }
         do {
-            guard let nu = try Routine.get(viewContext, archiveID: nuRoutineArchiveID) else { return }
-            exercise.routine = nu
+            guard let nu = try Routine.get(viewContext, archiveID: nuRoutineArchiveID)
+            else { return }
+            try exercise.move(viewContext, to: nu)
+            try viewContext.save()
         } catch {
             logger.error("\(#function): \(error.localizedDescription)")
         }

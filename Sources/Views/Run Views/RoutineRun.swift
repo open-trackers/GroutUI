@@ -206,7 +206,7 @@ public struct RoutineRun: View {
         if let nextIncomplete = try? routine.getNextIncomplete(viewContext, from: userOrder) {
             // Haptics.play()
             let nextTab = nextIncomplete.uriRepresentation()
-            // logger.debug("\(#function) Selecting TAB, from \(selectedTab.suffix ?? "") to \(nextTab.suffix ?? "")")
+            logger.debug("\(#function) Selecting TAB, from \(selectedTab.suffix ?? "") to \(nextTab.suffix ?? "")")
             selectedTab = nextTab
         } else {
             Haptics.play(.completedAction)
