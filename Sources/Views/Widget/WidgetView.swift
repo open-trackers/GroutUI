@@ -39,6 +39,7 @@ public struct WidgetView: View {
 
     public var body: some View {
         platformView
+            .widgetBackground(backgroundView: Color.clear)
     }
 
     private var cellForeground: Color {
