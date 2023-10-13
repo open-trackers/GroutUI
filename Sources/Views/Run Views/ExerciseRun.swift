@@ -100,12 +100,18 @@ public struct ExerciseRun: View {
         }
     }
 
+    #if os(iOS)
+        private let slices: CGFloat = 5
+    #elseif os(watchOS)
+        private let slices: CGFloat = 14
+    #endif
+
     #if os(watchOS)
         private var platformContent: some View {
             GeometryReader { geo in
                 VStack {
                     titleText
-                        .frame(height: geo.size.height * 3 / 13)
+                        .frame(height: geo.size.height * 3 / slices)
 
                     VStack {
                         switch middleMode {
@@ -117,10 +123,10 @@ public struct ExerciseRun: View {
                             volume
                         }
                     }
-                    .frame(height: geo.size.height * 5 / 13)
+                    .frame(height: geo.size.height * 5 / slices)
 
                     navigationRow
-                        .frame(height: geo.size.height * 5 / 13)
+                        .frame(height: geo.size.height * 6 / slices)
                 }
             }
         }
@@ -132,7 +138,7 @@ public struct ExerciseRun: View {
                 let isPortrait = geo.size.height > geo.size.width
                 VStack {
                     titleText
-                        .frame(maxHeight: geo.size.height / 5)
+                        .frame(maxHeight: geo.size.height / slices)
                     Group {
                         if isPortrait {
                             HStack(alignment: .top) {
@@ -145,7 +151,7 @@ public struct ExerciseRun: View {
                                 settings
                                 volume
                                 intensity
-                                    .frame(width: geo.size.width * 2 / 5)
+                                    .frame(width: geo.size.width * 2 / slices)
                             }
                         }
                     }

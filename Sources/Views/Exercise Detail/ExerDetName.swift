@@ -1,5 +1,5 @@
 //
-//  ExDetName.swift
+//  ExerDetName.swift
 //
 // Copyright 2022, 2023  OpenAlloc LLC
 //
@@ -39,6 +39,9 @@ struct ExDetName: View {
                             presets: exercisePresets,
                             pickerLabel: { Text($0.description) },
                             onSelect: { _ in })
+            #if os(watchOS)
+                .padding(.bottom)
+            #endif
                 .tint(tint)
         } header: {
             Text("Name")

@@ -38,6 +38,9 @@ public struct RoutDetName: View {
                 Text($0.description)
                     .foregroundStyle(.tint)
             }
+            #if os(watchOS)
+            .padding(.bottom)
+            #endif
             #if os(iOS)
             .font(.title3)
             #endif

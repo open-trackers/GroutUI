@@ -1,5 +1,5 @@
 //
-//  ExerciseRunMiddleRow.swift
+//  ExerciseMiddleRow.swift
 //
 // Copyright 2022, 2023  OpenAlloc LLC
 //
@@ -20,11 +20,11 @@ import SwiftUI
         var next: ExerciseMiddleRowMode {
             switch self {
             case .intensity:
-                return .settings
+                .settings
             case .settings:
-                return .volume
+                .volume
             case .volume:
-                return .intensity
+                .intensity
             }
         }
     }

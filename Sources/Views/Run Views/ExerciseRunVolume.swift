@@ -20,10 +20,10 @@ struct ExerciseRunVolume: View {
     let onEdit: (URL) -> Void
     let onTap: () -> Void
 
-    internal init(exercise: Exercise,
-                  labelFont: Font = .headline,
-                  onEdit: @escaping (URL) -> Void,
-                  onTap: @escaping () -> Void)
+    init(exercise: Exercise,
+         labelFont: Font = .headline,
+         onEdit: @escaping (URL) -> Void,
+         onTap: @escaping () -> Void)
     {
         self.exercise = exercise
         self.labelFont = labelFont

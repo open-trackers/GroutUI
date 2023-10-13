@@ -18,9 +18,9 @@ struct ExerciseRunIntensity: View {
     let labelFont: Font
     let onTap: () -> Void
 
-    internal init(exercise: Exercise,
-                  labelFont: Font = .headline,
-                  onTap: @escaping () -> Void)
+    init(exercise: Exercise,
+         labelFont: Font = .headline,
+         onTap: @escaping () -> Void)
     {
         self.exercise = exercise
         self.labelFont = labelFont
