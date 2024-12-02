@@ -14,7 +14,7 @@ import TrackerUI
 
 #if os(iOS)
     public struct GroutStepper<T, Label>: View
-        where T: Numeric & _FormatSpecifiable & Strideable, Label: View
+        where T: Numeric & Strideable, Label: View
     {
         // MARK: - Parameters
 

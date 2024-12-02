@@ -16,7 +16,7 @@ import GroutLib
 import TrackerLib
 import TrackerUI
 
-extension Routine: Named {}
+extension Routine: @retroactive Named {}
 
 /// Common view shared by watchOS and iOS.
 public struct RoutineList: View {

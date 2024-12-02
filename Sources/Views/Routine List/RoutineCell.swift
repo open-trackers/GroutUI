@@ -17,7 +17,7 @@ import GroutLib
 import TrackerLib
 import TrackerUI
 
-extension Routine: Celled {}
+extension Routine: @retroactive Celled {}
 
 public struct RoutineCell: View {
     @Environment(\.managedObjectContext) private var viewContext
