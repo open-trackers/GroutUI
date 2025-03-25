@@ -90,12 +90,12 @@ public struct RoutineRun: View {
             }
         }
         .animation(.easeInOut(duration: 0.25), value: selectedTab)
-        #if os(iOS)
+//        #if os(iOS)
         .tabViewStyle(.page(indexDisplayMode: .always))
-        #endif
-        #if os(watchOS)
-        .tabViewStyle(.carousel)
-        #endif
+//        #endif
+//        #if os(watchOS)
+//        .tabViewStyle(.carousel)
+//        #endif
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 toolbarItem
